@@ -1,0 +1,376 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4873651AF9AB303A5267E919 /* HealthKitBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1155F3F1F9907C48DA582AD /* HealthKitBridge.swift */; };
+		56D2B1D2CD5505060D4807B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5803CF3D581E951E02BBC9F /* Assets.xcassets */; };
+		58818884FD264255DC58CDD9 /* BackgroundSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0094523A683C84249A6E9AB /* BackgroundSyncManager.swift */; };
+		7DA393B60C73DD615C2CFFEA /* SyncBetterMiFitnessIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EC3BBD0A442E0F59CD602B /* SyncBetterMiFitnessIntent.swift */; };
+		90CFCB2744A7A38C0459C343 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0931041B98790D2153C05CC /* ContentView.swift */; };
+		9E9E668E912CC0819B2B0262 /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC906B71EC647D8840EC824 /* iOSApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		51EC3BBD0A442E0F59CD602B /* SyncBetterMiFitnessIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncBetterMiFitnessIntent.swift; sourceTree = "<group>"; };
+		70AC0E1B4D973C14279E95B9 /* BetterMiFitnessSync.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BetterMiFitnessSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FC906B71EC647D8840EC824 /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
+		A1155F3F1F9907C48DA582AD /* HealthKitBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitBridge.swift; sourceTree = "<group>"; };
+		A5E78E9EF722C3BAF0F454A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B5803CF3D581E951E02BBC9F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C0931041B98790D2153C05CC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F0094523A683C84249A6E9AB /* BackgroundSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSyncManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		98B854A688D82B0111960082 /* HealthKit */ = {
+			isa = PBXGroup;
+			children = (
+				A1155F3F1F9907C48DA582AD /* HealthKitBridge.swift */,
+			);
+			path = HealthKit;
+			sourceTree = "<group>";
+		};
+		A0A225BD7E388B5C43B0B7BE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				70AC0E1B4D973C14279E95B9 /* BetterMiFitnessSync.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A3F64118E89721F3754F232B = {
+			isa = PBXGroup;
+			children = (
+				AFED96D129825FCC6A7E807C /* iosApp */,
+				A0A225BD7E388B5C43B0B7BE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AFED96D129825FCC6A7E807C /* iosApp */ = {
+			isa = PBXGroup;
+			children = (
+				B5803CF3D581E951E02BBC9F /* Assets.xcassets */,
+				F0094523A683C84249A6E9AB /* BackgroundSyncManager.swift */,
+				C0931041B98790D2153C05CC /* ContentView.swift */,
+				A5E78E9EF722C3BAF0F454A0 /* Info.plist */,
+				9FC906B71EC647D8840EC824 /* iOSApp.swift */,
+				51EC3BBD0A442E0F59CD602B /* SyncBetterMiFitnessIntent.swift */,
+				98B854A688D82B0111960082 /* HealthKit */,
+			);
+			path = iosApp;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C83A31C24660D8B918093EE2 /* BetterMiFitnessSync */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4EA3A5DFE6CF7AB508C5EF5B /* Build configuration list for PBXNativeTarget "BetterMiFitnessSync" */;
+			buildPhases = (
+				A7C27BF90D3F04E1A27C6728 /* Build Kotlin Framework */,
+				5E7198CC01B10CC519474DED /* Sync Compose Resources */,
+				45C46179CA26CD558A212B51 /* Sources */,
+				5CBAA4BD027E11A16A8B21D1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BetterMiFitnessSync;
+			packageProductDependencies = (
+			);
+			productName = BetterMiFitnessSync;
+			productReference = 70AC0E1B4D973C14279E95B9 /* BetterMiFitnessSync.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FB88B04AD8BE50961A447E21 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 57119F9C7F3B6752D06A6E49 /* Build configuration list for PBXProject "BetterMiFitnessSync" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A3F64118E89721F3754F232B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A0A225BD7E388B5C43B0B7BE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C83A31C24660D8B918093EE2 /* BetterMiFitnessSync */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5CBAA4BD027E11A16A8B21D1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56D2B1D2CD5505060D4807B2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5E7198CC01B10CC519474DED /* Sync Compose Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Sync Compose Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -z \"${JAVA_HOME:-}\" ] || [ ! -d \"$JAVA_HOME\" ]; then\n  export JAVA_HOME=\"/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home\"\nfi\nexport PATH=\"$JAVA_HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"\ncd \"$SRCROOT/..\"\n# Needs Xcode env: PLATFORM_NAME, ARCHS, BUILT_PRODUCTS_DIR, UNLOCALIZED_RESOURCES_FOLDER_PATH\n./gradlew :composeApp:syncComposeResourcesForIos\n";
+		};
+		A7C27BF90D3F04E1A27C6728 /* Build Kotlin Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Kotlin Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Prefer CI / env JAVA_HOME; fall back to Homebrew JDK 17 on local Macs.\nif [ -z \"${JAVA_HOME:-}\" ] || [ ! -d \"$JAVA_HOME\" ]; then\n  export JAVA_HOME=\"/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home\"\nfi\nexport PATH=\"$JAVA_HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"\ncd \"$SRCROOT/..\"\n# Device (iphoneos) vs Simulator — CI builds device for IPA download.\nif [ \"${PLATFORM_NAME:-}\" = \"iphoneos\" ]; then\n  ./gradlew :composeApp:linkDebugFrameworkIosArm64\nelse\n  ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		45C46179CA26CD558A212B51 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				58818884FD264255DC58CDD9 /* BackgroundSyncManager.swift in Sources */,
+				90CFCB2744A7A38C0459C343 /* ContentView.swift in Sources */,
+				4873651AF9AB303A5267E919 /* HealthKitBridge.swift in Sources */,
+				7DA393B60C73DD615C2CFFEA /* SyncBetterMiFitnessIntent.swift in Sources */,
+				9E9E668E912CC0819B2B0262 /* iOSApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		03C23E157991E8DBA4C7E443 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_ENTITLEMENTS = iosApp.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework";
+				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Better Mi Fitness Sync";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LINKER_FLAGS = "$(inherited) -framework ComposeApp";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bettermifitness.sync;
+				PRODUCT_NAME = BetterMiFitnessSync;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		98050B367AD3E3564E35264F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_ENTITLEMENTS = iosApp.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework";
+				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Better Mi Fitness Sync";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LINKER_FLAGS = "$(inherited) -framework ComposeApp";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bettermifitness.sync;
+				PRODUCT_NAME = BetterMiFitnessSync;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9A388DC5DB0E99DA01B68FC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F72C0373330B9440268F2BB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4EA3A5DFE6CF7AB508C5EF5B /* Build configuration list for PBXNativeTarget "BetterMiFitnessSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				03C23E157991E8DBA4C7E443 /* Debug */,
+				98050B367AD3E3564E35264F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		57119F9C7F3B6752D06A6E49 /* Build configuration list for PBXProject "BetterMiFitnessSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F72C0373330B9440268F2BB1 /* Debug */,
+				9A388DC5DB0E99DA01B68FC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FB88B04AD8BE50961A447E21 /* Project object */;
+}

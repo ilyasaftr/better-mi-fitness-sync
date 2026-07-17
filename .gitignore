@@ -1,0 +1,56 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Kotlin
+*.class
+
+# Android
+local.properties
+*.apk
+*.aab
+*.ap_
+
+# iOS / Xcode
+iosApp/iosApp.xcodeproj/xcuserdata/
+iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/
+iosApp/BetterMiFitnessSync.xcodeproj/xcuserdata/
+iosApp/Pods/
+iosApp/.build/
+iosApp/build/
+DerivedData/
+*.xcworkspace
+!*.xcodeproj/project.pbxproj
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxuser
+*.xccheckout
+*.xcscmblueprint
+xcuserdata/
+
+# Kotlin/Native
+*.klib
+*.knm
+.konan-cache/
+.konan/
+
+# Local research / decompiled official APK (large, not app source)
+apk-decompiled/
+apk-extracted/
+
+# Local screenshots / ad-hoc captures (keep branding/ master icon)
+emulator-screenshot.png
+ios-material-symbols-screenshot.png
+ios-simulator-screenshot.png
+*-screenshot.png
+
+# Detekt
+detekt-baseline*.xml
+!config/detekt/baseline.xml

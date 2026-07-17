@@ -1,0 +1,80 @@
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+
+config:
+  validation: true
+
+complexity:
+  LongMethod:
+    active: true
+    # Compose UI screens are naturally long declarative trees.
+    threshold: 220
+  LongParameterList:
+    active: true
+    functionThreshold: 10
+    constructorThreshold: 10
+  TooManyFunctions:
+    active: false
+  ComplexCondition:
+    active: true
+    threshold: 5
+  NestedBlockDepth:
+    active: true
+    threshold: 5
+  CyclomaticComplexMethod:
+    active: true
+    # Large when-based mappers (sport types) are intentional.
+    threshold: 50
+
+style:
+  MagicNumber:
+    active: false
+  WildcardImport:
+    active: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 140
+  ReturnCount:
+    active: true
+    max: 8
+  ThrowsCount:
+    active: true
+    max: 8
+  ForbiddenComment:
+    active: false
+  UnusedPrivateProperty:
+    active: false
+  UnusedParameter:
+    active: false
+  UseCheckOrError:
+    active: false
+  LoopWithTooManyJumpStatements:
+    active: false
+
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated: ['Composable', 'Preview', 'Test']
+    # Snake_case test names + K/N entry points.
+    excludes:
+      - '**/commonTest/**'
+      - '**/androidTest/**'
+      - '**/iosTest/**'
+      - '**/MainViewController.kt'
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+  SwallowedException:
+    active: false
+  TooGenericExceptionThrown:
+    active: false
+
+empty-blocks:
+  EmptyFunctionBlock:
+    active: true
+    ignoreOverridden: true

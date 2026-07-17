@@ -1,0 +1,23 @@
+# Tag-driven release: always runs on v* tags (not subject to docs path filters).
+# Builds APK + IPA and publishes a GitHub Release via the reusable build workflow.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    name: Build and publish
+    uses: ./.github/workflows/build-release-artifacts.yml
+    permissions:
+      contents: write
+    secrets: inherit
