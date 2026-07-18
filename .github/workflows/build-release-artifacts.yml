@@ -1,8 +1,7 @@
-# Parallel APK + IPA builds for sideload/self-install downloads.
-# Heavy caching: Gradle (deps + build cache), Konan (K/N), Android SDK, Homebrew.
-# Tag releases: triggered via release.yml (workflow_call) so docs path filters never block tags.
-#
-# Docs-only changes (*.md, LICENSE, docs/) do not start this workflow on push/PR.
+# push main  -> detekt + unit tests only
+# PR / manual run / tag release -> full APK + IPA
+# docs (md, LICENSE, docs/) are ignored on push and PR
+# tags use release.yml -> workflow_call (no path filters)
 
 name: Build APK and IPA
 
@@ -23,12 +22,9 @@ on:
       - "LICENSE.*"
       - "docs/**"
   workflow_dispatch:
-  # Used by release.yml on v* tags (always runs; no paths-ignore)
   workflow_call:
 
 concurrency:
-  # PRs: one run per PR number (cancel superseded pushes).
-  # Branches/tags: one run per ref.
   group: >-
     build-artifacts-${{ github.workflow }}-${{
       github.event.pull_request.number || github.ref
@@ -40,19 +36,47 @@ permissions:
 
 env:
   JAVA_VERSION: "17"
-  # Prefer remote + local build cache; no interactive prompts
   GRADLE_OPTS: >-
     -Dorg.gradle.daemon=false
     -Dorg.gradle.parallel=true
     -Dorg.gradle.caching=true
     -Dkotlin.daemon.jvm.options=-Xmx2g
-  # Share Konan deps across jobs on the same runner OS
   KONAN_DATA_DIR: ${{ github.workspace }}/.konan-cache
 
 jobs:
-  # ─── Android (ubuntu) ─────────────────────────────────────────────
+  quick-check:
+    name: Quick check
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
+          cache-cleanup: on-success
+
+      - name: Detekt
+        run: ./gradlew detekt --stacktrace --build-cache --configuration-cache
+
+      - name: Unit tests (miclient JVM)
+        run: ./gradlew :miclient:androidTest --stacktrace --build-cache --configuration-cache
+
   android-apk:
     name: Android APK
+    if: >-
+      github.event_name == 'pull_request' ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'workflow_call'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     outputs:
@@ -166,9 +190,12 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-  # ─── iOS (macOS) — parallel with Android ──────────────────────────
   ios-ipa:
     name: iOS IPA
+    if: >-
+      github.event_name == 'pull_request' ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'workflow_call'
     runs-on: macos-latest
     timeout-minutes: 90
     outputs:
