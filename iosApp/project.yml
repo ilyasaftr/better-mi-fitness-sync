@@ -7,8 +7,9 @@ options:
 
 settings:
   base:
-    # Both device and simulator debug frameworks (CI builds arm64 device; local Xcode usually simulator).
-    FRAMEWORK_SEARCH_PATHS: "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework"
+    # Per-sdk paths so simulator never links the device ComposeApp binary (and vice versa).
+    "FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]": "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework"
+    "FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]": "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework"
 
 targets:
   BetterMiFitnessSync:
@@ -26,7 +27,8 @@ targets:
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGNING_REQUIRED: "YES"
         CODE_SIGNING_ALLOWED: "YES"
-        FRAMEWORK_SEARCH_PATHS: "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework"
+        "FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]": "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework"
+        "FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]": "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework"
         OTHER_LINKER_FLAGS: "$(inherited) -framework ComposeApp"
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
         SWIFT_VERSION: "5.9"
