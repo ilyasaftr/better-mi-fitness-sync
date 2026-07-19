@@ -202,6 +202,14 @@ jobs:
       startsWith(github.ref, 'refs/tags/v')
     runs-on: macos-latest
     timeout-minutes: 90
+    # Release K/N link needs more heap than debug (CI failed with "Java heap space").
+    env:
+      GRADLE_OPTS: >-
+        -Dorg.gradle.daemon=false
+        -Dorg.gradle.parallel=true
+        -Dorg.gradle.caching=true
+        -Dorg.gradle.jvmargs=-Xmx6g
+        -Dkotlin.daemon.jvm.options=-Xmx6g
     outputs:
       version_name: ${{ steps.version.outputs.version_name }}
       is_release: ${{ steps.version.outputs.is_release }}
@@ -308,7 +316,11 @@ jobs:
         run: ./gradlew :composeApp:allTests --stacktrace --build-cache --configuration-cache
 
       - name: Link Kotlin iOS device framework (Release)
-        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64 --stacktrace --build-cache --configuration-cache
+        run: >
+          ./gradlew :composeApp:linkReleaseFrameworkIosArm64
+          -Dorg.gradle.jvmargs="-Xmx6g -Dkotlin.daemon.jvm.options=-Xmx6g"
+          --stacktrace --build-cache --configuration-cache
+          --no-configuration-cache
 
       # Xcode DerivedData for Swift / link steps (secondary to Konan)
       - name: Cache Xcode DerivedData
