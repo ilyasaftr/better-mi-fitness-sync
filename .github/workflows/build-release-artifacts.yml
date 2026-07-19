@@ -441,10 +441,6 @@ jobs:
             echo "- **Android:** [BetterMiFitnessSync.apk](https://github.com/${{ github.repository }}/releases/latest/download/BetterMiFitnessSync.apk) — enable install from unknown sources, then install."
             echo "- **iOS:** [BetterMiFitnessSync.ipa](https://github.com/${{ github.repository }}/releases/latest/download/BetterMiFitnessSync.ipa) — **unsigned**; re-sign with Sideloadly / AltStore / Xcode before install."
             echo ""
-            echo "App version in the binary matches this tag (\`versionName\` / marketing version)."
-            echo ""
-            echo "Stable assets (\`BetterMiFitnessSync.apk\` / \`.ipa\`) always track the latest release; versioned copies are also attached."
-            echo ""
             if [ -n "$PREV" ]; then
               echo "### Changes since \`$PREV\`"
               echo ""
