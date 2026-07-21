@@ -32,14 +32,33 @@ import HealthKit
             .heartRate, .restingHeartRate, .stepCount, .distanceWalkingRunning,
             .activeEnergyBurned, .oxygenSaturation, .bodyMass, .bodyFatPercentage,
             .bodyTemperature, .bloodPressureSystolic, .bloodPressureDiastolic, .vo2Max,
+            // Running form (iOS 16+) — no RunningCadence in public HealthKit
+            .runningSpeed, .runningStrideLength, .runningPower,
+            .runningGroundContactTime, .runningVerticalOscillation,
+            // Walking (iOS 14+)
+            .walkingSpeed, .walkingStepLength,
+            // Swimming / recovery / elevation proxy
+            .distanceSwimming, .swimmingStrokeCount,
+            .heartRateRecoveryOneMinute, .flightsClimbed,
+            .distanceCycling,
         ]
         for id in ids {
             if let t = HKQuantityType.quantityType(forIdentifier: id) { typesToShare.insert(t) }
+        }
+        // Cycling cadence/speed/power are iOS 17+ only (deployment target is 16.0)
+        if #available(iOS 17.0, *) {
+            let cycling: [HKQuantityTypeIdentifier] = [
+                .cyclingCadence, .cyclingSpeed, .cyclingPower,
+            ]
+            for id in cycling {
+                if let t = HKQuantityType.quantityType(forIdentifier: id) { typesToShare.insert(t) }
+            }
         }
         if let sleep = HKCategoryType.categoryType(forIdentifier: .sleepAnalysis) {
             typesToShare.insert(sleep)
         }
         typesToShare.insert(HKObjectType.workoutType())
+        typesToShare.insert(HKSeriesType.workoutRoute())
 
         healthStore.requestAuthorization(toShare: typesToShare, read: []) { success, error in
             completion(success, error)

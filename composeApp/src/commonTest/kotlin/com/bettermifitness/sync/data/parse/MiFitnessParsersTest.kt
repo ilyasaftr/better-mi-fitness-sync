@@ -199,7 +199,11 @@ class MiFitnessParsersTest {
                 value = """
                     {
                       "start_time":1784453950,"end_time":1784457222,"duration":3272,
-                      "distance":5210,"calories":1000,"avg_hrm":150,
+                      "distance":5210,"calories":1000,"avg_hrm":150,"max_hrm":178,"min_hrm":125,
+                      "avg_pace":673,"max_pace":483,"min_pace":2238,"avg_cadence":133,"max_cadence":168,
+                      "max_speed":7.45,"avg_stride":65,"steps":8261,
+                      "hrm_warm_up_duration":0,"hrm_fat_burning_duration":80,
+                      "hrm_aerobic_duration":2274,"hrm_anaerobic_duration":1206,"hrm_extreme_duration":5,
                       "version":9,"proto_type":22,"timezone":28,"did":"xiaomiwear_app","time":1784453950
                     }
                 """.trimIndent(),
@@ -210,6 +214,14 @@ class MiFitnessParsersTest {
         assertEquals(1_784_453_950L, w.gpsTimestampSec)
         assertEquals(28, w.gpsTzIn15Min)
         assertEquals(22, w.gpsProtoType)
+        assertEquals(150, w.avgHeartRateBpm)
+        assertEquals(178, w.maxHeartRateBpm)
+        assertEquals(125, w.minHeartRateBpm)
+        assertEquals(673.0, w.avgPaceSecPerKm)
+        assertEquals(133.0, w.avgCadenceSpm)
+        assertEquals(8261, w.totalSteps)
+        assertEquals(2274, w.hrZoneAerobicSec)
+        assertEquals(28 * 15 * 60, w.zoneOffsetSeconds())
     }
 
     @Test

@@ -2,8 +2,10 @@ package com.bettermifitness.sync.data.api
 
 import com.mifitness.miclient.api.MiDataClient
 import com.mifitness.miclient.fds.FdsClient
+import com.mifitness.miclient.fds.FdsKeys
 import com.mifitness.miclient.gps.GpsPoint
 import com.mifitness.miclient.gps.SportGpsBinary
+import com.mifitness.miclient.gps.SportRecordBinary
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.boolean
@@ -110,9 +112,63 @@ class MiDirectApi(private val client: MiDataClient) {
     }
 
     /**
-     * Downloads and parses sport GPS (FDS fileType=2) for one workout.
-     * Returns empty list on missing object / parse failure (caller should still write the session).
+     * Downloads FDS sport files (GPS + record + recover) and merges into [base].
+     * Failures are non-fatal — returns [base] with whatever could be filled.
      */
+    suspend fun enrichWorkoutDetails(base: WorkoutSession): WorkoutSession {
+        val sid = base.gpsDeviceSid ?: return base
+        val ts = base.gpsTimestampSec ?: return base
+        val tz = base.gpsTzIn15Min ?: base.tzIn15Min ?: return base
+        val proto = base.gpsProtoType ?: return base
+        val fds = FdsClient(client)
+        return try {
+            var out = base
+            // GPS route
+            try {
+                val gpsBytes = fds.downloadSportFile(
+                    FdsClient.SportFileRequest(sid, ts, tz, proto, FdsKeys.FILE_TYPE_GPS),
+                )
+                val points = SportGpsBinary.parsePoints(gpsBytes).map { it.toRoutePoint() }
+                if (points.size >= 2) out = out.copy(route = points)
+            } catch (_: Exception) { /* optional */ }
+
+            // In-workout record series
+            try {
+                val recBytes = fds.downloadSportFile(
+                    FdsClient.SportFileRequest(sid, ts, tz, proto, FdsKeys.FILE_TYPE_RECORD),
+                )
+                val series = SportRecordBinary.parseSeries(recBytes, base.startTime)
+                out = out.copy(
+                    heartRateSeries = mergeSeries(out.heartRateSeries, series.heartRate.toTimed()),
+                    paceSeries = mergeSeries(out.paceSeries, series.paceSecPerKm.toTimed()),
+                    cadenceSeries = mergeSeries(out.cadenceSeries, series.cadenceSpm.toTimed()),
+                    speedSeries = mergeSeries(out.speedSeries, series.speedMps.toTimed()),
+                    elevationSeries = mergeSeries(out.elevationSeries, series.elevationM.toTimed()),
+                    kmSplits = if (series.kmSplits.isNotEmpty()) {
+                        series.kmSplits.map { WorkoutKmSplit(it.kilometer, it.timeSec, it.paceSecPerKm) }
+                    } else {
+                        out.kmSplits
+                    },
+                )
+            } catch (_: Exception) { /* optional */ }
+
+            // Recover HR after workout
+            try {
+                val recovBytes = fds.downloadSportFile(
+                    FdsClient.SportFileRequest(sid, ts, tz, proto, FdsKeys.FILE_TYPE_RECOVER_RATE),
+                )
+                val recover = SportRecordBinary.parseRecoverHr(recovBytes, base.endTime)
+                    .map { WorkoutTimedSample(it.timeSec, it.value) }
+                if (recover.isNotEmpty()) out = out.copy(recoverHeartRateSeries = recover)
+            } catch (_: Exception) { /* optional */ }
+
+            out
+        } finally {
+            fds.close()
+        }
+    }
+
+    /** Downloads and parses sport GPS only. */
     suspend fun downloadSportGpsRoute(
         sid: String,
         timeSec: Long,
@@ -121,13 +177,8 @@ class MiDirectApi(private val client: MiDataClient) {
     ): List<WorkoutRoutePoint> {
         val fds = FdsClient(client)
         return try {
-            val bytes = fds.downloadSportGps(
-                FdsClient.SportGpsRequest(
-                    sid = sid,
-                    timeSec = timeSec,
-                    tzIn15Min = tzIn15Min,
-                    protoType = protoType,
-                ),
+            val bytes = fds.downloadSportFile(
+                FdsClient.SportFileRequest(sid, timeSec, tzIn15Min, protoType, FdsKeys.FILE_TYPE_GPS),
             )
             SportGpsBinary.parsePoints(bytes).map { it.toRoutePoint() }
         } catch (_: Exception) {
@@ -144,6 +195,20 @@ class MiDirectApi(private val client: MiDataClient) {
         altitudeMeters = altitude?.toDouble(),
         horizontalAccuracyMeters = accuracy?.toDouble(),
     )
+
+    private fun List<SportRecordBinary.TimedValue>.toTimed(): List<WorkoutTimedSample> =
+        map { WorkoutTimedSample(it.timeSec, it.value) }
+
+    private fun mergeSeries(
+        preferred: List<WorkoutTimedSample>,
+        extra: List<WorkoutTimedSample>,
+    ): List<WorkoutTimedSample> {
+        if (preferred.size >= extra.size && preferred.isNotEmpty()) return preferred
+        if (extra.isEmpty()) return preferred
+        if (preferred.isEmpty()) return extra
+        // Prefer denser series
+        return if (extra.size > preferred.size) extra else preferred
+    }
 
     /**
      * Fetches user profile (decrypted from Mi's endpoint).

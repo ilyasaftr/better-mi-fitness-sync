@@ -170,39 +170,50 @@ class HealthRepository(
             val parsed = MiFitnessParsers.parseWorkouts(
                 api.getSportRecordsByTime(from, to),
             )
-            val sessions = attachGpsRoutes(parsed)
+            // HR samples in range — attach as series when FDS record is sparse
+            val hrRaw = try {
+                fetchAllByTime("heart_rate", from, to).map { it.toRaw() }
+            } catch (_: Exception) {
+                emptyList()
+            }
+            val hrSamples = MiFitnessParsers.parseHeartRateSamples(hrRaw)
+            val sessions = enrichWorkouts(parsed, hrSamples)
             if (sessions.isNotEmpty()) healthWriter.writeWorkouts(sessions)
             sessions.size
         }
     }
 
     /**
-     * Best-effort FDS GPS download per outdoor session. Failures leave [WorkoutSession.route] empty
-     * so the workout summary still syncs.
+     * FDS GPS/record/recover + cloud HR overlap. Failures leave partial detail so summary still syncs.
      */
-    private suspend fun attachGpsRoutes(
+    private suspend fun enrichWorkouts(
         sessions: List<WorkoutSession>,
+        hrSamples: List<com.bettermifitness.sync.data.api.HeartRateSample>,
     ): List<WorkoutSession> {
         return sessions.map { session ->
-            val sid = session.gpsDeviceSid
-            val ts = session.gpsTimestampSec
-            val tz = session.gpsTzIn15Min
-            val proto = session.gpsProtoType
-            if (sid.isNullOrBlank() || ts == null || tz == null || proto == null) {
-                return@map session
+            var out = session
+            // Cloud HR overlapping the workout window
+            val fromCloud = MiFitnessParsers.heartRateInWindow(
+                hrSamples,
+                session.startTime,
+                session.endTime,
+            )
+            if (fromCloud.size > out.heartRateSeries.size) {
+                out = out.copy(heartRateSeries = fromCloud)
             }
-            val points = try {
-                api.downloadSportGpsRoute(
-                    sid = sid,
-                    timeSec = ts,
-                    tzIn15Min = tz,
-                    protoType = proto,
-                )
-            } catch (_: Exception) {
-                emptyList()
+            // FDS GPS + record + recover
+            if (!session.gpsDeviceSid.isNullOrBlank()) {
+                out = try {
+                    api.enrichWorkoutDetails(out)
+                } catch (_: Exception) {
+                    out
+                }
             }
-            if (points.isEmpty()) session
-            else session.copy(route = points)
+            // Prefer denser HR after FDS
+            if (fromCloud.size > out.heartRateSeries.size) {
+                out = out.copy(heartRateSeries = fromCloud)
+            }
+            out
         }
     }
 

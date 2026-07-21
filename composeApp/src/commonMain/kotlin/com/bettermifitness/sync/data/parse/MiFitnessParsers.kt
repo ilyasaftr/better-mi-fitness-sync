@@ -5,6 +5,7 @@ import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
 import com.bettermifitness.sync.data.api.HeartRateEntry
 import com.bettermifitness.sync.data.api.HeartRateSample
+// HeartRateSample used by heartRateInWindow
 import com.bettermifitness.sync.data.api.SleepEntry
 import com.bettermifitness.sync.data.api.SleepSession
 import com.bettermifitness.sync.data.api.SleepStage
@@ -15,6 +16,7 @@ import com.bettermifitness.sync.data.api.TemperatureSample
 import com.bettermifitness.sync.data.api.Vo2MaxSample
 import com.bettermifitness.sync.data.api.WeightMeasurement
 import com.bettermifitness.sync.data.api.WorkoutSession
+import com.bettermifitness.sync.data.api.WorkoutTimedSample
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.doubleOrNull
@@ -279,23 +281,59 @@ object MiFitnessParsers {
             val did = payload["did"]?.jsonPrimitive?.content?.takeIf { it.isNotBlank() }
             val tz = payload["timezone"]?.jsonPrimitive?.intOrNull
             val gpsTime = payload["time"]?.jsonPrimitive?.longOrNull ?: startTs
-            // FDS GPS exists only when report version > 0 (Mi FitnessFDSDataGetter).
-            val canFetchGps = version > 0 && !did.isNullOrBlank() && protoType != null && tz != null
+            // FDS files exist when report version > 0 (Mi FitnessFDSDataGetter).
+            val canFetchFds = version > 0 && !did.isNullOrBlank() && protoType != null && tz != null
+            val maxH = payload.doubleField("max_height")
+            val minH = payload.doubleField("min_height")
+            val avgH = payload.doubleField("avg_height")
             WorkoutSession(
                 startTime = startTs,
                 endTime = endTs,
                 activityType = activity,
-                distanceMeters = payload.doubleField("distance"),
+                distanceMeters = payload.doubleField("distance")
+                    ?: payload.doubleField("corrected_distance"),
                 caloriesKcal = payload.doubleField("calories")
                     ?: payload.doubleField("total_cal"),
                 avgHeartRateBpm = payload["avg_hrm"]?.jsonPrimitive?.intOrNull,
                 maxHeartRateBpm = payload["max_hrm"]?.jsonPrimitive?.intOrNull,
+                minHeartRateBpm = payload["min_hrm"]?.jsonPrimitive?.intOrNull,
                 totalSteps = payload["steps"]?.jsonPrimitive?.intOrNull
                     ?: payload["total_steps"]?.jsonPrimitive?.intOrNull,
-                gpsDeviceSid = did.takeIf { canFetchGps },
-                gpsTimestampSec = gpsTime.takeIf { canFetchGps },
-                gpsTzIn15Min = tz.takeIf { canFetchGps },
-                gpsProtoType = protoType.takeIf { canFetchGps },
+                avgPaceSecPerKm = payload.doubleField("avg_pace"),
+                maxPaceSecPerKm = payload.doubleField("max_pace"),
+                minPaceSecPerKm = payload.doubleField("min_pace"),
+                avgCadenceSpm = payload.doubleField("avg_cadence"),
+                maxCadenceSpm = payload.doubleField("max_cadence"),
+                maxSpeedMps = payload.doubleField("max_speed"),
+                avgStrideCm = payload.doubleField("avg_stride"),
+                avgPowerWatts = payload.doubleField("avg_power")
+                    ?: payload.doubleField("running_power")
+                    ?: payload.doubleField("power"),
+                maxPowerWatts = payload.doubleField("max_power"),
+                avgGroundContactMs = payload.doubleField("avg_touchdown_time")
+                    ?: payload.doubleField("touchdown_time")
+                    ?: payload.doubleField("ground_contact_time"),
+                avgVerticalOscillationCm = payload.doubleField("avg_vertical_amplitude")
+                    ?: payload.doubleField("vertical_amplitude")
+                    ?: payload.doubleField("vertical_oscillation"),
+                maxElevationM = maxH?.takeIf { it != 0.0 },
+                minElevationM = minH?.takeIf { it != 0.0 },
+                avgElevationM = avgH?.takeIf { it != 0.0 },
+                elevationGainM = elevationGain(minH, maxH, avgH),
+                hrZoneWarmupSec = payload["hrm_warm_up_duration"]?.jsonPrimitive?.intOrNull,
+                hrZoneFatBurnSec = payload["hrm_fat_burning_duration"]?.jsonPrimitive?.intOrNull,
+                hrZoneAerobicSec = payload["hrm_aerobic_duration"]?.jsonPrimitive?.intOrNull,
+                hrZoneAnaerobicSec = payload["hrm_anaerobic_duration"]?.jsonPrimitive?.intOrNull,
+                hrZoneExtremeSec = payload["hrm_extreme_duration"]?.jsonPrimitive?.intOrNull,
+                trainEffect = payload.doubleField("train_effect"),
+                trainLoad = payload.doubleField("train_load"),
+                recoverMinutes = payload["recover_time"]?.jsonPrimitive?.intOrNull,
+                vo2Max = payload.doubleField("vo2_max")?.takeIf { it > 0 },
+                tzIn15Min = tz,
+                gpsDeviceSid = did.takeIf { canFetchFds },
+                gpsTimestampSec = gpsTime.takeIf { canFetchFds },
+                gpsTzIn15Min = tz.takeIf { canFetchFds },
+                gpsProtoType = protoType.takeIf { canFetchFds },
             )
         } catch (_: Exception) {
             null
@@ -311,6 +349,26 @@ object MiFitnessParsers {
             null
         }
     }
+
+    /** Rough elevation gain from min/max when Mi does not send ascent explicitly. */
+    private fun elevationGain(minH: Double?, maxH: Double?, avgH: Double?): Double? {
+        if (minH != null && maxH != null && maxH > minH && maxH != 0.0) {
+            return maxH - minH
+        }
+        return null
+    }
+
+    /** Maps raw HR entries into timed samples for a workout window. */
+    fun heartRateInWindow(
+        entries: List<HeartRateSample>,
+        startSec: Long,
+        endSec: Long,
+    ): List<WorkoutTimedSample> =
+        entries
+            .filter { it.timestamp in startSec..endSec && it.bpm in 30..250 }
+            .sortedBy { it.timestamp }
+            .map { WorkoutTimedSample(it.timestamp, it.bpm.toDouble()) }
+            .distinctBy { it.timeSec }
 
     fun parseSleepSessions(entries: List<RawFitnessEntry>): List<SleepSession> =
         entries

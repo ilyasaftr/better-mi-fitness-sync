@@ -62,19 +62,27 @@ object FdsKeys {
         )
     }
 
+    /** Sport FDS key material. Uses [protoType] as sportType and [fileType] (0/2/3). */
+    fun sportDataIdKeyBytes(
+        timeSec: Long,
+        tzIn15Min: Int,
+        protoType: Int,
+        fileType: Int,
+    ): ByteArray {
+        val typeByte = genDataTypeByte(
+            dataType = DATA_TYPE_SPORT,
+            sportType = protoType,
+            fileType = fileType,
+        )
+        return dataIdKeyBytes(timeSec, tzIn15Min, typeByte)
+    }
+
     /** FDS GPS key material for a sport report. Uses [protoType] as sportType. */
     fun gpsDataIdKeyBytes(
         timeSec: Long,
         tzIn15Min: Int,
         protoType: Int,
-    ): ByteArray {
-        val typeByte = genDataTypeByte(
-            dataType = DATA_TYPE_SPORT,
-            sportType = protoType,
-            fileType = FILE_TYPE_GPS,
-        )
-        return dataIdKeyBytes(timeSec, tzIn15Min, typeByte)
-    }
+    ): ByteArray = sportDataIdKeyBytes(timeSec, tzIn15Min, protoType, FILE_TYPE_GPS)
 
     /**
      * `suffix = Base64URL(dataIdKeyBytes) + "_" + Base64URL(SHA1(sid UTF-8))`
@@ -85,12 +93,20 @@ object FdsKeys {
         return "${left}_$right"
     }
 
+    fun suffixForSportFile(
+        sid: String,
+        timeSec: Long,
+        tzIn15Min: Int,
+        protoType: Int,
+        fileType: Int,
+    ): String = suffix(sid, sportDataIdKeyBytes(timeSec, tzIn15Min, protoType, fileType))
+
     fun suffixForGps(
         sid: String,
         timeSec: Long,
         tzIn15Min: Int,
         protoType: Int,
-    ): String = suffix(sid, gpsDataIdKeyBytes(timeSec, tzIn15Min, protoType))
+    ): String = suffixForSportFile(sid, timeSec, tzIn15Min, protoType, FILE_TYPE_GPS)
 
     /** Map key in gen_download_url result: `suffix_timestamp`. */
     fun serverKey(suffix: String, timeSec: Long): String = "${suffix}_$timeSec"

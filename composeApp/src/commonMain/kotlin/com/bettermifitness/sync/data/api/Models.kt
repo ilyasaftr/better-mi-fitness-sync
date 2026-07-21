@@ -140,6 +140,21 @@ data class WorkoutRoutePoint(
     val horizontalAccuracyMeters: Double? = null,
 )
 
+/** Scalar sample during a workout (HR, pace, cadence, …). */
+@Serializable
+data class WorkoutTimedSample(
+    val timeSec: Long,
+    val value: Double,
+)
+
+/** Whole-km split from Mi record series (or derived). */
+@Serializable
+data class WorkoutKmSplit(
+    val kilometer: Int,
+    val timeSec: Long,
+    val paceSecPerKm: Double? = null,
+)
+
 @Serializable
 data class WorkoutSession(
     val startTime: Long,
@@ -150,18 +165,66 @@ data class WorkoutSession(
     val caloriesKcal: Double? = null,
     val avgHeartRateBpm: Int? = null,
     val maxHeartRateBpm: Int? = null,
+    val minHeartRateBpm: Int? = null,
     val totalSteps: Int? = null,
+    /** Pace in seconds per kilometer (Mi avg_pace / max_pace / min_pace). */
+    val avgPaceSecPerKm: Double? = null,
+    val maxPaceSecPerKm: Double? = null,
+    val minPaceSecPerKm: Double? = null,
+    val avgCadenceSpm: Double? = null,
+    val maxCadenceSpm: Double? = null,
+    val maxSpeedMps: Double? = null,
+    val avgStrideCm: Double? = null,
+    /** Running power watts (Mi rarely provides on phone GPS). */
+    val avgPowerWatts: Double? = null,
+    val maxPowerWatts: Double? = null,
+    /** Form metrics when Mi/watch provides them (ms / cm). */
+    val avgGroundContactMs: Double? = null,
+    val avgVerticalOscillationCm: Double? = null,
+    val elevationGainM: Double? = null,
+    val elevationLossM: Double? = null,
+    val maxElevationM: Double? = null,
+    val minElevationM: Double? = null,
+    val avgElevationM: Double? = null,
+    /** Seconds spent in Mi HR zones (warm-up → extreme). */
+    val hrZoneWarmupSec: Int? = null,
+    val hrZoneFatBurnSec: Int? = null,
+    val hrZoneAerobicSec: Int? = null,
+    val hrZoneAnaerobicSec: Int? = null,
+    val hrZoneExtremeSec: Int? = null,
+    val trainEffect: Double? = null,
+    val trainLoad: Double? = null,
+    val recoverMinutes: Int? = null,
+    val vo2Max: Double? = null,
+    /** Mi `timezone` field: offset in units of 15 minutes (28 → UTC+7). */
+    val tzIn15Min: Int? = null,
     /** GPS route points (empty when indoor / download failed / no GPS file). */
     val route: List<WorkoutRoutePoint> = emptyList(),
+    /** In-workout time series (from FDS record +/or Mi HR by time). */
+    val heartRateSeries: List<WorkoutTimedSample> = emptyList(),
+    val paceSeries: List<WorkoutTimedSample> = emptyList(),
+    val cadenceSeries: List<WorkoutTimedSample> = emptyList(),
+    val speedSeries: List<WorkoutTimedSample> = emptyList(),
+    val elevationSeries: List<WorkoutTimedSample> = emptyList(),
+    /** Stride length in **meters** over time (for HK RunningStrideLength / notes). */
+    val strideMetersSeries: List<WorkoutTimedSample> = emptyList(),
+    val powerWattsSeries: List<WorkoutTimedSample> = emptyList(),
+    val groundContactMsSeries: List<WorkoutTimedSample> = emptyList(),
+    val verticalOscillationCmSeries: List<WorkoutTimedSample> = emptyList(),
+    val kmSplits: List<WorkoutKmSplit> = emptyList(),
+    val recoverHeartRateSeries: List<WorkoutTimedSample> = emptyList(),
     /**
-     * FDS GPS download keys from the sport report (not written to Health).
-     * Set when report `version > 0` so sync can fetch `fileType=2`.
+     * FDS download keys from the sport report (not written to Health).
+     * Set when report `version > 0` so sync can fetch GPS/record/recover files.
      */
     val gpsDeviceSid: String? = null,
     val gpsTimestampSec: Long? = null,
     val gpsTzIn15Min: Int? = null,
     val gpsProtoType: Int? = null,
-)
+) {
+    /** Zone offset seconds from [tzIn15Min] (null → treat as UTC). */
+    fun zoneOffsetSeconds(): Int = (tzIn15Min ?: gpsTzIn15Min ?: 0) * 15 * 60
+}
 
 @Serializable
 data class SportRecordEntry(

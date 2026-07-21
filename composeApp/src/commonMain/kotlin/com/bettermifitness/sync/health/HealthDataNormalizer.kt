@@ -13,6 +13,7 @@ import com.bettermifitness.sync.data.api.Vo2MaxSample
 import com.bettermifitness.sync.data.api.WeightMeasurement
 import com.bettermifitness.sync.data.api.WorkoutRoutePoint
 import com.bettermifitness.sync.data.api.WorkoutSession
+import com.bettermifitness.sync.data.api.WorkoutTimedSample
 
 /**
  * Pure helpers that sanitize Mi fitness payloads before platform health writes.
@@ -172,7 +173,7 @@ object HealthDataNormalizer {
             val end = toEpochSeconds(w.endTime)
             if (!isPlausibleEpochSeconds(start) || end <= start) return@mapNotNull null
             if (end - start > 24 * 3600) return@mapNotNull null
-            WorkoutSession(
+            val cleaned = WorkoutSession(
                 startTime = start,
                 endTime = end,
                 activityType = w.activityType.ifBlank { "workout" },
@@ -180,19 +181,83 @@ object HealthDataNormalizer {
                 caloriesKcal = w.caloriesKcal?.takeIf { it > 0 },
                 avgHeartRateBpm = w.avgHeartRateBpm?.takeIf { it in 20..250 },
                 maxHeartRateBpm = w.maxHeartRateBpm?.takeIf { it in 20..250 },
+                minHeartRateBpm = w.minHeartRateBpm?.takeIf { it in 20..250 },
                 totalSteps = w.totalSteps?.takeIf { it > 0 },
+                avgPaceSecPerKm = w.avgPaceSecPerKm?.takeIf { it in 60.0..3600.0 },
+                maxPaceSecPerKm = w.maxPaceSecPerKm?.takeIf { it in 60.0..3600.0 },
+                minPaceSecPerKm = w.minPaceSecPerKm?.takeIf { it in 60.0..3600.0 },
+                avgCadenceSpm = w.avgCadenceSpm?.takeIf { it in 20.0..300.0 },
+                maxCadenceSpm = w.maxCadenceSpm?.takeIf { it in 20.0..300.0 },
+                maxSpeedMps = w.maxSpeedMps?.takeIf { it in 0.1..30.0 },
+                avgStrideCm = w.avgStrideCm?.takeIf { it in 20.0..250.0 },
+                avgPowerWatts = w.avgPowerWatts?.takeIf { it in 20.0..2000.0 },
+                maxPowerWatts = w.maxPowerWatts?.takeIf { it in 20.0..2000.0 },
+                avgGroundContactMs = w.avgGroundContactMs?.takeIf { it in 50.0..500.0 },
+                avgVerticalOscillationCm = w.avgVerticalOscillationCm?.takeIf { it in 1.0..30.0 },
+                elevationGainM = w.elevationGainM?.takeIf { it in 0.0..15_000.0 },
+                elevationLossM = w.elevationLossM?.takeIf { it in 0.0..15_000.0 },
+                maxElevationM = w.maxElevationM,
+                minElevationM = w.minElevationM,
+                avgElevationM = w.avgElevationM,
+                hrZoneWarmupSec = w.hrZoneWarmupSec?.takeIf { it >= 0 },
+                hrZoneFatBurnSec = w.hrZoneFatBurnSec?.takeIf { it >= 0 },
+                hrZoneAerobicSec = w.hrZoneAerobicSec?.takeIf { it >= 0 },
+                hrZoneAnaerobicSec = w.hrZoneAnaerobicSec?.takeIf { it >= 0 },
+                hrZoneExtremeSec = w.hrZoneExtremeSec?.takeIf { it >= 0 },
+                trainEffect = w.trainEffect?.takeIf { it in 0.0..10.0 },
+                trainLoad = w.trainLoad?.takeIf { it >= 0.0 },
+                recoverMinutes = w.recoverMinutes?.takeIf { it in 0..10_000 },
+                vo2Max = w.vo2Max?.takeIf { it in 10.0..100.0 },
+                tzIn15Min = w.tzIn15Min,
                 route = normalizeRoute(w.route, start, end),
-                // Keep FDS keys only for debugging/re-fetch; writers ignore them.
+                heartRateSeries = normalizeTimed(w.heartRateSeries, start, end, 30.0, 250.0),
+                paceSeries = normalizeTimed(w.paceSeries, start, end, 60.0, 3600.0),
+                cadenceSeries = normalizeTimed(w.cadenceSeries, start, end, 20.0, 300.0),
+                speedSeries = normalizeTimed(w.speedSeries, start, end, 0.1, 30.0),
+                elevationSeries = normalizeTimed(w.elevationSeries, start - 60, end + 60, -500.0, 9000.0),
+                strideMetersSeries = normalizeTimed(w.strideMetersSeries, start, end, 0.2, 2.5),
+                powerWattsSeries = normalizeTimed(w.powerWattsSeries, start, end, 20.0, 2000.0),
+                groundContactMsSeries = normalizeTimed(w.groundContactMsSeries, start, end, 50.0, 500.0),
+                verticalOscillationCmSeries = normalizeTimed(
+                    w.verticalOscillationCmSeries, start, end, 1.0, 30.0,
+                ),
+                kmSplits = w.kmSplits.filter { it.kilometer > 0 && it.timeSec in start..end + 120 },
+                recoverHeartRateSeries = normalizeTimed(
+                    w.recoverHeartRateSeries,
+                    end,
+                    end + 3600,
+                    30.0,
+                    250.0,
+                ),
                 gpsDeviceSid = w.gpsDeviceSid,
                 gpsTimestampSec = w.gpsTimestampSec,
                 gpsTzIn15Min = w.gpsTzIn15Min,
                 gpsProtoType = w.gpsProtoType,
             )
+            // Fill pace/cadence/stride/speed series for Health Details charts
+            WorkoutRunningMetrics.enrich(cleaned)
         }
             .sortedBy { it.startTime }
             .associateBy { it.startTime }
             .values
             .sortedBy { it.startTime }
+
+    private fun normalizeTimed(
+        samples: List<WorkoutTimedSample>,
+        start: Long,
+        end: Long,
+        minV: Double,
+        maxV: Double,
+    ): List<WorkoutTimedSample> =
+        samples
+            .mapNotNull { s ->
+                val t = toEpochSeconds(s.timeSec)
+                if (t < start || t > end) return@mapNotNull null
+                if (s.value !in minV..maxV) return@mapNotNull null
+                WorkoutTimedSample(t, s.value)
+            }
+            .sortedBy { it.timeSec }
+            .distinctBy { it.timeSec }
 
     /**
      * Drops invalid coords, sorts by time, clamps to session window, de-dupes same second.

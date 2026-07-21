@@ -28,12 +28,27 @@ import platform.HealthKit.HKQuantityTypeIdentifierBloodPressureSystolic
 import platform.HealthKit.HKQuantityTypeIdentifierBodyFatPercentage
 import platform.HealthKit.HKQuantityTypeIdentifierBodyMass
 import platform.HealthKit.HKQuantityTypeIdentifierBodyTemperature
+import platform.HealthKit.HKQuantityTypeIdentifierCyclingCadence
+import platform.HealthKit.HKQuantityTypeIdentifierCyclingPower
+import platform.HealthKit.HKQuantityTypeIdentifierCyclingSpeed
+import platform.HealthKit.HKQuantityTypeIdentifierDistanceCycling
+import platform.HealthKit.HKQuantityTypeIdentifierDistanceSwimming
 import platform.HealthKit.HKQuantityTypeIdentifierDistanceWalkingRunning
+import platform.HealthKit.HKQuantityTypeIdentifierFlightsClimbed
 import platform.HealthKit.HKQuantityTypeIdentifierHeartRate
+import platform.HealthKit.HKQuantityTypeIdentifierHeartRateRecoveryOneMinute
 import platform.HealthKit.HKQuantityTypeIdentifierOxygenSaturation
 import platform.HealthKit.HKQuantityTypeIdentifierRestingHeartRate
+import platform.HealthKit.HKQuantityTypeIdentifierRunningGroundContactTime
+import platform.HealthKit.HKQuantityTypeIdentifierRunningPower
+import platform.HealthKit.HKQuantityTypeIdentifierRunningSpeed
+import platform.HealthKit.HKQuantityTypeIdentifierRunningStrideLength
+import platform.HealthKit.HKQuantityTypeIdentifierRunningVerticalOscillation
 import platform.HealthKit.HKQuantityTypeIdentifierStepCount
+import platform.HealthKit.HKQuantityTypeIdentifierSwimmingStrokeCount
 import platform.HealthKit.HKQuantityTypeIdentifierVO2Max
+import platform.HealthKit.HKQuantityTypeIdentifierWalkingSpeed
+import platform.HealthKit.HKQuantityTypeIdentifierWalkingStepLength
 import platform.HealthKit.HKMetadataKeySyncIdentifier
 import platform.HealthKit.HKMetadataKeySyncVersion
 import platform.HealthKit.HKUnit
@@ -46,8 +61,14 @@ import platform.HealthKit.HKCategoryValueSleepAnalysisAwake
 import platform.HealthKit.HKCategoryValueSleepAnalysisInBed
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.HealthKit.HKSample
 import platform.HealthKit.HKWorkout
+import platform.HealthKit.HKWorkoutBuilder
+import platform.HealthKit.HKWorkoutConfiguration
 import platform.HealthKit.HKWorkoutRouteBuilder
+import platform.HealthKit.HKWorkoutSessionLocationTypeIndoor
+import platform.HealthKit.HKWorkoutSessionLocationTypeOutdoor
+import platform.Foundation.NSLog
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -316,42 +337,600 @@ actual class HealthWriter : HealthStore {
     actual override suspend fun writeWorkouts(sessions: List<WorkoutSession>) {
         val clean = HealthDataNormalizer.normalizeWorkouts(sessions)
         if (clean.isEmpty()) return
-        val kcal = HKUnit.unitFromString("kcal")
-        val meters = HKUnit.unitFromString("m")
         for (w in clean) {
-            val mapping = SportTypeMapper.map(w.activityType)
-            val workout = HKWorkout.workoutWithActivityType(
-                workoutActivityType = mapping.healthKitType.toULong(),
-                startDate = NSDate.dateWithTimeIntervalSince1970(w.startTime.toDouble()),
-                endDate = NSDate.dateWithTimeIntervalSince1970(w.endTime.toDouble()),
-                workoutEvents = null,
-                totalEnergyBurned = w.caloriesKcal?.let {
-                    HKQuantity.quantityWithUnit(kcal, it)
-                },
-                totalDistance = w.distanceMeters?.let {
-                    HKQuantity.quantityWithUnit(meters, it)
-                },
-                metadata = mapOf<Any?, Any?>(
-                    HKMetadataKeySyncIdentifier to HealthRecordIds.workout(w.startTime),
-                    HKMetadataKeySyncVersion to HealthRecordIds.version(
-                        w.startTime,
-                        w.endTime,
-                        mapping.title,
-                        w.distanceMeters,
-                        w.caloriesKcal,
-                        w.route.size,
-                    ),
-                ),
-            )
-            saveSamples(listOf(workout))
-            if (w.route.size >= 2) {
+            try {
+                writeOneWorkoutWithBuilder(w)
+            } catch (e: Exception) {
+                NSLog("BetterMi: workout builder failed (${w.startTime}): ${e.message}; legacy fallback")
                 try {
-                    saveWorkoutRoute(workout, w.route)
-                } catch (_: Exception) {
-                    // Route is best-effort; workout already saved.
+                    writeOneWorkoutLegacy(w)
+                } catch (e2: Exception) {
+                    NSLog("BetterMi: workout write failed (${w.startTime}): ${e2.message}")
                 }
             }
         }
+    }
+
+    /**
+     * Historical import via [HKWorkoutBuilder] (Apple's supported path).
+     *
+     * Per WWDC22 / HKWorkoutBuilder docs, workout statistics and Health "Related Samples"
+     * for Running Speed / Stride / Power / GCT / VO are only associated when samples are
+     * **added to the builder** — not merely saved with overlapping timestamps.
+     * Standalone saves of Running* samples succeed but do not show under the workout.
+     */
+    private suspend fun writeOneWorkoutWithBuilder(w: WorkoutSession) {
+        val mapping = SportTypeMapper.map(w.activityType)
+        val version = workoutVersion(w, mapping)
+        val meta = workoutMetadata(w, version)
+        val start = NSDate.dateWithTimeIntervalSince1970(w.startTime.toDouble())
+        val end = NSDate.dateWithTimeIntervalSince1970(w.endTime.toDouble())
+
+        val config = HKWorkoutConfiguration()
+        config.activityType = mapping.healthKitType.toULong()
+        config.locationType = workoutLocationType(w.activityType)
+
+        val builder = HKWorkoutBuilder(
+            healthStore = healthStore,
+            configuration = config,
+            device = null,
+        )
+
+        suspendCoroutine { cont ->
+            builder.beginCollectionWithStartDate(start) { ok, error ->
+                if (ok) cont.resume(Unit)
+                else cont.resumeWithException(
+                    Exception(error?.localizedDescription ?: "beginCollection failed"),
+                )
+            }
+        }
+
+        // Metadata (sync id/version, notes, HR summaries)
+        @Suppress("UNCHECKED_CAST")
+        suspendCoroutine { cont ->
+            builder.addMetadata(meta as Map<Any?, *>) { ok, error ->
+                if (ok) cont.resume(Unit)
+                else cont.resumeWithException(
+                    Exception(error?.localizedDescription ?: "addMetadata failed"),
+                )
+            }
+        }
+
+        // Core samples first (energy / distance / HR / steps), then form metrics per-type.
+        // A single unauthorized form type must NOT fail the whole builder (that used to drop
+        // us into legacy path → Pace/HR only, grey Stride in Fitness).
+        val core = buildCoreWorkoutSamples(w, version)
+        val form = buildSportFormSamples(w, version)
+        addSamplesToBuilder(builder, core)
+        var formAdded = 0
+        form.groupBy { it.quantityType.identifier }.forEach { (typeId, samples) ->
+            try {
+                addSamplesToBuilder(builder, samples)
+                formAdded += samples.size
+            } catch (e: Exception) {
+                NSLog("BetterMi: skip form type $typeId: ${e.message}")
+            }
+        }
+        if (form.isNotEmpty()) {
+            NSLog(
+                "BetterMi: workout ${w.startTime} builder core=${core.size} " +
+                    "form=$formAdded/${form.size} stride=${w.strideMetersSeries.size}",
+            )
+        }
+
+        suspendCoroutine { cont ->
+            builder.endCollectionWithEndDate(end) { ok, error ->
+                if (ok) cont.resume(Unit)
+                else cont.resumeWithException(
+                    Exception(error?.localizedDescription ?: "endCollection failed"),
+                )
+            }
+        }
+
+        val workout = suspendCoroutine { cont ->
+            builder.finishWorkoutWithCompletion { finished, error ->
+                if (finished != null) cont.resume(finished)
+                else cont.resumeWithException(
+                    Exception(error?.localizedDescription ?: "finishWorkout failed"),
+                )
+            }
+        }
+
+        if (w.route.size >= 2) {
+            try {
+                saveWorkoutRoute(workout, w.route)
+            } catch (e: Exception) {
+                NSLog("BetterMi: route failed: ${e.message}")
+            }
+        }
+        // Recover HR is after end — not part of the workout collection window
+        writeRecoverHeartRate(w, version)
+    }
+
+    /** Legacy HKWorkout factory — energy/distance totals only; form samples not associated. */
+    private suspend fun writeOneWorkoutLegacy(w: WorkoutSession) {
+        val mapping = SportTypeMapper.map(w.activityType)
+        val version = workoutVersion(w, mapping)
+        val meta = workoutMetadata(w, version)
+        val kcal = HKUnit.unitFromString("kcal")
+        val meters = HKUnit.unitFromString("m")
+        val workout = HKWorkout.workoutWithActivityType(
+            workoutActivityType = mapping.healthKitType.toULong(),
+            startDate = NSDate.dateWithTimeIntervalSince1970(w.startTime.toDouble()),
+            endDate = NSDate.dateWithTimeIntervalSince1970(w.endTime.toDouble()),
+            workoutEvents = null,
+            totalEnergyBurned = w.caloriesKcal?.let { HKQuantity.quantityWithUnit(kcal, it) },
+            totalDistance = w.distanceMeters?.let { HKQuantity.quantityWithUnit(meters, it) },
+            metadata = meta,
+        )
+        saveSamples(listOf(workout))
+        if (w.route.size >= 2) {
+            try {
+                saveWorkoutRoute(workout, w.route)
+            } catch (_: Exception) { /* best-effort */ }
+        }
+        // Still save samples (may appear as standalone Browse data, not Related Samples)
+        val samples = buildAssociatedWorkoutSamples(w, version)
+        samples.chunked(200).forEach { chunk ->
+            try {
+                saveSamples(chunk)
+            } catch (_: Exception) { /* optional */ }
+        }
+        writeRecoverHeartRate(w, version)
+    }
+
+    private fun workoutVersion(
+        w: WorkoutSession,
+        mapping: SportTypeMapper.Mapping,
+    ): Long = HealthRecordIds.version(
+        w.startTime, w.endTime, mapping.title,
+        w.distanceMeters, w.caloriesKcal, w.route.size, w.heartRateSeries.size,
+        w.avgPaceSecPerKm, w.avgCadenceSpm, w.trainLoad,
+        w.speedSeries.size, w.cadenceSeries.size, w.strideMetersSeries.size,
+        w.powerWattsSeries.size, w.groundContactMsSeries.size,
+        w.verticalOscillationCmSeries.size,
+        // Bump forces new sample sync-ids association for form metrics (stride etc.)
+        "builder-v3-stride",
+    )
+
+    private fun workoutMetadata(w: WorkoutSession, version: Long): MutableMap<Any?, Any?> {
+        val meta = mutableMapOf<Any?, Any?>(
+            HKMetadataKeySyncIdentifier to HealthRecordIds.workout(w.startTime),
+            HKMetadataKeySyncVersion to version,
+        )
+        w.avgHeartRateBpm?.let { meta["MiAvgHeartRate"] = it }
+        w.maxHeartRateBpm?.let { meta["MiMaxHeartRate"] = it }
+        w.minHeartRateBpm?.let { meta["MiMinHeartRate"] = it }
+        buildIosWorkoutNotes(w)?.let { meta["MiFitnessNotes"] = it }
+        return meta
+    }
+
+    private fun workoutLocationType(activityType: String): Long {
+        val a = activityType.lowercase()
+        return when {
+            a.contains("indoor") || a.contains("treadmill") || a.contains("spinning") ->
+                HKWorkoutSessionLocationTypeIndoor
+            a.contains("outdoor") || a.contains("running") || a.contains("walking") ||
+                a.contains("riding") || a.contains("cycling") || a.contains("hiking") ->
+                HKWorkoutSessionLocationTypeOutdoor
+            else -> HKWorkoutSessionLocationTypeOutdoor
+        }
+    }
+
+    private suspend fun addSamplesToBuilder(
+        builder: HKWorkoutBuilder,
+        samples: List<HKQuantitySample>,
+    ) {
+        if (samples.isEmpty()) return
+        samples.chunked(100).forEach { chunk ->
+            suspendCoroutine { cont ->
+                @Suppress("UNCHECKED_CAST")
+                builder.addSamples(chunk as List<HKSample>) { ok, error ->
+                    if (ok) cont.resume(Unit)
+                    else cont.resumeWithException(
+                        Exception(error?.localizedDescription ?: "addSamples failed"),
+                    )
+                }
+            }
+        }
+    }
+
+    /** Energy / distance / HR / steps — required for a usable workout. */
+    private fun buildCoreWorkoutSamples(
+        w: WorkoutSession,
+        version: Long,
+    ): List<HKQuantitySample> {
+        val out = ArrayList<HKQuantitySample>()
+        val idPrefix = HealthRecordIds.workout(w.startTime)
+        val start = NSDate.dateWithTimeIntervalSince1970(w.startTime.toDouble())
+        val end = NSDate.dateWithTimeIntervalSince1970(w.endTime.toDouble())
+        val family = WorkoutMetricFamilies.classify(w.activityType)
+        val bpm = HKUnit.unitFromString("count/min")
+
+        w.caloriesKcal?.takeIf { it > 0 }?.let { cals ->
+            singleQuantitySample(
+                typeId = HKQuantityTypeIdentifierActiveEnergyBurned
+                    ?: "HKQuantityTypeIdentifierActiveEnergyBurned",
+                unitStr = "kcal",
+                value = cals,
+                start = start,
+                end = end,
+                syncId = "$idPrefix:v3:energy",
+                version = version,
+            )?.let { out += it }
+        }
+
+        w.distanceMeters?.takeIf { it > 0 }?.let { dist ->
+            val distTypeId = when (family) {
+                WorkoutMetricFamily.CYCLING ->
+                    HKQuantityTypeIdentifierDistanceCycling
+                        ?: "HKQuantityTypeIdentifierDistanceCycling"
+                WorkoutMetricFamily.SWIMMING ->
+                    HKQuantityTypeIdentifierDistanceSwimming
+                        ?: "HKQuantityTypeIdentifierDistanceSwimming"
+                else ->
+                    HKQuantityTypeIdentifierDistanceWalkingRunning
+                        ?: "HKQuantityTypeIdentifierDistanceWalkingRunning"
+            }
+            singleQuantitySample(
+                typeId = distTypeId,
+                unitStr = "m",
+                value = dist,
+                start = start,
+                end = end,
+                syncId = "$idPrefix:v3:dist",
+                version = version,
+            )?.let { out += it }
+        }
+
+        val hrType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRate)
+        if (hrType != null) {
+            for (s in w.heartRateSeries) {
+                val date = NSDate.dateWithTimeIntervalSince1970(s.timeSec.toDouble())
+                out += HKQuantitySample.quantitySampleWithType(
+                    quantityType = hrType,
+                    quantity = HKQuantity.quantityWithUnit(bpm, s.value),
+                    startDate = date,
+                    endDate = date,
+                    metadata = mapOf<Any?, Any?>(
+                        HKMetadataKeySyncIdentifier to "$idPrefix:v3:hr:${s.timeSec}",
+                        HKMetadataKeySyncVersion to version,
+                    ),
+                )
+            }
+        }
+
+        if (family == WorkoutMetricFamily.RUNNING ||
+            family == WorkoutMetricFamily.WALKING ||
+            family == WorkoutMetricFamily.OTHER
+        ) {
+            val stepType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount)
+            if (stepType != null && (w.totalSteps ?: 0) > 0) {
+                out += HKQuantitySample.quantitySampleWithType(
+                    quantityType = stepType,
+                    quantity = HKQuantity.quantityWithUnit(
+                        HKUnit.unitFromString("count"),
+                        w.totalSteps!!.toDouble(),
+                    ),
+                    startDate = start,
+                    endDate = end,
+                    metadata = mapOf<Any?, Any?>(
+                        HKMetadataKeySyncIdentifier to "$idPrefix:v3:steps",
+                        HKMetadataKeySyncVersion to version,
+                    ),
+                )
+            }
+        }
+        return out
+    }
+
+    /**
+     * Sport form metrics (Apple public types only).
+     * Running stride → [HKQuantityTypeIdentifierRunningStrideLength] (m).
+     * No RunningCadence exists in HealthKit.
+     */
+    private fun buildSportFormSamples(
+        w: WorkoutSession,
+        version: Long,
+    ): List<HKQuantitySample> {
+        val out = ArrayList<HKQuantitySample>()
+        val idPrefix = HealthRecordIds.workout(w.startTime)
+        val start = NSDate.dateWithTimeIntervalSince1970(w.startTime.toDouble())
+        val end = NSDate.dateWithTimeIntervalSince1970(w.endTime.toDouble())
+        val family = WorkoutMetricFamilies.classify(w.activityType)
+
+        // Ensure stride series exists when Mi only sent avg_stride (enrich may already have)
+        val strideSeries = w.strideMetersSeries.ifEmpty {
+            w.avgStrideCm?.takeIf { it in 20.0..250.0 }?.let {
+                WorkoutRunningMetrics.flatSeries(w.startTime, w.endTime, it / 100.0)
+            } ?: emptyList()
+        }
+        val speedSeries = w.speedSeries.ifEmpty {
+            val mps = w.maxSpeedMps?.takeIf { it > 0.3 }
+                ?: w.avgPaceSecPerKm?.takeIf { it in 60.0..3600.0 }?.let { 1000.0 / it }
+            if (mps != null) WorkoutRunningMetrics.flatSeries(w.startTime, w.endTime, mps)
+            else emptyList()
+        }
+
+        when (family) {
+            WorkoutMetricFamily.RUNNING -> {
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierRunningSpeed
+                        ?: "HKQuantityTypeIdentifierRunningSpeed",
+                    unitStr = "m/s",
+                    samples = speedSeries,
+                    idPrefix = "$idPrefix:v3:rspeed",
+                    version = version,
+                )
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierRunningStrideLength
+                        ?: "HKQuantityTypeIdentifierRunningStrideLength",
+                    unitStr = "m",
+                    samples = strideSeries,
+                    idPrefix = "$idPrefix:v3:stride",
+                    version = version,
+                )
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierRunningPower
+                        ?: "HKQuantityTypeIdentifierRunningPower",
+                    unitStr = "W",
+                    samples = w.powerWattsSeries,
+                    idPrefix = "$idPrefix:v3:rpow",
+                    version = version,
+                )
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierRunningGroundContactTime
+                        ?: "HKQuantityTypeIdentifierRunningGroundContactTime",
+                    unitStr = "ms",
+                    samples = w.groundContactMsSeries,
+                    idPrefix = "$idPrefix:v3:gct",
+                    version = version,
+                )
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierRunningVerticalOscillation
+                        ?: "HKQuantityTypeIdentifierRunningVerticalOscillation",
+                    unitStr = "cm",
+                    samples = w.verticalOscillationCmSeries,
+                    idPrefix = "$idPrefix:v3:vo",
+                    version = version,
+                )
+            }
+            WorkoutMetricFamily.WALKING -> {
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierWalkingSpeed
+                        ?: "HKQuantityTypeIdentifierWalkingSpeed",
+                    unitStr = "m/s",
+                    samples = speedSeries,
+                    idPrefix = "$idPrefix:v3:wspeed",
+                    version = version,
+                )
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierWalkingStepLength
+                        ?: "HKQuantityTypeIdentifierWalkingStepLength",
+                    unitStr = "m",
+                    samples = strideSeries,
+                    idPrefix = "$idPrefix:v3:wstep",
+                    version = version,
+                )
+            }
+            WorkoutMetricFamily.CYCLING -> {
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierCyclingCadence
+                        ?: "HKQuantityTypeIdentifierCyclingCadence",
+                    unitStr = "count/min",
+                    samples = w.cadenceSeries,
+                    idPrefix = "$idPrefix:v3:ccad",
+                    version = version,
+                )
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierCyclingSpeed
+                        ?: "HKQuantityTypeIdentifierCyclingSpeed",
+                    unitStr = "m/s",
+                    samples = speedSeries,
+                    idPrefix = "$idPrefix:v3:cspd",
+                    version = version,
+                )
+                out += formSeries(
+                    typeId = HKQuantityTypeIdentifierCyclingPower
+                        ?: "HKQuantityTypeIdentifierCyclingPower",
+                    unitStr = "W",
+                    samples = w.powerWattsSeries,
+                    idPrefix = "$idPrefix:v3:cpow",
+                    version = version,
+                )
+            }
+            WorkoutMetricFamily.SWIMMING, WorkoutMetricFamily.OTHER -> Unit
+        }
+
+        w.vo2Max?.takeIf { it in 10.0..100.0 }?.let { vo2 ->
+            singleQuantitySample(
+                typeId = HKQuantityTypeIdentifierVO2Max
+                    ?: "HKQuantityTypeIdentifierVO2Max",
+                unitStr = "ml/(kg*min)",
+                value = vo2,
+                start = end,
+                end = end,
+                syncId = "$idPrefix:v3:vo2",
+                version = version,
+            )?.let { out += it }
+        }
+
+        recoverOneMinuteBpm(w)?.let { bpm1 ->
+            val t1 = NSDate.dateWithTimeIntervalSince1970((w.endTime + 60).toDouble())
+            singleQuantitySample(
+                typeId = HKQuantityTypeIdentifierHeartRateRecoveryOneMinute
+                    ?: "HKQuantityTypeIdentifierHeartRateRecoveryOneMinute",
+                unitStr = "count/min",
+                value = bpm1,
+                start = t1,
+                end = t1,
+                syncId = "$idPrefix:v3:hrr1",
+                version = version,
+            )?.let { out += it }
+        }
+
+        w.elevationGainM?.takeIf { it >= 3.0 }?.let { gain ->
+            val flights = (gain / 3.0).toInt().coerceAtLeast(1)
+            singleQuantitySample(
+                typeId = HKQuantityTypeIdentifierFlightsClimbed
+                    ?: "HKQuantityTypeIdentifierFlightsClimbed",
+                unitStr = "count",
+                value = flights.toDouble(),
+                start = start,
+                end = end,
+                syncId = "$idPrefix:v3:flights",
+                version = version,
+            )?.let { out += it }
+        }
+
+        return out
+    }
+
+    /** Full set for legacy fallback path. */
+    private fun buildAssociatedWorkoutSamples(
+        w: WorkoutSession,
+        version: Long,
+    ): List<HKQuantitySample> =
+        buildCoreWorkoutSamples(w, version) + buildSportFormSamples(w, version)
+
+    private fun recoverOneMinuteBpm(w: WorkoutSession): Double? {
+        val series = w.recoverHeartRateSeries
+        if (series.isEmpty()) return null
+        val target = w.endTime + 60
+        // Nearest recover sample within 90s of the 1-minute mark
+        val nearest = series.minByOrNull { kotlin.math.abs(it.timeSec - target) } ?: return null
+        if (kotlin.math.abs(nearest.timeSec - target) > 90) return null
+        return nearest.value.takeIf { it in 30.0..250.0 }
+    }
+
+    private fun singleQuantitySample(
+        typeId: String,
+        unitStr: String,
+        value: Double,
+        start: NSDate,
+        end: NSDate,
+        syncId: String,
+        version: Long,
+    ): HKQuantitySample? {
+        val type = HKQuantityType.quantityTypeForIdentifier(typeId) ?: return null
+        if (healthStore.authorizationStatusForType(type) !=
+            platform.HealthKit.HKAuthorizationStatusSharingAuthorized
+        ) {
+            return null
+        }
+        val unit = HKUnit.unitFromString(unitStr)
+        return HKQuantitySample.quantitySampleWithType(
+            quantityType = type,
+            quantity = HKQuantity.quantityWithUnit(unit, value),
+            startDate = start,
+            endDate = end,
+            metadata = mapOf<Any?, Any?>(
+                HKMetadataKeySyncIdentifier to syncId,
+                HKMetadataKeySyncVersion to version,
+            ),
+        )
+    }
+
+    /**
+     * Optional form/sport series for the workout builder.
+     * Skips types that are unavailable or explicitly denied; otherwise lets HealthKit
+     * accept samples after the share request (status is often not yet Authorized).
+     */
+    private fun formSeries(
+        typeId: String,
+        unitStr: String,
+        samples: List<com.bettermifitness.sync.data.api.WorkoutTimedSample>,
+        idPrefix: String,
+        version: Long,
+    ): List<HKQuantitySample> {
+        if (samples.isEmpty()) return emptyList()
+        val type = HKQuantityType.quantityTypeForIdentifier(typeId) ?: return emptyList()
+        if (healthStore.authorizationStatusForType(type) ==
+            platform.HealthKit.HKAuthorizationStatusSharingDenied
+        ) {
+            return emptyList()
+        }
+        val unit = HKUnit.unitFromString(unitStr)
+        return samples.map { s ->
+            val date = NSDate.dateWithTimeIntervalSince1970(s.timeSec.toDouble())
+            HKQuantitySample.quantitySampleWithType(
+                quantityType = type,
+                quantity = HKQuantity.quantityWithUnit(unit, s.value),
+                startDate = date,
+                endDate = date,
+                metadata = mapOf<Any?, Any?>(
+                    HKMetadataKeySyncIdentifier to "$idPrefix:${s.timeSec}",
+                    HKMetadataKeySyncVersion to version,
+                ),
+            )
+        }
+    }
+
+    private suspend fun writeRecoverHeartRate(w: WorkoutSession, version: Long) {
+        val hrType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRate)
+            ?: return
+        if (w.recoverHeartRateSeries.isEmpty()) return
+        val bpm = HKUnit.unitFromString("count/min")
+        val samples = w.recoverHeartRateSeries.map { s ->
+            val date = NSDate.dateWithTimeIntervalSince1970(s.timeSec.toDouble())
+            HKQuantitySample.quantitySampleWithType(
+                quantityType = hrType,
+                quantity = HKQuantity.quantityWithUnit(bpm, s.value),
+                startDate = date,
+                endDate = date,
+                metadata = mapOf<Any?, Any?>(
+                    HKMetadataKeySyncIdentifier to
+                        HealthRecordIds.workout(w.startTime) + ":rhr:" + s.timeSec,
+                    HKMetadataKeySyncVersion to version,
+                ),
+            )
+        }
+        try {
+            saveSamples(samples)
+        } catch (_: Exception) { /* optional */ }
+    }
+
+    private fun buildIosWorkoutNotes(w: WorkoutSession): String? {
+        val parts = mutableListOf<String>()
+        w.avgPaceSecPerKm?.let {
+            val s = it.toInt()
+            parts += "avg pace ${s / 60}:${(s % 60).toString().padStart(2, '0')}/km"
+        }
+        // Running cadence: notes only (no public HK RunningCadence). Cycling → CyclingCadence samples.
+        w.avgCadenceSpm?.let {
+            val family = WorkoutMetricFamilies.classify(w.activityType)
+            parts += when (family) {
+                WorkoutMetricFamily.CYCLING -> "cadence ${it.toInt()} rpm"
+                else -> "cadence ${it.toInt()} spm"
+            }
+        }
+        w.avgStrideCm?.let { parts += "stride ${it.toInt()} cm" }
+            ?: w.strideMetersSeries.firstOrNull()?.let {
+                parts += "stride ${(it.value * 100).toInt()} cm"
+            }
+        w.maxSpeedMps?.let {
+            val kmh = (it * 3.6 * 10).toInt() / 10.0
+            parts += "max $kmh km/h"
+        }
+        w.avgPowerWatts?.let { parts += "power ${it.toInt()} W" }
+        w.avgGroundContactMs?.let { parts += "GCT ${it.toInt()} ms" }
+        w.avgVerticalOscillationCm?.let {
+            val tenths = ((it * 10).toInt()) / 10.0
+            parts += "VO $tenths cm"
+        }
+        w.trainEffect?.let { parts += "TE $it" }
+        w.trainLoad?.let { parts += "load ${it.toInt()}" }
+        w.recoverMinutes?.let { parts += "recover ${it}m" }
+        w.vo2Max?.let { parts += "VO2 $it" }
+        val zones = listOfNotNull(
+            w.hrZoneWarmupSec?.let { "WU${it}s" },
+            w.hrZoneFatBurnSec?.let { "FB${it}s" },
+            w.hrZoneAerobicSec?.let { "AE${it}s" },
+            w.hrZoneAnaerobicSec?.let { "AN${it}s" },
+            w.hrZoneExtremeSec?.let { "EX${it}s" },
+        )
+        if (zones.isNotEmpty()) parts += zones.joinToString("/")
+        return parts.takeIf { it.isNotEmpty() }?.joinToString(" · ")
     }
 
     /**
@@ -385,7 +964,7 @@ actual class HealthWriter : HealthStore {
                 builder.finishRouteWithWorkout(workout, metadata = null) { _, finishError ->
                     if (finishError != null) {
                         cont.resumeWithException(
-                            Exception(finishError.localizedDescription ?: "finishRoute failed"),
+                            Exception(finishError.localizedDescription),
                         )
                     } else {
                         cont.resume(Unit)
@@ -500,11 +1079,11 @@ actual class HealthWriter : HealthStore {
 
     actual override suspend fun hasWritePermissions(): Boolean {
         if (!isAvailable()) return false
-        // HealthKit only exposes share-authorization status (not a full ACL dump).
-        // Treat as granted when every type we care about is SharingAuthorized.
-        val types = shareTypes()
-        if (types.isEmpty()) return false
-        return types.all { type ->
+        // Core types must be authorized to sync. Running-form types are optional —
+        // if missing, we still sync workouts and skip form samples with a log.
+        val core = coreShareTypes()
+        if (core.isEmpty()) return false
+        return core.all { type ->
             healthStore.authorizationStatusForType(type) ==
                 platform.HealthKit.HKAuthorizationStatusSharingAuthorized
         }
@@ -555,7 +1134,7 @@ actual class HealthWriter : HealthStore {
      * Types we may *write*. Blood pressure is authorized via systolic + diastolic quantity
      * types only — not [HKCorrelationTypeIdentifierBloodPressure] (that crashes auth).
      */
-    private fun shareTypes(): Set<platform.HealthKit.HKSampleType> = setOfNotNull(
+    private fun coreShareTypes(): Set<platform.HealthKit.HKSampleType> = setOfNotNull(
         HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRate),
         HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierRestingHeartRate),
         HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount),
@@ -572,6 +1151,36 @@ actual class HealthWriter : HealthStore {
         platform.HealthKit.HKObjectType.workoutType(),
         platform.HealthKit.HKSeriesType.workoutRouteType(),
     )
+
+    /**
+     * Optional sport metrics (Apple public identifiers only).
+     * Requested at auth time so [HKWorkoutBuilder] can associate them.
+     */
+    private fun activityMetricShareTypes(): Set<platform.HealthKit.HKSampleType> = setOfNotNull(
+        // Running (iOS 16+)
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierRunningSpeed),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierRunningStrideLength),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierRunningPower),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierRunningGroundContactTime),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierRunningVerticalOscillation),
+        // Walking (iOS 14+)
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierWalkingSpeed),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierWalkingStepLength),
+        // Cycling (iOS 17+) — only public cadence type in HealthKit
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierCyclingCadence),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierCyclingSpeed),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierCyclingPower),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDistanceCycling),
+        // Swimming
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDistanceSwimming),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierSwimmingStrokeCount),
+        // Other workout-related
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRateRecoveryOneMinute),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierFlightsClimbed),
+    )
+
+    private fun shareTypes(): Set<platform.HealthKit.HKSampleType> =
+        coreShareTypes() + activityMetricShareTypes()
 
     private suspend fun saveSamples(samples: List<Any>) {
         if (samples.isEmpty()) return

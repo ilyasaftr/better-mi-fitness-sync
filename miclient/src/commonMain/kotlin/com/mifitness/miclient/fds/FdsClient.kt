@@ -29,12 +29,22 @@ class FdsClient(
         val serverKey: String,
     )
 
-    data class SportGpsRequest(
+    data class SportFileRequest(
         /** Device / app source id (`did` in sport JSON, column `sid` in local DB). */
         val sid: String,
         val timeSec: Long,
         val tzIn15Min: Int,
         /** `proto_type` from sport report (not always equal to `sport_type`). */
+        val protoType: Int,
+        /** [FdsKeys.FILE_TYPE_RECORD], [FdsKeys.FILE_TYPE_GPS], [FdsKeys.FILE_TYPE_RECOVER_RATE]. */
+        val fileType: Int = FdsKeys.FILE_TYPE_GPS,
+    )
+
+    @Deprecated("Use SportFileRequest", ReplaceWith("SportFileRequest(sid, timeSec, tzIn15Min, protoType)"))
+    data class SportGpsRequest(
+        val sid: String,
+        val timeSec: Long,
+        val tzIn15Min: Int,
         val protoType: Int,
     )
 
@@ -97,17 +107,33 @@ class FdsClient(
         }
     }
 
-    /** Sport GPS file (`fileType = 2`). */
-    suspend fun downloadSportGps(request: SportGpsRequest): ByteArray {
-        val suffix = FdsKeys.suffixForGps(
+    /** Sport FDS file (record=0, GPS=2, recover=3). */
+    suspend fun downloadSportFile(request: SportFileRequest): ByteArray {
+        val suffix = FdsKeys.suffixForSportFile(
             sid = request.sid,
             timeSec = request.timeSec,
             tzIn15Min = request.tzIn15Min,
             protoType = request.protoType,
+            fileType = request.fileType,
         )
         val meta = genDownloadUrl(request.sid, request.timeSec, suffix)
         return downloadDecrypted(meta)
     }
+
+    /** Sport GPS file (`fileType = 2`). */
+    suspend fun downloadSportGps(request: SportGpsRequest): ByteArray =
+        downloadSportFile(
+            SportFileRequest(
+                sid = request.sid,
+                timeSec = request.timeSec,
+                tzIn15Min = request.tzIn15Min,
+                protoType = request.protoType,
+                fileType = FdsKeys.FILE_TYPE_GPS,
+            ),
+        )
+
+    suspend fun downloadSportGps(request: SportFileRequest): ByteArray =
+        downloadSportFile(request.copy(fileType = FdsKeys.FILE_TYPE_GPS))
 
     fun close() {
         plainHttp.close()

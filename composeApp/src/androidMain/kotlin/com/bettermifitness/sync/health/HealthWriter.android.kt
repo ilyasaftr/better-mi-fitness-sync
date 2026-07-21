@@ -9,13 +9,17 @@ import androidx.health.connect.client.records.BloodPressureRecord
 import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.BodyTemperatureRecord
 import androidx.health.connect.client.records.DistanceRecord
+import androidx.health.connect.client.records.ElevationGainedRecord
 import androidx.health.connect.client.records.ExerciseRoute
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.OxygenSaturationRecord
+import androidx.health.connect.client.records.PowerRecord
 import androidx.health.connect.client.records.RestingHeartRateRecord
 import androidx.health.connect.client.records.SkinTemperatureRecord
 import androidx.health.connect.client.records.SleepSessionRecord
+import androidx.health.connect.client.records.SpeedRecord
+import androidx.health.connect.client.records.StepsCadenceRecord
 import androidx.health.connect.client.records.StepsRecord as HcStepsRecord
 import androidx.health.connect.client.records.Vo2MaxRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -24,9 +28,11 @@ import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
 import androidx.health.connect.client.units.Percentage
+import androidx.health.connect.client.units.Power
 import androidx.health.connect.client.units.Pressure
 import androidx.health.connect.client.units.Temperature
 import androidx.health.connect.client.units.TemperatureDelta
+import androidx.health.connect.client.units.Velocity
 import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
@@ -61,6 +67,10 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             HealthPermission.getWritePermission(BodyFatRecord::class),
             HealthPermission.getWritePermission(ExerciseSessionRecord::class),
             HealthPermission.PERMISSION_WRITE_EXERCISE_ROUTE,
+            HealthPermission.getWritePermission(ElevationGainedRecord::class),
+            HealthPermission.getWritePermission(SpeedRecord::class),
+            HealthPermission.getWritePermission(StepsCadenceRecord::class),
+            HealthPermission.getWritePermission(PowerRecord::class),
             HealthPermission.getWritePermission(BloodPressureRecord::class),
             HealthPermission.getWritePermission(BodyTemperatureRecord::class),
             HealthPermission.getWritePermission(Vo2MaxRecord::class),
@@ -266,55 +276,266 @@ actual class HealthWriter(private val context: Context) : HealthStore {
     actual override suspend fun writeWorkouts(sessions: List<WorkoutSession>) {
         val clean = HealthDataNormalizer.normalizeWorkouts(sessions)
         if (clean.isEmpty()) return
-        val records = clean.map { w ->
+        val batch = mutableListOf<androidx.health.connect.client.records.Record>()
+        for (w in clean) {
+            val zo = zoneOffsetOf(w)
+            val start = Instant.ofEpochSecond(w.startTime)
+            val end = Instant.ofEpochSecond(w.endTime)
             val mapping = SportTypeMapper.map(w.activityType)
+            val notes = buildWorkoutNotes(w)
+            val version = HealthRecordIds.version(
+                w.startTime, w.endTime, mapping.title, mapping.healthConnectType,
+                w.distanceMeters, w.caloriesKcal, w.route.size, w.heartRateSeries.size,
+                w.avgPaceSecPerKm, w.avgCadenceSpm, w.trainLoad,
+                w.speedSeries.size, w.cadenceSeries.size, w.strideMetersSeries.size,
+                w.powerWattsSeries.size,
+            )
+            val meta = Metadata.manualEntry(
+                clientRecordId = HealthRecordIds.workout(w.startTime),
+                clientRecordVersion = version,
+            )
             val route = exerciseRouteOrNull(w)
-            if (route != null) {
+            batch += if (route != null) {
                 ExerciseSessionRecord(
-                    startTime = Instant.ofEpochSecond(w.startTime),
-                    startZoneOffset = ZoneOffset.UTC,
-                    endTime = Instant.ofEpochSecond(w.endTime),
-                    endZoneOffset = ZoneOffset.UTC,
-                    metadata = Metadata.manualEntry(
-                        clientRecordId = HealthRecordIds.workout(w.startTime),
-                        clientRecordVersion = HealthRecordIds.version(
-                            w.startTime,
-                            w.endTime,
-                            mapping.title,
-                            mapping.healthConnectType,
-                            w.distanceMeters,
-                            w.caloriesKcal,
-                            w.route.size,
-                        ),
-                    ),
+                    startTime = start,
+                    startZoneOffset = zo,
+                    endTime = end,
+                    endZoneOffset = zo,
+                    metadata = meta,
                     exerciseType = mapping.healthConnectType,
                     title = mapping.title,
+                    notes = notes,
                     exerciseRoute = route,
                 )
             } else {
                 ExerciseSessionRecord(
-                    startTime = Instant.ofEpochSecond(w.startTime),
-                    endTime = Instant.ofEpochSecond(w.endTime),
-                    startZoneOffset = ZoneOffset.UTC,
-                    endZoneOffset = ZoneOffset.UTC,
+                    startTime = start,
+                    endTime = end,
+                    startZoneOffset = zo,
+                    endZoneOffset = zo,
                     exerciseType = mapping.healthConnectType,
                     title = mapping.title,
+                    notes = notes,
+                    metadata = meta,
+                )
+            }
+            w.distanceMeters?.takeIf { it > 0 }?.let { d ->
+                batch += DistanceRecord(
+                    startTime = start,
+                    endTime = end,
+                    startZoneOffset = zo,
+                    endZoneOffset = zo,
+                    distance = Length.meters(d),
                     metadata = Metadata.manualEntry(
-                        clientRecordId = HealthRecordIds.workout(w.startTime),
-                        clientRecordVersion = HealthRecordIds.version(
-                            w.startTime,
-                            w.endTime,
-                            mapping.title,
-                            mapping.healthConnectType,
-                            w.distanceMeters,
-                            w.caloriesKcal,
-                            0,
-                        ),
+                        clientRecordId = HealthRecordIds.workout(w.startTime) + ":dist",
+                        clientRecordVersion = version,
                     ),
                 )
             }
+            w.caloriesKcal?.takeIf { it > 0 }?.let { c ->
+                batch += ActiveCaloriesBurnedRecord(
+                    startTime = start,
+                    endTime = end,
+                    startZoneOffset = zo,
+                    endZoneOffset = zo,
+                    energy = Energy.kilocalories(c),
+                    metadata = Metadata.manualEntry(
+                        clientRecordId = HealthRecordIds.workout(w.startTime) + ":kcal",
+                        clientRecordVersion = version,
+                    ),
+                )
+            }
+            w.totalSteps?.takeIf { it > 0 }?.let { steps ->
+                batch += HcStepsRecord(
+                    startTime = start,
+                    endTime = end,
+                    startZoneOffset = zo,
+                    endZoneOffset = zo,
+                    count = steps.toLong(),
+                    metadata = Metadata.manualEntry(
+                        clientRecordId = HealthRecordIds.workout(w.startTime) + ":steps",
+                        clientRecordVersion = version,
+                    ),
+                )
+            }
+            w.elevationGainM?.takeIf { it > 0 }?.let { gain ->
+                try {
+                    batch += ElevationGainedRecord(
+                        startTime = start,
+                        endTime = end,
+                        startZoneOffset = zo,
+                        endZoneOffset = zo,
+                        elevation = Length.meters(gain),
+                        metadata = Metadata.manualEntry(
+                            clientRecordId = HealthRecordIds.workout(w.startTime) + ":elev",
+                            clientRecordVersion = version,
+                        ),
+                    )
+                } catch (_: Exception) { /* type may be unavailable */ }
+            }
+            if (w.heartRateSeries.size >= 2) {
+                val samples = w.heartRateSeries.map {
+                    HeartRateRecord.Sample(
+                        time = Instant.ofEpochSecond(it.timeSec),
+                        beatsPerMinute = it.value.toLong().coerceIn(30, 250),
+                    )
+                }
+                val hrStart = Instant.ofEpochSecond(w.heartRateSeries.first().timeSec)
+                val hrEnd = Instant.ofEpochSecond(w.heartRateSeries.last().timeSec).plusSeconds(1)
+                if (hrEnd.isAfter(hrStart)) {
+                    batch += HeartRateRecord(
+                        startTime = hrStart,
+                        endTime = hrEnd,
+                        startZoneOffset = zo,
+                        endZoneOffset = zo,
+                        samples = samples,
+                        metadata = Metadata.manualEntry(
+                            clientRecordId = HealthRecordIds.workout(w.startTime) + ":hr",
+                            clientRecordVersion = version,
+                        ),
+                    )
+                }
+            }
+            // Speed (pace in HC is derived from speed series during exercise)
+            addSpeedRecord(batch, w, zo, version)
+            addCadenceRecord(batch, w, zo, version)
+            addPowerRecord(batch, w, zo, version)
         }
-        client.insertRecords(records)
+        // Insert in chunks to avoid binder limits on large routes/HR
+        batch.chunked(50).forEach { chunk ->
+            client.insertRecords(chunk)
+        }
+    }
+
+    private fun zoneOffsetOf(w: WorkoutSession): ZoneOffset {
+        val sec = w.zoneOffsetSeconds()
+        return try {
+            ZoneOffset.ofTotalSeconds(sec.coerceIn(-18 * 3600, 18 * 3600))
+        } catch (_: Exception) {
+            ZoneOffset.UTC
+        }
+    }
+
+    private fun buildWorkoutNotes(w: WorkoutSession): String? {
+        val parts = mutableListOf<String>()
+        w.avgPaceSecPerKm?.let { parts += "avg pace ${formatPace(it)}/km" }
+        w.avgCadenceSpm?.let { parts += "cadence ${it.toInt()} spm" }
+        w.avgStrideCm?.let { parts += "stride ${it.toInt()} cm" }
+        w.avgPowerWatts?.let { parts += "power ${it.toInt()} W" }
+        w.trainEffect?.let { parts += "TE $it" }
+        w.trainLoad?.let { parts += "load ${it.toInt()}" }
+        w.recoverMinutes?.let { parts += "recover ${it}m" }
+        val zones = listOfNotNull(
+            w.hrZoneWarmupSec?.let { "WU ${it}s" },
+            w.hrZoneFatBurnSec?.let { "FB ${it}s" },
+            w.hrZoneAerobicSec?.let { "AE ${it}s" },
+            w.hrZoneAnaerobicSec?.let { "AN ${it}s" },
+            w.hrZoneExtremeSec?.let { "EX ${it}s" },
+        )
+        if (zones.isNotEmpty()) parts += "HR zones: ${zones.joinToString(", ")}"
+        if (w.kmSplits.isNotEmpty()) parts += "${w.kmSplits.size} km splits"
+        return parts.takeIf { it.isNotEmpty() }?.joinToString(" · ")
+    }
+
+    private fun formatPace(secPerKm: Double): String {
+        val s = secPerKm.toInt().coerceAtLeast(0)
+        return "%d:%02d".format(s / 60, s % 60)
+    }
+
+    private fun addSpeedRecord(
+        batch: MutableList<androidx.health.connect.client.records.Record>,
+        w: WorkoutSession,
+        zo: ZoneOffset,
+        version: Long,
+    ) {
+        val series = w.speedSeries
+        if (series.size < 2) return
+        try {
+            val samples = series.map {
+                SpeedRecord.Sample(
+                    time = Instant.ofEpochSecond(it.timeSec),
+                    speed = Velocity.metersPerSecond(it.value.coerceIn(0.0, 15.0)),
+                )
+            }
+            val s0 = Instant.ofEpochSecond(series.first().timeSec)
+            val s1 = Instant.ofEpochSecond(series.last().timeSec).plusSeconds(1)
+            if (!s1.isAfter(s0)) return
+            batch += SpeedRecord(
+                startTime = s0,
+                endTime = s1,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
+                samples = samples,
+                metadata = Metadata.manualEntry(
+                    clientRecordId = HealthRecordIds.workout(w.startTime) + ":spd",
+                    clientRecordVersion = version,
+                ),
+            )
+        } catch (_: Exception) { /* optional on older HC */ }
+    }
+
+    private fun addCadenceRecord(
+        batch: MutableList<androidx.health.connect.client.records.Record>,
+        w: WorkoutSession,
+        zo: ZoneOffset,
+        version: Long,
+    ) {
+        val series = w.cadenceSeries
+        if (series.size < 2) return
+        try {
+            val samples = series.map {
+                StepsCadenceRecord.Sample(
+                    time = Instant.ofEpochSecond(it.timeSec),
+                    rate = it.value.coerceIn(0.0, 300.0),
+                )
+            }
+            val s0 = Instant.ofEpochSecond(series.first().timeSec)
+            val s1 = Instant.ofEpochSecond(series.last().timeSec).plusSeconds(1)
+            if (!s1.isAfter(s0)) return
+            batch += StepsCadenceRecord(
+                startTime = s0,
+                endTime = s1,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
+                samples = samples,
+                metadata = Metadata.manualEntry(
+                    clientRecordId = HealthRecordIds.workout(w.startTime) + ":cad",
+                    clientRecordVersion = version,
+                ),
+            )
+        } catch (_: Exception) { /* optional */ }
+    }
+
+    private fun addPowerRecord(
+        batch: MutableList<androidx.health.connect.client.records.Record>,
+        w: WorkoutSession,
+        zo: ZoneOffset,
+        version: Long,
+    ) {
+        val series = w.powerWattsSeries
+        if (series.size < 2) return
+        try {
+            val samples = series.map {
+                PowerRecord.Sample(
+                    time = Instant.ofEpochSecond(it.timeSec),
+                    power = Power.watts(it.value.coerceIn(0.0, 2000.0)),
+                )
+            }
+            val s0 = Instant.ofEpochSecond(series.first().timeSec)
+            val s1 = Instant.ofEpochSecond(series.last().timeSec).plusSeconds(1)
+            if (!s1.isAfter(s0)) return
+            batch += PowerRecord(
+                startTime = s0,
+                endTime = s1,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
+                samples = samples,
+                metadata = Metadata.manualEntry(
+                    clientRecordId = HealthRecordIds.workout(w.startTime) + ":pow",
+                    clientRecordVersion = version,
+                ),
+            )
+        } catch (_: Exception) { /* optional */ }
     }
 
     private fun exerciseRouteOrNull(w: WorkoutSession): ExerciseRoute? {
