@@ -100,7 +100,11 @@ object SportRecordBinary {
                 if (stride !in 1..32) continue
 
                 val absStart = if (start > 1_000_000_000L) start else sessionStartHint + start
-                extractWithStride(body, sampleStart, count, stride, absStart, hr, pace, cadence, speed, elev, splits)
+                extractWithStride(
+                    body = body,
+                    layout = SampleLayout(sampleStart, count, stride, absStart),
+                    out = SeriesOut(hr, pace, cadence, speed, elev, splits),
+                )
                 off = sampleStart + count * stride
                 advanced = true
                 segments++
@@ -137,19 +141,31 @@ object SportRecordBinary {
         return -1
     }
 
+    private data class SampleLayout(
+        val start: Int,
+        val count: Int,
+        val stride: Int,
+        val absStart: Long,
+    )
+
+    private data class SeriesOut(
+        val hr: MutableList<TimedValue>,
+        val pace: MutableList<TimedValue>,
+        val cadence: MutableList<TimedValue>,
+        val speed: MutableList<TimedValue>,
+        val elev: MutableList<TimedValue>,
+        val splits: MutableList<KmSplit>,
+    )
+
     private fun extractWithStride(
         body: ByteArray,
-        start: Int,
-        count: Int,
-        stride: Int,
-        absStart: Long,
-        hr: MutableList<TimedValue>,
-        pace: MutableList<TimedValue>,
-        cadence: MutableList<TimedValue>,
-        speed: MutableList<TimedValue>,
-        elev: MutableList<TimedValue>,
-        splits: MutableList<KmSplit>,
+        layout: SampleLayout,
+        out: SeriesOut,
     ) {
+        val start = layout.start
+        val count = layout.count
+        val stride = layout.stride
+        val absStart = layout.absStart
         var km = 0
         for (i in 0 until count) {
             val o = start + i * stride
@@ -158,19 +174,19 @@ object SportRecordBinary {
             // Common layouts: [hr] or [flags][hr] or multi-field LE
             val b0 = body[o].toInt() and 0xFF
             if (b0 in 45..220) {
-                hr += TimedValue(t, b0.toDouble())
+                out.hr += TimedValue(t, b0.toDouble())
             } else if (stride >= 2) {
                 val b1 = body[o + 1].toInt() and 0xFF
-                if (b1 in 45..220) hr += TimedValue(t, b1.toDouble())
+                if (b1 in 45..220) out.hr += TimedValue(t, b1.toDouble())
             }
             if (stride >= 4) {
                 // try u16 pace at +2
                 val p = u16(body, o + (if (stride >= 6) 2 else 0))
-                if (p in 120..3600) pace += TimedValue(t, p.toDouble())
+                if (p in 120..3600) out.pace += TimedValue(t, p.toDouble())
             }
             if (stride >= 3) {
                 val cad = body[o + stride - 1].toInt() and 0xFF
-                if (cad in 60..250) cadence += TimedValue(t, cad.toDouble())
+                if (cad in 60..250) out.cadence += TimedValue(t, cad.toDouble())
             }
             // integer km markers sometimes sparse
             if (stride >= 8) {
@@ -179,7 +195,7 @@ object SportRecordBinary {
                     val k = (dist / 1000).toInt()
                     if (k > km) {
                         km = k
-                        splits += KmSplit(k, t, null)
+                        out.splits += KmSplit(k, t, null)
                     }
                 }
             }
@@ -191,17 +207,17 @@ object SportRecordBinary {
                 if (o + 8 > body.size) break
                 val f = floatLe(body, o + 4)
                 if (f in -100f..9000f && kotlin.math.abs(f) > 0.5f) {
-                    elev += TimedValue(absStart + i, f.toDouble())
+                    out.elev += TimedValue(absStart + i, f.toDouble())
                 }
             }
         }
         // speed m/s as u16/100
-        if (stride >= 4 && speed.isEmpty()) {
+        if (stride >= 4 && out.speed.isEmpty()) {
             for (i in 0 until minOf(count, 5000)) {
                 val o = start + i * stride + 2
                 if (o + 2 > body.size) break
                 val s = u16(body, o) / 100.0
-                if (s in 0.5..15.0) speed += TimedValue(absStart + i, s)
+                if (s in 0.5..15.0) out.speed += TimedValue(absStart + i, s)
             }
         }
     }
