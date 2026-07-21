@@ -33,43 +33,29 @@ adb install -r BetterMiFitnessSync.apk
 
 ## Install on iOS
 
-CI builds an **unsigned** device IPA (no App Store or TestFlight signing). You must **re-sign** it with a signing identity that can use **HealthKit**.
-
-### HealthKit signing (important)
-
-This app needs the **HealthKit capability / entitlement** (`com.apple.developer.healthkit`). That is **not** available with a normal free Apple ID sideload the way many unsigned IPAs are installed.
-
-| Signing method | Works for this app? |
-|----------------|---------------------|
-| Free personal Apple ID only (typical Sideloadly / AltStore free tier) | **No** — HealthKit entitlement is not granted; install may fail or Health access will not work |
-| **Paid Apple Developer Program** team (individual or org), app signed with HealthKit enabled | **Yes** |
-| Xcode run from source with a paid team + HealthKit capability | **Yes** |
-| Enterprise / custom profiles that include HealthKit | Yes, if your org allows it |
-
-**Use a paid Apple Developer account** (or an equivalent certificate/profile that includes HealthKit). A free Apple ID is **not enough**.
-
-### Steps
-
 1. Download **[BetterMiFitnessSync.ipa](https://github.com/ilyasaftr/better-mi-fitness-sync/releases/latest/download/BetterMiFitnessSync.ipa)** from the latest release.
-2. Re-sign and install with a tool that uses your **paid Developer** certificate/profile, and keep the HealthKit entitlement, for example:
-   - [Sideloadly](https://sideloadly.io/) (with a paid team / proper cert — free ID is not enough)
-   - Xcode: open `iosApp`, select your **paid** team, ensure HealthKit capability is on, then build & run on a device
-   - Other re-sign workflows that inject HealthKit and use a valid provisioning profile
+2. Re-sign and install on your iPhone (for example [Sideloadly](https://sideloadly.io/), or open `iosApp` in Xcode and run on a device).
 3. On first launch, allow **Health** (HealthKit) access when prompted.
 4. Sign in with your **Mi Account**, pick what to sync, then run a sync.
 
-**Requirements:** Physical iPhone for real HealthKit use. Signing must include the HealthKit entitlement (paid Developer Program or equivalent). Paid team installs last longer than free ad-hoc experiments; free Apple ID alone will not make Health sync work.
+**Notes:** The release IPA is **unsigned**. You must re-sign it with a certificate that includes the **HealthKit** entitlement (`com.apple.developer.healthkit`). A **free Apple ID** is **not enough** — use a **paid Apple Developer Program** team (or equivalent profile with HealthKit). Physical iPhone required for real HealthKit use.
 
 ## What it does
 
-- Sign in to Mi Fitness (email, password, or browser verification)
-- Pull steps, heart rate, SpO₂, sleep, weight, workouts, and related metrics
-- Write them into Health Connect (Android) or HealthKit (iOS)
+- Sign in to Mi Fitness (email, password, or browser verification); auto-detects your Mi health region from cloud data
+- Sync daily metrics: steps, distance, active calories, heart rate, resting heart rate, SpO₂, sleep (with stages), weight / body fat, blood pressure, temperature, VO₂ max
+- Sync workouts with richer detail when Mi provides it:
+  - GPS routes (outdoor activities)
+  - In-workout heart rate (and recover HR when available)
+  - Pace / speed, elevation, and summary notes (cadence, stride, training load, HR zones, …)
+  - **Android (Health Connect):** steps cadence (run/walk), cycling pedaling cadence (rides), speed, power, elevation gained
+  - **iOS (HealthKit):** running speed & stride, walking speed & step length, cycling cadence/speed/power; form metrics like power / GCT / vertical oscillation only when Mi sends them (no public running-cadence type on HealthKit)
+- Writes into **Health Connect** (Android) or **Apple Health / HealthKit** (iOS)
 - Optional auto-sync on a schedule
-- Credentials and tokens stay **on your device**. This app is a sync bridge, not a cloud health store.
+- Credentials and tokens stay **on your device** — a sync bridge, not a cloud health store
 
 ## Privacy
 
 - Login credentials and session tokens are stored locally on the device.
 - Health samples go from **Mi Fitness** to **your phone’s health store**.
-- There is no Better Mi Fitness Sync backend that keeps a copy of your health history.
+- We don’t run a cloud server that stores your health history — nothing is uploaded to us for safekeeping or analysis.
