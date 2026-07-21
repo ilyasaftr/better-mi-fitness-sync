@@ -32,6 +32,8 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            // Avoid "Cannot infer a bundle ID … use -Xbinary=bundleId="
+            binaryOption("bundleId", "com.bettermifitness.sync.ComposeApp")
         }
     }
 
