@@ -8,9 +8,9 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.BloodPressureRecord
 import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.BodyTemperatureRecord
+import androidx.health.connect.client.records.CyclingPedalingCadenceRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ElevationGainedRecord
-import androidx.health.connect.client.records.ExerciseRoute
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.OxygenSaturationRecord
@@ -28,11 +28,9 @@ import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
 import androidx.health.connect.client.units.Percentage
-import androidx.health.connect.client.units.Power
 import androidx.health.connect.client.units.Pressure
 import androidx.health.connect.client.units.Temperature
 import androidx.health.connect.client.units.TemperatureDelta
-import androidx.health.connect.client.units.Velocity
 import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
@@ -70,6 +68,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             HealthPermission.getWritePermission(ElevationGainedRecord::class),
             HealthPermission.getWritePermission(SpeedRecord::class),
             HealthPermission.getWritePermission(StepsCadenceRecord::class),
+            HealthPermission.getWritePermission(CyclingPedalingCadenceRecord::class),
             HealthPermission.getWritePermission(PowerRecord::class),
             HealthPermission.getWritePermission(BloodPressureRecord::class),
             HealthPermission.getWritePermission(BodyTemperatureRecord::class),

@@ -1,6 +1,7 @@
 package com.bettermifitness.sync.health
 
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.CyclingPedalingCadenceRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ElevationGainedRecord
 import androidx.health.connect.client.records.ExerciseRoute
@@ -188,6 +189,12 @@ class AndroidWorkoutRecordFactory {
         } catch (_: Exception) { /* optional */ }
     }
 
+    /**
+     * Cadence by sport (Health Connect data types):
+     * - Cycling → [CyclingPedalingCadenceRecord] (RPM)
+     * - Run / walk / other foot sports → [StepsCadenceRecord] (steps/min)
+     * There is no separate "running cadence" type beyond steps cadence.
+     */
     private fun addCadence(
         out: MutableList<androidx.health.connect.client.records.Record>,
         session: WorkoutSession,
@@ -196,28 +203,49 @@ class AndroidWorkoutRecordFactory {
     ) {
         val series = WorkoutFormSeries.cadence(session)
         if (series.size < 2) return
+        val s0 = Instant.ofEpochSecond(series.first().timeSec)
+        val s1 = Instant.ofEpochSecond(series.last().timeSec).plusSeconds(1)
+        if (!s1.isAfter(s0)) return
+        val family = WorkoutMetricFamilies.classify(session.activityType)
         try {
-            val samples = series.map {
-                StepsCadenceRecord.Sample(
-                    time = Instant.ofEpochSecond(it.timeSec),
-                    rate = it.value.coerceIn(0.0, 300.0),
+            if (family == WorkoutMetricFamily.CYCLING) {
+                val samples = series.map {
+                    CyclingPedalingCadenceRecord.Sample(
+                        time = Instant.ofEpochSecond(it.timeSec),
+                        revolutionsPerMinute = it.value.coerceIn(0.0, 300.0),
+                    )
+                }
+                out += CyclingPedalingCadenceRecord(
+                    startTime = s0,
+                    endTime = s1,
+                    startZoneOffset = zo,
+                    endZoneOffset = zo,
+                    samples = samples,
+                    metadata = Metadata.manualEntry(
+                        clientRecordId = HealthRecordIds.workout(session.startTime) + ":pcad",
+                        clientRecordVersion = version,
+                    ),
+                )
+            } else {
+                val samples = series.map {
+                    StepsCadenceRecord.Sample(
+                        time = Instant.ofEpochSecond(it.timeSec),
+                        rate = it.value.coerceIn(0.0, 300.0),
+                    )
+                }
+                out += StepsCadenceRecord(
+                    startTime = s0,
+                    endTime = s1,
+                    startZoneOffset = zo,
+                    endZoneOffset = zo,
+                    samples = samples,
+                    metadata = Metadata.manualEntry(
+                        clientRecordId = HealthRecordIds.workout(session.startTime) + ":cad",
+                        clientRecordVersion = version,
+                    ),
                 )
             }
-            val s0 = Instant.ofEpochSecond(series.first().timeSec)
-            val s1 = Instant.ofEpochSecond(series.last().timeSec).plusSeconds(1)
-            if (!s1.isAfter(s0)) return
-            out += StepsCadenceRecord(
-                startTime = s0,
-                endTime = s1,
-                startZoneOffset = zo,
-                endZoneOffset = zo,
-                samples = samples,
-                metadata = Metadata.manualEntry(
-                    clientRecordId = HealthRecordIds.workout(session.startTime) + ":cad",
-                    clientRecordVersion = version,
-                ),
-            )
-        } catch (_: Exception) { /* optional */ }
+        } catch (_: Exception) { /* optional on older HC */ }
     }
 
     private fun addPower(
