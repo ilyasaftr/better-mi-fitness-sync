@@ -190,10 +190,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_ENTITLEMENTS = iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				ENABLE_ON_DEMAND_RESOURCES = NO;
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*][config=Debug]" = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework";
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*][config=Release]" = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/releaseFramework";
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*][config=Debug]" = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework";
@@ -214,10 +216,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_ENTITLEMENTS = iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				ENABLE_ON_DEMAND_RESOURCES = NO;
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*][config=Debug]" = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/debugFramework";
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*][config=Release]" = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosArm64/releaseFramework";
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*][config=Debug]" = "$(inherited) $(SRCROOT)/../composeApp/build/bin/iosSimulatorArm64/debugFramework";

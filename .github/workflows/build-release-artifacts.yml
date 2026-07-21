@@ -374,6 +374,14 @@ jobs:
             *Debug*) echo "Refusing path that looks like Debug: $APP"; exit 1 ;;
           esac
 
+          # Fail CI if home-screen icons are missing (sideload tools need these).
+          if [ ! -f "$APP/Assets.car" ] && ! ls "$APP"/AppIcon*.png >/dev/null 2>&1; then
+            echo "ERROR: app bundle has no Assets.car / AppIcon*.png (icon would be blank)"
+            ls -la "$APP" || true
+            exit 1
+          fi
+          ls -la "$APP"/AppIcon*.png "$APP/Assets.car" 2>/dev/null || true
+
           mkdir -p Payload dist
           rm -rf Payload/*
           cp -R "$APP" Payload/
