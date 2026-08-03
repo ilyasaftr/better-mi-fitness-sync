@@ -17,6 +17,7 @@ data class SyncProgress(
     val heartRate: SyncState = SyncState.Idle,
     val restingHeartRate: SyncState = SyncState.Idle,
     val sleep: SyncState = SyncState.Idle,
+    val hrv: SyncState = SyncState.Idle,
     val steps: SyncState = SyncState.Idle,
     val distance: SyncState = SyncState.Idle,
     val activeCalories: SyncState = SyncState.Idle,
@@ -69,6 +70,8 @@ class HealthRepository(
         if ("heart_rate" in enabled) syncHeartRate(from, to)
         if ("resting_heart_rate" in enabled) syncRestingHeartRate(from, to)
         if ("sleep" in enabled) syncSleep(from, to)
+        // HRV is derived from sleep payloads (no separate Mi key); empty = non-capable device.
+        if ("hrv" in enabled) syncHrv(from, to)
         if ("steps" in enabled) syncSteps(from, to)
         if ("distance" in enabled) syncDistance(from, to)
         if ("active_calories" in enabled) syncActiveCalories(from, to)
@@ -116,6 +119,21 @@ class HealthRepository(
             )
             if (sessions.isNotEmpty()) healthWriter.writeSleep(sessions)
             sessions.size
+        }
+    }
+
+    /**
+     * Overnight HRV from sleep JSON (`avg_hrv`). Uses the same `sleep` cloud key —
+     * devices without HRV simply yield 0 samples (success).
+     */
+    suspend fun syncHrv(from: String, to: String) {
+        runMetric("hrv") {
+            val response = api.getLatest("sleep", limit = 30)
+            val samples = MiFitnessParsers.parseHrvSamples(
+                response.result?.dataList.orEmpty().map { it.toRaw() },
+            )
+            if (samples.isNotEmpty()) healthWriter.writeHrv(samples)
+            samples.size
         }
     }
 
@@ -358,6 +376,7 @@ class HealthRepository(
             "heartRate" -> _syncProgress.value.copy(heartRate = state)
             "restingHeartRate" -> _syncProgress.value.copy(restingHeartRate = state)
             "sleep" -> _syncProgress.value.copy(sleep = state)
+            "hrv" -> _syncProgress.value.copy(hrv = state)
             "steps" -> _syncProgress.value.copy(steps = state)
             "distance" -> _syncProgress.value.copy(distance = state)
             "activeCalories" -> _syncProgress.value.copy(activeCalories = state)

@@ -6,6 +6,7 @@ import com.bettermifitness.sync.data.api.DistanceSample
 import com.bettermifitness.sync.data.api.HeartRateEntry
 import com.bettermifitness.sync.data.api.HeartRateSample
 // HeartRateSample used by heartRateInWindow
+import com.bettermifitness.sync.data.api.HrvSample
 import com.bettermifitness.sync.data.api.SleepEntry
 import com.bettermifitness.sync.data.api.SleepSession
 import com.bettermifitness.sync.data.api.SleepStage
@@ -48,6 +49,10 @@ fun SleepEntry.toRaw(): RawFitnessEntry = RawFitnessEntry(key, time, value)
 object MiFitnessParsers {
 
     private val json = Json { ignoreUnknownKeys = true }
+
+    /** Plausible overnight wrist HRV in milliseconds (Mi UI unit). */
+    private const val HRV_MS_MIN = 5
+    private const val HRV_MS_MAX = 300
 
     fun parseHeartRateSamples(entries: List<RawFitnessEntry>): List<HeartRateSample> =
         entries.mapNotNull { entry ->
@@ -350,6 +355,28 @@ object MiFitnessParsers {
         }
     }
 
+    private fun JsonObject.intField(name: String): Int? {
+        val el = this[name] ?: return null
+        return try {
+            el.jsonPrimitive.intOrNull
+                ?: el.jsonPrimitive.doubleOrNull?.toInt()
+                ?: el.jsonPrimitive.content.toIntOrNull()
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun JsonObject.longField(name: String): Long? {
+        val el = this[name] ?: return null
+        return try {
+            el.jsonPrimitive.longOrNull
+                ?: el.jsonPrimitive.doubleOrNull?.toLong()
+                ?: el.jsonPrimitive.content.toLongOrNull()
+        } catch (_: Exception) {
+            null
+        }
+    }
+
     /** Rough elevation gain from min/max when Mi does not send ascent explicitly. */
     private fun elevationGain(minH: Double?, maxH: Double?, avgH: Double?): Double? {
         if (minH != null && maxH != null && maxH > minH && maxH != 0.0) {
@@ -402,19 +429,51 @@ object MiFitnessParsers {
                 )
             }
 
+            val endTime = obj["wake_up_time"]?.jsonPrimitive?.long ?: entry.time
+            val avgHrv = obj.intField("avg_hrv")
+                ?: obj.intField("avgHrv")
+            val minHrv = obj.intField("min_hrv")
+                ?: obj.intField("minHrv")
+            val maxHrv = obj.intField("max_hrv")
+                ?: obj.intField("maxHrv")
+            val hrvAnalysis = obj.longField("hrv_analysis_timestamp")
+                ?: obj.longField("hrvAnalysisTimestamp")
+
             SleepSession(
                 startTime = obj["bedtime"]?.jsonPrimitive?.long ?: entry.time,
-                endTime = obj["wake_up_time"]?.jsonPrimitive?.long ?: entry.time,
+                endTime = endTime,
                 inBedStart = obj["bed_timestamp"]?.jsonPrimitive?.long
                     ?: obj["bedtime"]?.jsonPrimitive?.long ?: entry.time,
                 inBedEnd = obj["out_bed_timestamp"]?.jsonPrimitive?.long
                     ?: obj["wake_up_time"]?.jsonPrimitive?.long ?: entry.time,
                 stages = stages,
+                avgHrvMs = avgHrv,
+                minHrvMs = minHrv,
+                maxHrvMs = maxHrv,
+                hrvAnalysisTimeSec = hrvAnalysis,
             )
         } catch (_: Exception) {
             null
         }
     }
+
+    /**
+     * Overnight HRV samples from sleep payloads.
+     * Devices without HRV simply omit `avg_hrv` — returns empty (not an error).
+     */
+    fun parseHrvSamples(entries: List<RawFitnessEntry>): List<HrvSample> =
+        hrvSamplesFromSessions(parseSleepSessions(entries))
+
+    fun hrvSamplesFromSessions(sessions: List<SleepSession>): List<HrvSample> =
+        sessions.mapNotNull { session ->
+            val ms = session.avgHrvMs ?: return@mapNotNull null
+            if (ms !in HRV_MS_MIN..HRV_MS_MAX) return@mapNotNull null
+            val t = session.hrvAnalysisTimeSec
+                ?.takeIf { it > 0 }
+                ?: session.endTime.takeIf { it > 0 }
+                ?: return@mapNotNull null
+            HrvSample(timestamp = t, hrvMs = ms.toDouble())
+        }
 
     /**
      * Insert explicit awake stages for gaps ≥ 60s between reported sleep stages.

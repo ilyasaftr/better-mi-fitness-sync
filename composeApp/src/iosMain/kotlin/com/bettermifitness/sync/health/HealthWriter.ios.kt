@@ -4,6 +4,7 @@ import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
 import com.bettermifitness.sync.data.api.HeartRateSample
+import com.bettermifitness.sync.data.api.HrvSample
 import com.bettermifitness.sync.data.api.SleepSession
 import com.bettermifitness.sync.data.api.SpO2Sample
 import com.bettermifitness.sync.data.api.StepsRecord
@@ -30,6 +31,7 @@ import platform.HealthKit.HKQuantityTypeIdentifierBodyMass
 import platform.HealthKit.HKQuantityTypeIdentifierBodyTemperature
 import platform.HealthKit.HKQuantityTypeIdentifierDistanceWalkingRunning
 import platform.HealthKit.HKQuantityTypeIdentifierHeartRate
+import platform.HealthKit.HKQuantityTypeIdentifierHeartRateVariabilitySDNN
 import platform.HealthKit.HKQuantityTypeIdentifierOxygenSaturation
 import platform.HealthKit.HKQuantityTypeIdentifierRestingHeartRate
 import platform.HealthKit.HKQuantityTypeIdentifierStepCount
@@ -411,6 +413,33 @@ actual class HealthWriter : HealthStore {
                 metadata = mapOf<Any?, Any?>(
                     HKMetadataKeySyncIdentifier to HealthRecordIds.vo2Max(s.timestamp),
                     HKMetadataKeySyncVersion to HealthRecordIds.version(s.timestamp, s.mlPerKgMin),
+                ),
+            )
+        }
+        saveSamples(hkSamples)
+    }
+
+    /**
+     * Writes Mi overnight HRV (ms) into HealthKit HRV SDNN type.
+     * Apple only exposes SDNN publicly; Mi's wrist overnight value is closest available mapping.
+     */
+    actual override suspend fun writeHrv(samples: List<HrvSample>) {
+        val clean = HealthDataNormalizer.normalizeHrv(samples)
+        if (clean.isEmpty()) return
+        val type = HKQuantityType.quantityTypeForIdentifier(
+            HKQuantityTypeIdentifierHeartRateVariabilitySDNN,
+        ) ?: return
+        val unit = HKUnit.unitFromString("ms")
+        val hkSamples = clean.map { s ->
+            val date = NSDate.dateWithTimeIntervalSince1970(s.timestamp.toDouble())
+            HKQuantitySample.quantitySampleWithType(
+                quantityType = type,
+                quantity = HKQuantity.quantityWithUnit(unit, s.hrvMs),
+                startDate = date,
+                endDate = date,
+                metadata = mapOf<Any?, Any?>(
+                    HKMetadataKeySyncIdentifier to HealthRecordIds.hrv(s.timestamp),
+                    HKMetadataKeySyncVersion to HealthRecordIds.version(s.timestamp, s.hrvMs),
                 ),
             )
         }

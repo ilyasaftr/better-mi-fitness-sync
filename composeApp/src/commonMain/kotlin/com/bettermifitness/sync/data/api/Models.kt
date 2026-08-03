@@ -71,6 +71,15 @@ data class SleepSession(
     val inBedStart: Long = 0,
     val inBedEnd: Long = 0,
     val stages: List<SleepStage> = emptyList(),
+    /**
+     * Overnight HRV from Mi sleep payload (ms). Present only on capable devices
+     * (e.g. Band 10 Pro); Band 10 and similar omit these fields.
+     */
+    val avgHrvMs: Int? = null,
+    val minHrvMs: Int? = null,
+    val maxHrvMs: Int? = null,
+    /** Epoch seconds when Mi analyzed HRV; falls back to wake time when writing. */
+    val hrvAnalysisTimeSec: Long? = null,
 )
 
 @Serializable
@@ -78,6 +87,17 @@ data class SleepStage(
     val startTime: Long,
     val endTime: Long,
     val stage: Int, // 2=light/core, 3=deep, 4=REM, 5=awake (Mi codes)
+)
+
+/**
+ * Overnight HRV sample derived from Mi sleep JSON (`avg_hrv` in ms).
+ * Not a separate Mi cloud key — only written when sleep payload includes HRV.
+ */
+@Serializable
+data class HrvSample(
+    val timestamp: Long,
+    /** Heart-rate variability in milliseconds (Mi UI unit). */
+    val hrvMs: Double,
 )
 
 // --- Steps ---

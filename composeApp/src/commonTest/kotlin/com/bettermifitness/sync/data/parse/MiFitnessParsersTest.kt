@@ -249,5 +249,92 @@ class MiFitnessParsersTest {
         assertEquals(1_700_036_000L, session.endTime)
         assertEquals(2, session.stages.size)
         assertTrue(session.stages.all { it.stage in 2..3 })
+        assertEquals(null, session.avgHrvMs)
+    }
+
+    @Test
+    fun parseSleepSession_withHrv_populatesOvernightFields() {
+        val entry = RawFitnessEntry(
+            key = "sleep",
+            time = 1_700_003_600L,
+            value = """
+                {
+                  "bedtime": 1700000000,
+                  "wake_up_time": 1700036000,
+                  "avg_hrv": 42,
+                  "min_hrv": 28,
+                  "max_hrv": 65,
+                  "hrv_analysis_timestamp": 1700035000,
+                  "items": [
+                    {"start_time": 1700000000, "end_time": 1700036000, "state": 2}
+                  ]
+                }
+            """.trimIndent(),
+        )
+        val session = MiFitnessParsers.parseSleepSession(entry)
+        assertNotNull(session)
+        assertEquals(42, session.avgHrvMs)
+        assertEquals(28, session.minHrvMs)
+        assertEquals(65, session.maxHrvMs)
+        assertEquals(1_700_035_000L, session.hrvAnalysisTimeSec)
+
+        val hrv = MiFitnessParsers.hrvSamplesFromSessions(listOf(session))
+        assertEquals(1, hrv.size)
+        assertEquals(1_700_035_000L, hrv[0].timestamp)
+        assertEquals(42.0, hrv[0].hrvMs)
+    }
+
+    @Test
+    fun parseHrvSamples_withoutAvgHrv_isEmpty() {
+        val entry = RawFitnessEntry(
+            key = "sleep",
+            time = 1_700_003_600L,
+            value = """
+                {
+                  "bedtime": 1700000000,
+                  "wake_up_time": 1700036000,
+                  "items": []
+                }
+            """.trimIndent(),
+        )
+        val samples = MiFitnessParsers.parseHrvSamples(listOf(entry))
+        assertTrue(samples.isEmpty())
+    }
+
+    @Test
+    fun parseHrvSamples_fallsBackToWakeTimeWhenAnalysisMissing() {
+        val entry = RawFitnessEntry(
+            key = "sleep",
+            time = 1_700_003_600L,
+            value = """
+                {
+                  "bedtime": 1700000000,
+                  "wake_up_time": 1700036000,
+                  "avg_hrv": 55,
+                  "items": []
+                }
+            """.trimIndent(),
+        )
+        val samples = MiFitnessParsers.parseHrvSamples(listOf(entry))
+        assertEquals(1, samples.size)
+        assertEquals(1_700_036_000L, samples[0].timestamp)
+        assertEquals(55.0, samples[0].hrvMs)
+    }
+
+    @Test
+    fun parseHrvSamples_rejectsImplausibleValues() {
+        val entry = RawFitnessEntry(
+            key = "sleep",
+            time = 1_700_003_600L,
+            value = """
+                {
+                  "bedtime": 1700000000,
+                  "wake_up_time": 1700036000,
+                  "avg_hrv": 999,
+                  "items": []
+                }
+            """.trimIndent(),
+        )
+        assertTrue(MiFitnessParsers.parseHrvSamples(listOf(entry)).isEmpty())
     }
 }

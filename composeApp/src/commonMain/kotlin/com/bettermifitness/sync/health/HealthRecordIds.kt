@@ -66,6 +66,9 @@ object HealthRecordIds {
     fun vo2Max(timestampSec: Long): String =
         "mifit-vo2max-$timestampSec"
 
+    fun hrv(timestampSec: Long): String =
+        "mifit-hrv-$timestampSec"
+
     /** Floor epoch seconds to the HR batch window start. */
     fun heartRateWindowStart(timestampSec: Long): Long =
         (timestampSec / HEART_RATE_WINDOW_SEC) * HEART_RATE_WINDOW_SEC

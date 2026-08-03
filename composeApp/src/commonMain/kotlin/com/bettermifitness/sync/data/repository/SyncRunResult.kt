@@ -71,6 +71,7 @@ fun SyncProgress.stateForKey(key: String): SyncState? = when (key) {
     "heart_rate" -> heartRate
     "resting_heart_rate" -> restingHeartRate
     "sleep" -> sleep
+    "hrv" -> hrv
     "steps" -> steps
     "distance" -> distance
     "active_calories" -> activeCalories
