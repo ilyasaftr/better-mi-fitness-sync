@@ -98,11 +98,27 @@ class HealthDataNormalizerTest {
                 SleepStage(1_700_000_000L, 1_700_001_800L, 2),
                 SleepStage(1_700_001_800L, 1_700_003_600L, 3),
             ),
+            avgHrvMs = 40,
         )
         val bad = SleepSession(startTime = 100L, endTime = 50L)
         val out = HealthDataNormalizer.normalizeSleep(listOf(good, bad))
         assertEquals(1, out.size)
         assertEquals(2, out[0].stages.size)
+        assertEquals(40, out[0].avgHrvMs)
+    }
+
+    @Test
+    fun normalizeHrv_filtersAndDedupes() {
+        val out = HealthDataNormalizer.normalizeHrv(
+            listOf(
+                com.bettermifitness.sync.data.api.HrvSample(1_700_003_600L, 42.0),
+                com.bettermifitness.sync.data.api.HrvSample(1_700_003_600L, 48.0), // same second, last wins
+                com.bettermifitness.sync.data.api.HrvSample(1_700_003_600L, 0.0), // invalid
+                com.bettermifitness.sync.data.api.HrvSample(100L, 30.0), // implausible time
+            ),
+        )
+        assertEquals(1, out.size)
+        assertEquals(48.0, out[0].hrvMs)
     }
 
     @Test
@@ -113,7 +129,6 @@ class HealthDataNormalizerTest {
         assertEquals("awake", HealthDataNormalizer.miSleepStageLabel(5))
         assertTrue(HealthDataNormalizer.miSleepStageLabel(99) == "unknown")
     }
-}
 
     @Test
     fun normalizeRoute_filtersAndDedupes() {
@@ -132,3 +147,4 @@ class HealthDataNormalizerTest {
         assertEquals(start + 10, out[0].timeSec)
         assertEquals(start + 40, out[1].timeSec)
     }
+}

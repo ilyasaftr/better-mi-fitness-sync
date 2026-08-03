@@ -93,6 +93,7 @@ class SyncPreferences(
             "heart_rate",
             "resting_heart_rate",
             "sleep",
+            "hrv",
             "steps",
             "distance",
             "active_calories",

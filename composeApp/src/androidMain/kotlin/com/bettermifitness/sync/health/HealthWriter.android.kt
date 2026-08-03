@@ -13,6 +13,7 @@ import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ElevationGainedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
+import androidx.health.connect.client.records.HeartRateVariabilityRmssdRecord
 import androidx.health.connect.client.records.OxygenSaturationRecord
 import androidx.health.connect.client.records.PowerRecord
 import androidx.health.connect.client.records.RestingHeartRateRecord
@@ -35,6 +36,7 @@ import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
 import com.bettermifitness.sync.data.api.HeartRateSample
+import com.bettermifitness.sync.data.api.HrvSample
 import com.bettermifitness.sync.data.api.SleepSession
 import com.bettermifitness.sync.data.api.SpO2Sample
 import com.bettermifitness.sync.data.api.StepsRecord
@@ -73,6 +75,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             HealthPermission.getWritePermission(BloodPressureRecord::class),
             HealthPermission.getWritePermission(BodyTemperatureRecord::class),
             HealthPermission.getWritePermission(Vo2MaxRecord::class),
+            HealthPermission.getWritePermission(HeartRateVariabilityRmssdRecord::class),
         )
         val skinOk = try {
             client.features.getFeatureStatus(HealthConnectFeatures.FEATURE_SKIN_TEMPERATURE) ==
@@ -379,6 +382,24 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.vo2Max(s.timestamp),
                     clientRecordVersion = HealthRecordIds.version(s.timestamp, s.mlPerKgMin),
+                ),
+            )
+        }
+        client.insertRecords(records)
+    }
+
+    actual override suspend fun writeHrv(samples: List<HrvSample>) {
+        val clean = HealthDataNormalizer.normalizeHrv(samples)
+        if (clean.isEmpty()) return
+        // Mi overnight HRV is in ms; Health Connect stores RMSSD milliseconds.
+        val records = clean.map { s ->
+            HeartRateVariabilityRmssdRecord(
+                time = Instant.ofEpochSecond(s.timestamp),
+                zoneOffset = ZoneOffset.UTC,
+                heartRateVariabilityMillis = s.hrvMs,
+                metadata = Metadata.manualEntry(
+                    clientRecordId = HealthRecordIds.hrv(s.timestamp),
+                    clientRecordVersion = HealthRecordIds.version(s.timestamp, s.hrvMs),
                 ),
             )
         }

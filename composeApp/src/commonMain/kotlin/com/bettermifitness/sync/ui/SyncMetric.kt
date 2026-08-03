@@ -12,6 +12,8 @@ enum class SyncMetric(
     HEART_RATE("heart_rate", "Heart Rate", AppIcons.MonitorHeart),
     RESTING_HEART_RATE("resting_heart_rate", "Resting Heart Rate", AppIcons.Favorite),
     SLEEP("sleep", "Sleep", AppIcons.Bedtime),
+    /** Overnight HRV from sleep payload; 0 samples if the band does not support HRV. */
+    HRV("hrv", "HRV (overnight)", AppIcons.MonitorHeart),
     STEPS("steps", "Steps", AppIcons.DirectionsWalk),
     DISTANCE("distance", "Distance", AppIcons.Straighten),
     ACTIVE_CALORIES("active_calories", "Active Calories", AppIcons.LocalFireDepartment),

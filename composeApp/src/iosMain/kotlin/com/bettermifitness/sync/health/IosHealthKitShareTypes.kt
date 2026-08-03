@@ -20,6 +20,7 @@ import platform.HealthKit.HKQuantityTypeIdentifierDistanceWalkingRunning
 import platform.HealthKit.HKQuantityTypeIdentifierFlightsClimbed
 import platform.HealthKit.HKQuantityTypeIdentifierHeartRate
 import platform.HealthKit.HKQuantityTypeIdentifierHeartRateRecoveryOneMinute
+import platform.HealthKit.HKQuantityTypeIdentifierHeartRateVariabilitySDNN
 import platform.HealthKit.HKQuantityTypeIdentifierOxygenSaturation
 import platform.HealthKit.HKQuantityTypeIdentifierRestingHeartRate
 import platform.HealthKit.HKQuantityTypeIdentifierRunningGroundContactTime
@@ -55,6 +56,7 @@ object IosHealthKitShareTypes {
         HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureSystolic),
         HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodPressureDiastolic),
         HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierVO2Max),
+        HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRateVariabilitySDNN),
         HKCategoryType.categoryTypeForIdentifier(HKCategoryTypeIdentifierSleepAnalysis),
         HKObjectType.workoutType(),
         HKSeriesType.workoutRouteType(),

@@ -4,6 +4,7 @@ import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
 import com.bettermifitness.sync.data.api.HeartRateSample
+import com.bettermifitness.sync.data.api.HrvSample
 import com.bettermifitness.sync.data.api.SleepSession
 import com.bettermifitness.sync.data.api.SpO2Sample
 import com.bettermifitness.sync.data.api.StepsRecord
@@ -29,6 +30,7 @@ expect class HealthWriter : HealthStore {
     override suspend fun writeBloodPressure(samples: List<BloodPressureSample>)
     override suspend fun writeTemperature(samples: List<TemperatureSample>)
     override suspend fun writeVo2Max(samples: List<Vo2MaxSample>)
+    override suspend fun writeHrv(samples: List<HrvSample>)
     override suspend fun isAvailable(): Boolean
     override suspend fun hasWritePermissions(): Boolean
     override suspend fun requestPermissions()

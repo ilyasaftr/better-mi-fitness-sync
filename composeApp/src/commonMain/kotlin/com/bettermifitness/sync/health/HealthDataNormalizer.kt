@@ -4,6 +4,7 @@ import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
 import com.bettermifitness.sync.data.api.HeartRateSample
+import com.bettermifitness.sync.data.api.HrvSample
 import com.bettermifitness.sync.data.api.SleepSession
 import com.bettermifitness.sync.data.api.SleepStage
 import com.bettermifitness.sync.data.api.SpO2Sample
@@ -101,6 +102,12 @@ object HealthDataNormalizer {
                 inBedStart = inBedStart,
                 inBedEnd = inBedEnd,
                 stages = stages,
+                avgHrvMs = session.avgHrvMs?.takeIf { it in 5..300 },
+                minHrvMs = session.minHrvMs?.takeIf { it in 5..300 },
+                maxHrvMs = session.maxHrvMs?.takeIf { it in 5..300 },
+                hrvAnalysisTimeSec = session.hrvAnalysisTimeSec
+                    ?.let { toEpochSeconds(it) }
+                    ?.takeIf { isPlausibleEpochSeconds(it) },
             )
         }
             .sortedBy { it.startTime }
@@ -108,6 +115,18 @@ object HealthDataNormalizer {
             .values
             .sortedBy { it.startTime }
     }
+
+    fun normalizeHrv(samples: List<HrvSample>): List<HrvSample> =
+        samples.mapNotNull { s ->
+            val t = toEpochSeconds(s.timestamp)
+            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (s.hrvMs !in 5.0..300.0) return@mapNotNull null
+            HrvSample(timestamp = t, hrvMs = s.hrvMs)
+        }
+            .sortedBy { it.timestamp }
+            .associateBy { it.timestamp }
+            .values
+            .sortedBy { it.timestamp }
 
     /**
      * Mi Fitness sleep states → platform-neutral labels for tests.

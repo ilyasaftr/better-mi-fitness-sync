@@ -4,6 +4,7 @@ import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
 import com.bettermifitness.sync.data.api.HeartRateSample
+import com.bettermifitness.sync.data.api.HrvSample
 import com.bettermifitness.sync.data.api.SleepSession
 import com.bettermifitness.sync.data.api.SpO2Sample
 import com.bettermifitness.sync.data.api.StepsRecord
@@ -28,6 +29,8 @@ interface HealthSampleWriter {
     suspend fun writeBloodPressure(samples: List<BloodPressureSample>)
     suspend fun writeTemperature(samples: List<TemperatureSample>)
     suspend fun writeVo2Max(samples: List<Vo2MaxSample>)
+    /** Overnight HRV (ms). Empty list is a no-op — non-capable devices send no samples. */
+    suspend fun writeHrv(samples: List<HrvSample>)
 }
 
 /**

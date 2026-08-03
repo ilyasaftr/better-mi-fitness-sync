@@ -97,6 +97,7 @@ class SyncViewModel(
         "heart_rate" -> progress.heartRate
         "resting_heart_rate" -> progress.restingHeartRate
         "sleep" -> progress.sleep
+        "hrv" -> progress.hrv
         "steps" -> progress.steps
         "distance" -> progress.distance
         "active_calories" -> progress.activeCalories
