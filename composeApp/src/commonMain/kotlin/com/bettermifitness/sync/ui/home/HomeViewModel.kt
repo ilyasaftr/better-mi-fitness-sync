@@ -11,6 +11,7 @@ import com.bettermifitness.sync.health.HealthReadiness
 import com.bettermifitness.sync.sync.SyncOutcomeLabels
 import com.bettermifitness.sync.ui.SyncMetric
 import com.bettermifitness.sync.util.RelativeTime
+import com.mifitness.miclient.api.MiApiException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -157,6 +158,19 @@ class HomeViewModel(
             try {
                 _profile.value = session.api.getMe()
                 _profileError.value = null
+            } catch (e: MiApiException.AuthExpired) {
+                val refresh = session.refreshSessionDetailed()
+                if (refresh.isSuccess) {
+                    try {
+                        _profile.value = session.api.getMe()
+                        _profileError.value = null
+                        return@launch
+                    } catch (retry: Exception) {
+                        _profileError.value = retry.message ?: "Failed to load profile"
+                        return@launch
+                    }
+                }
+                _profileError.value = refresh.userMessage
             } catch (e: Exception) {
                 _profileError.value = e.message ?: "Failed to load profile"
             }

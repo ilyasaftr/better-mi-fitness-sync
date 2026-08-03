@@ -217,4 +217,24 @@ interface MiAuthHost {
     ): Pair<String, String>
 }
 
-class MiAuthException(message: String) : Exception(message)
+/**
+ * Passport / STS failures.
+ * [kind] lets the app decide re-login vs verification vs retry without parsing messages.
+ */
+class MiAuthException(
+    message: String,
+    val kind: Kind = Kind.Generic,
+    val notificationUrl: String? = null,
+    val businessCode: Int? = null,
+) : Exception(message) {
+    enum class Kind {
+        Generic,
+        /** passToken rejected / missing — full sign-in required. */
+        InvalidCredential,
+        /** Xiaomi securityStatus / notification challenge. */
+        NeedsVerification,
+        MissingDeviceId,
+        MissingPassToken,
+        StsFailed,
+    }
+}

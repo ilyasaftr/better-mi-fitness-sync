@@ -1,8 +1,10 @@
 package com.mifitness.miclient.auth
 
 /**
- * The complete set of credentials needed to make encrypted Mi Fitness API calls.
- * Obtained from [MiAuth.completeLogin] after the user logs in via the WebView.
+ * Credentials needed for encrypted Mi Fitness API calls and session refresh.
+ *
+ * [passToken] is long-lived (passport); [serviceToken] + [ssecurity] are short-lived per SID.
+ * [cUserId] is Xiaomi's encrypted user id used in health cookies (APK `encryptedUserId`).
  */
 data class MiCredentials(
     val userId: String,
@@ -11,4 +13,5 @@ data class MiCredentials(
     val passToken: String,
     val deviceId: String,
     val region: String,
+    val cUserId: String = "",
 )

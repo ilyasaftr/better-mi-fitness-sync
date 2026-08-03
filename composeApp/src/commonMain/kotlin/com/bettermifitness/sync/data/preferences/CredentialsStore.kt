@@ -40,6 +40,11 @@ class CredentialsStore(
             preferences[SSECURITY_KEY] = credentials.ssecurity
             preferences[PASS_TOKEN_KEY] = credentials.passToken
             preferences[DEVICE_ID_KEY] = credentials.deviceId
+            if (credentials.cUserId.isNotBlank()) {
+                preferences[C_USER_ID_KEY] = credentials.cUserId
+            } else {
+                preferences.remove(C_USER_ID_KEY)
+            }
 
             val loginFromSts = MiRegion.normalizeCode(credentials.region)
             preferences[LOGIN_REGION_KEY] = loginFromSts
@@ -58,8 +63,10 @@ class CredentialsStore(
         val serviceToken = prefs[TOKEN_KEY] ?: return null
         val userId = prefs[MI_USER_ID_KEY] ?: return null
         val ssecurity = prefs[SSECURITY_KEY] ?: return null
-        val passToken = prefs[PASS_TOKEN_KEY] ?: return null
-        val deviceId = prefs[DEVICE_ID_KEY] ?: return null
+        // passToken may be blank on legacy installs; still load for in-memory API until re-login.
+        val passToken = prefs[PASS_TOKEN_KEY] ?: ""
+        val deviceId = prefs[DEVICE_ID_KEY] ?: ""
+        val cUserId = prefs[C_USER_ID_KEY] ?: ""
         val effective = MiRegion.normalizeCode(
             prefs[REGION_KEY] ?: prefs[LOGIN_REGION_KEY],
         )
@@ -70,6 +77,7 @@ class CredentialsStore(
             passToken = passToken,
             deviceId = deviceId,
             region = effective,
+            cUserId = cUserId,
         )
     }
 
@@ -102,6 +110,7 @@ class CredentialsStore(
             preferences.remove(SSECURITY_KEY)
             preferences.remove(PASS_TOKEN_KEY)
             preferences.remove(DEVICE_ID_KEY)
+            preferences.remove(C_USER_ID_KEY)
         }
     }
 
@@ -116,5 +125,6 @@ class CredentialsStore(
         private val SSECURITY_KEY = stringPreferencesKey("ssecurity")
         private val PASS_TOKEN_KEY = stringPreferencesKey("pass_token")
         private val DEVICE_ID_KEY = stringPreferencesKey("device_id")
+        private val C_USER_ID_KEY = stringPreferencesKey("c_user_id")
     }
 }

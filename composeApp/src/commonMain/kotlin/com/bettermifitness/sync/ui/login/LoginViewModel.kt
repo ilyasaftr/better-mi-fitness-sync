@@ -208,6 +208,25 @@ class LoginViewModel(
     }
 
     private suspend fun persistAndSucceed(credentials: MiCredentials) {
+        if (credentials.passToken.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = "Login did not return a passToken, so the app cannot stay " +
+                        "signed in across days. Try again or use the other login method.",
+                )
+            }
+            return
+        }
+        if (credentials.deviceId.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = "Login missing device id — try again.",
+                )
+            }
+            return
+        }
         sessionManager.activate(credentials)
         credentialsStore.saveCredentials(credentials)
         // Pick the health cloud shard that actually holds the newest samples.
