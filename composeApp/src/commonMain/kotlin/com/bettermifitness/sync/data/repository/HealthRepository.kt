@@ -1,6 +1,7 @@
 package com.bettermifitness.sync.data.repository
 
 import com.bettermifitness.sync.data.MiSessionManager
+import com.bettermifitness.sync.data.SessionRefreshResult
 import com.bettermifitness.sync.data.api.HeartRateEntry
 import com.bettermifitness.sync.data.api.WorkoutSession
 import com.bettermifitness.sync.data.parse.MiFitnessParsers
@@ -49,6 +50,8 @@ class HealthRepository(
 
     private var authRefreshTried = false
     private var sawAuthFailure = false
+    private var lastRefreshUserMessage: String? = null
+    private var lastRefreshRetryable: Boolean = false
     private val retryableFailures = mutableListOf<Boolean>()
 
     override suspend fun syncAll(
@@ -58,6 +61,8 @@ class HealthRepository(
     ): SyncRunResult {
         authRefreshTried = false
         sawAuthFailure = false
+        lastRefreshUserMessage = null
+        lastRefreshRetryable = false
         retryableFailures.clear()
         _syncProgress.value = SyncProgress()
 
@@ -297,8 +302,22 @@ class HealthRepository(
             sawAuthFailure = true
             if (!authRefreshTried) {
                 authRefreshTried = true
-                if (session.refreshSession()) {
-                    return block()
+                when (val refresh = session.refreshSessionDetailed()) {
+                    SessionRefreshResult.Success -> {
+                        lastRefreshUserMessage = null
+                        lastRefreshRetryable = false
+                        return block()
+                    }
+                    is SessionRefreshResult.TransientFailure -> {
+                        lastRefreshUserMessage = refresh.userMessage
+                        lastRefreshRetryable = true
+                    }
+                    is SessionRefreshResult.NeedsReLogin,
+                    is SessionRefreshResult.NeedsVerification,
+                    -> {
+                        lastRefreshUserMessage = refresh.userMessage
+                        lastRefreshRetryable = false
+                    }
                 }
             }
             throw e
@@ -309,7 +328,7 @@ class HealthRepository(
         when (e) {
             is MiApiException.AuthExpired -> {
                 sawAuthFailure = true
-                retryableFailures += false
+                retryableFailures += lastRefreshRetryable
             }
             is MiApiException -> retryableFailures += e.isRetryable
             else -> retryableFailures += true
@@ -319,7 +338,9 @@ class HealthRepository(
     private fun friendlyMessage(e: Exception): String {
         return when (e) {
             is MiApiException.AuthExpired ->
-                e.message?.takeIf { it.isNotBlank() } ?: "Session expired — sign in again"
+                lastRefreshUserMessage
+                    ?: e.message?.takeIf { it.isNotBlank() }
+                    ?: "Session expired — sign in again"
             is MiApiException.Network ->
                 e.message?.takeIf { it.isNotBlank() } ?: "Network error"
             is MiApiException.RateLimited ->

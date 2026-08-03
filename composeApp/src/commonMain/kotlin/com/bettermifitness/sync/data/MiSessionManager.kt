@@ -7,10 +7,12 @@ import com.mifitness.miclient.api.MiDataClient
 import com.mifitness.miclient.auth.MiAuth
 import com.mifitness.miclient.auth.MiAuthException
 import com.mifitness.miclient.auth.MiCredentials
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Holds the current Mi session (authenticated API client).
- * Can re-mint serviceToken via [refreshSession] using the stored passToken.
+ * Can re-mint serviceToken via [refreshSession] using the stored passToken (APK force-refresh).
  */
 class MiSessionManager(
     private val credentialsStore: CredentialsPort,
@@ -18,6 +20,7 @@ class MiSessionManager(
 ) : SyncSessionPort {
     private var dataClient: MiDataClient? = null
     private var directApi: MiDirectApi? = null
+    private val refreshMutex = Mutex()
 
     /** The active API client. Throws if not logged in. */
     val api: MiDirectApi
@@ -46,6 +49,9 @@ class MiSessionManager(
     override suspend fun ensureActive(): Boolean {
         if (isActive) return true
         val creds = credentialsStore.loadCredentials() ?: return false
+        if (creds.serviceToken.isBlank() || creds.userId.isBlank() || creds.ssecurity.isBlank()) {
+            return false
+        }
         activate(creds)
         return true
     }
@@ -62,23 +68,52 @@ class MiSessionManager(
 
     /**
      * Uses passToken to obtain a new serviceToken, persists it, and re-activates the client.
-     * Region mode is applied in [CredentialsStore.saveCredentials] so manual override is kept.
-     * @return true if refresh succeeded
+     * Serialized so concurrent metric failures do not stampede passport (APK update lock).
      */
-    suspend fun refreshSession(): Boolean {
-        val current = credentialsStore.loadCredentials() ?: return false
-        if (current.passToken.isBlank()) return false
-        return try {
+    suspend fun refreshSessionDetailed(): SessionRefreshResult = refreshMutex.withLock {
+        val current = credentialsStore.loadCredentials()
+            ?: return@withLock SessionRefreshResult.NeedsReLogin("No saved credentials")
+        if (current.passToken.isBlank()) {
+            return@withLock SessionRefreshResult.NeedsReLogin(
+                "No passToken saved — sign in again to stay connected across days",
+            )
+        }
+        if (current.deviceId.isBlank()) {
+            return@withLock SessionRefreshResult.NeedsReLogin(
+                "No deviceId saved — sign in again",
+            )
+        }
+
+        return@withLock try {
             val refreshed = miAuth.refreshWithPassToken(current)
             credentialsStore.saveCredentials(refreshed)
-            // loadCredentials re-applies auto/manual effective region
             val effective = credentialsStore.loadCredentials() ?: refreshed
             activate(effective)
-            true
-        } catch (_: MiAuthException) {
-            false
-        } catch (_: Exception) {
-            false
+            SessionRefreshResult.Success
+        } catch (e: MiAuthException) {
+            when (e.kind) {
+                MiAuthException.Kind.MissingPassToken,
+                MiAuthException.Kind.MissingDeviceId,
+                MiAuthException.Kind.InvalidCredential,
+                -> SessionRefreshResult.NeedsReLogin(e.message ?: "Sign in again")
+                MiAuthException.Kind.NeedsVerification ->
+                    SessionRefreshResult.NeedsVerification(
+                        reason = e.message ?: "Xiaomi requires re-verification",
+                        notificationUrl = e.notificationUrl,
+                    )
+                MiAuthException.Kind.StsFailed,
+                MiAuthException.Kind.Generic,
+                -> SessionRefreshResult.TransientFailure(e.message ?: "Session refresh failed")
+            }
+        } catch (e: Exception) {
+            SessionRefreshResult.TransientFailure(
+                e.message?.takeIf { it.isNotBlank() } ?: (e::class.simpleName ?: "Refresh error"),
+            )
         }
     }
+
+    /**
+     * @return true if refresh succeeded
+     */
+    suspend fun refreshSession(): Boolean = refreshSessionDetailed().isSuccess
 }

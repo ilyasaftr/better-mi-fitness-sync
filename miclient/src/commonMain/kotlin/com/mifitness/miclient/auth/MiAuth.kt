@@ -16,11 +16,13 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 
 /**
  * Mi Account authentication façade (password, OTP handoff, STS browser callback).
  *
- * Internals are split across [PassportAuthUtils], [PassportHttpSession], and [LoginResult.OtpRequired].
+ * Session refresh follows the official passport path:
+ * passToken cookies → `/pass/serviceLogin` → signed STS (`clientSign`) → new serviceToken.
  */
 class MiAuth(
     private val userAgent: String = PassportAuthUtils.DEFAULT_USER_AGENT,
@@ -71,7 +73,10 @@ class MiAuth(
         val params = parseQueryString(parsedUrl.encodedQuery)
         val deviceId = params["d"]
             ?: params["deviceId"]
-            ?: throw MiAuthException("Missing device id (d=…) in redirect URL — copy the full address bar URL")
+            ?: throw MiAuthException(
+                "Missing device id (d=…) in redirect URL — copy the full address bar URL",
+                kind = MiAuthException.Kind.MissingDeviceId,
+            )
         val regionFromUrl = params["p_ur"] ?: ""
 
         val cookieStorage = AcceptAllCookiesStorage()
@@ -79,7 +84,6 @@ class MiAuth(
         PassportHttpSession.seedDeviceIdCookie(cookieStorage, deviceId)
 
         try {
-            // One-shot GET is not enough — STS often 302s while setting serviceToken.
             val (serviceToken, regionFromRedirects) = followRedirectsCollectingServiceToken(
                 client,
                 cleaned,
@@ -89,6 +93,7 @@ class MiAuth(
                     "Could not get a session from that redirect URL. " +
                         "Open the login page again, finish sign-in, then paste the new full URL " +
                         "(it should start with https://sts-hlth.io.mi.com/).",
+                    kind = MiAuthException.Kind.StsFailed,
                 )
             }
 
@@ -101,15 +106,24 @@ class MiAuth(
 
             val userId = cookie("userId")
             val passToken = cookie("passToken")
-            val ssecurity = if (userId.isNotEmpty() && passToken.isNotEmpty()) {
+            val cUserId = cookie("cUserId")
+            if (passToken.isBlank()) {
+                throw MiAuthException(
+                    "Browser login did not yield a passToken, so the session cannot be refreshed later. " +
+                        "Try password login or paste the URL immediately after Xiaomi shows “ok”.",
+                    kind = MiAuthException.Kind.MissingPassToken,
+                )
+            }
+            val ssecurity = if (userId.isNotEmpty()) {
                 harvestSsecurity(client, userId, passToken, deviceId, sid)
             } else {
                 ""
             }
-            if (ssecurity.isEmpty()) {
+            if (ssecurity.isEmpty() || userId.isEmpty()) {
                 throw MiAuthException(
                     "Got a service token but not full session details. " +
                         "Try browser login again and paste the URL as soon as the page says “ok”.",
+                    kind = MiAuthException.Kind.StsFailed,
                 )
             }
 
@@ -122,6 +136,7 @@ class MiAuth(
                 region = PassportAuthUtils.resolveRegion(
                     regionFromUrl.ifBlank { regionFromRedirects },
                 ),
+                cUserId = cUserId,
             )
         } finally {
             client.close()
@@ -137,7 +152,7 @@ class MiAuth(
 
     /**
      * Re-mint serviceToken (and ssecurity when needed) using a stored [passToken].
-     * Used when Mi health APIs reject an expired session without forcing a full password login.
+     * Mirrors APK force-refresh via [XMPassport.loginByPassToken] + signed STS.
      */
     suspend fun refreshWithPassToken(
         credentials: MiCredentials,
@@ -145,13 +160,25 @@ class MiAuth(
         callback: String = PassportAuthUtils.DEFAULT_STS_CALLBACK,
     ): MiCredentials {
         if (credentials.passToken.isBlank()) {
-            throw MiAuthException("No passToken saved — sign in again")
+            throw MiAuthException(
+                "No passToken saved — sign in again",
+                kind = MiAuthException.Kind.MissingPassToken,
+            )
         }
         if (credentials.userId.isBlank()) {
-            throw MiAuthException("No userId saved — sign in again")
+            throw MiAuthException(
+                "No userId saved — sign in again",
+                kind = MiAuthException.Kind.InvalidCredential,
+            )
+        }
+        if (credentials.deviceId.isBlank()) {
+            throw MiAuthException(
+                "No deviceId saved — sign in again (device identity is required for refresh)",
+                kind = MiAuthException.Kind.MissingDeviceId,
+            )
         }
 
-        val deviceId = credentials.deviceId.ifBlank { PassportAuthUtils.generateDeviceId() }
+        val deviceId = credentials.deviceId
         val cookieStorage = AcceptAllCookiesStorage()
         val client = PassportHttpSession.buildClient(cookieStorage)
         PassportHttpSession.seedDeviceIdCookie(cookieStorage, deviceId)
@@ -165,22 +192,22 @@ class MiAuth(
         )
 
         return try {
-            val refreshed = tryLoginWithPassTokenCookies(
+            val refreshed = loginWithPassTokenCookies(
                 client = client,
                 cookieStorage = cookieStorage,
                 deviceId = deviceId,
                 sid = sid,
                 callback = callback,
-            ) ?: throw MiAuthException("Session refresh failed — sign in again")
+                previousPassToken = credentials.passToken,
+                previousCUserId = credentials.cUserId,
+            )
 
-            // STS may omit region; keep the previously stored health region when blank.
             val region = refreshed.region.takeIf { it.isNotBlank() }
                 ?: credentials.region.takeIf { it.isNotBlank() }
                 ?: "sg"
             refreshed.copy(
                 deviceId = deviceId,
                 region = region,
-                passToken = refreshed.passToken.ifBlank { credentials.passToken },
             )
         } finally {
             client.close()
@@ -205,7 +232,11 @@ class MiAuth(
             val desc = authResponse["desc"]?.jsonPrimitive?.content
                 ?: authResponse["description"]?.jsonPrimitive?.content
                 ?: "Login failed"
-            throw MiAuthException(PassportAuthUtils.friendlyLoginError(code, desc))
+            throw MiAuthException(
+                PassportAuthUtils.friendlyLoginError(code, desc),
+                kind = MiAuthException.Kind.InvalidCredential,
+                businessCode = code,
+            )
         }
 
         val securityStatus = authResponse["securityStatus"]?.jsonPrimitive?.int ?: 0
@@ -262,32 +293,51 @@ class MiAuth(
             }
         }
 
-        val passTokenCreds = tryLoginWithPassTokenCookies(
-            client, cookieStorage, deviceId, sid, callback,
-        )
-        if (passTokenCreds != null) {
+        return try {
+            val passTokenCreds = loginWithPassTokenCookies(
+                client = client,
+                cookieStorage = cookieStorage,
+                deviceId = deviceId,
+                sid = sid,
+                callback = callback,
+                previousPassToken = null,
+                previousCUserId = "",
+            )
             client.close()
-            return passTokenCreds
+            passTokenCreds
+        } catch (e: MiAuthException) {
+            client.close()
+            throw MiAuthException(
+                "OTP_ACCEPTED_NEEDS_BROWSER: Email code was accepted, but Xiaomi still " +
+                    "won't finish app login for this session. Use browser login once to trust this device. " +
+                    "(${e.message})",
+                kind = MiAuthException.Kind.NeedsVerification,
+            )
         }
-
-        client.close()
-        throw MiAuthException(
-            "OTP_ACCEPTED_NEEDS_BROWSER: Email code was accepted, but Xiaomi still " +
-                "won't finish app login for this session. Use browser login once to trust this device.",
-        )
     }
 
-    private suspend fun tryLoginWithPassTokenCookies(
+    /**
+     * passToken cookie login + STS — APK [XMPassport.loginByPassToken] shape.
+     * Throws [MiAuthException] with typed [MiAuthException.kind] instead of silent null.
+     */
+    private suspend fun loginWithPassTokenCookies(
         client: HttpClient,
         cookieStorage: AcceptAllCookiesStorage,
         deviceId: String,
         sid: String,
         callback: String,
-    ): MiCredentials? {
+        previousPassToken: String?,
+        previousCUserId: String,
+    ): MiCredentials {
         val accountCookies = cookieStorage.get(Url("https://account.xiaomi.com/"))
         val userId = accountCookies.firstOrNull { it.name == "userId" }?.value?.takeIf { it.isNotBlank() }
         val passToken = accountCookies.firstOrNull { it.name == "passToken" }?.value?.takeIf { it.isNotBlank() }
-        if (userId.isNullOrEmpty() || passToken.isNullOrEmpty()) return null
+        if (userId.isNullOrEmpty() || passToken.isNullOrEmpty()) {
+            throw MiAuthException(
+                "Missing userId/passToken cookies for session refresh",
+                kind = MiAuthException.Kind.MissingPassToken,
+            )
+        }
 
         PassportHttpSession.seedDeviceIdCookie(cookieStorage, deviceId)
         cookieStorage.addCookie(
@@ -308,25 +358,73 @@ class MiAuth(
         val obj = try {
             json.parseToJsonElement(body).jsonObject
         } catch (_: Exception) {
-            return null
+            throw MiAuthException(
+                "Session refresh returned non-JSON from serviceLogin",
+                kind = MiAuthException.Kind.StsFailed,
+            )
         }
         val code = obj["code"]?.jsonPrimitive?.int ?: -1
-        if (code != 0) return null
+        if (code != 0) {
+            val desc = obj["desc"]?.jsonPrimitive?.content
+                ?: obj["description"]?.jsonPrimitive?.content
+                ?: "passToken login failed"
+            throw MiAuthException(
+                PassportAuthUtils.friendlyLoginError(code, desc),
+                kind = MiAuthException.Kind.InvalidCredential,
+                businessCode = code,
+            )
+        }
         val securityStatus = obj["securityStatus"]?.jsonPrimitive?.int ?: 0
-        if (securityStatus != 0) return null
+        if (securityStatus != 0) {
+            val notification = obj["notificationUrl"]?.jsonPrimitive?.content
+            throw MiAuthException(
+                "Xiaomi requires re-verification to renew the session (securityStatus=$securityStatus)",
+                kind = MiAuthException.Kind.NeedsVerification,
+                notificationUrl = notification?.let { PassportAuthUtils.absUrl(it) },
+                businessCode = securityStatus,
+            )
+        }
 
         val ssecurity = obj["ssecurity"]?.jsonPrimitive?.content
             ?: harvestSsecurity(client, userId, passToken, deviceId, sid)
+        if (ssecurity.isEmpty()) {
+            throw MiAuthException(
+                "Session refresh missing ssecurity",
+                kind = MiAuthException.Kind.StsFailed,
+            )
+        }
+
         val location = obj["location"]?.jsonPrimitive?.content
-        val passFromBody = obj["passToken"]?.jsonPrimitive?.content ?: passToken
+        val nonce = obj["nonce"]?.let { el ->
+            try {
+                el.jsonPrimitive.long.toString()
+            } catch (_: Exception) {
+                el.jsonPrimitive.content
+            }
+        }.orEmpty()
+
+        val rePassHeader = response.headers["re-pass-token"]
+            ?: response.headers["Re-Pass-Token"]
+        val passFromBody = obj["passToken"]?.jsonPrimitive?.content
+        val effectivePass = PassportSts.preferRotatedPassToken(
+            oldPassToken = previousPassToken ?: passToken,
+            newPassToken = passFromBody ?: passToken,
+            rePassTokenHeader = rePassHeader,
+        )
         val uid = PassportAuthUtils.jsonUserId(obj).ifEmpty { userId }
+        val cUserId = obj["cUserId"]?.jsonPrimitive?.content
+            ?: obj["encryptedUserId"]?.jsonPrimitive?.content
+            ?: previousCUserId
 
         val serviceToken: String
         val region: String
         if (!location.isNullOrEmpty()) {
-            val pair = followRedirectsCollectingServiceToken(
-                client,
-                PassportAuthUtils.absUrl(location),
+            val pair = exchangeStsLocation(
+                client = client,
+                location = PassportAuthUtils.absUrl(location),
+                ssecurity = ssecurity,
+                nonce = nonce,
+                sid = sid,
             )
             serviceToken = pair.first
             region = pair.second
@@ -338,15 +436,21 @@ class MiAuth(
                 ?: ""
             region = ""
         }
-        if (serviceToken.isEmpty() || ssecurity.isEmpty()) return null
+        if (serviceToken.isEmpty()) {
+            throw MiAuthException(
+                "Session refresh did not yield a serviceToken",
+                kind = MiAuthException.Kind.StsFailed,
+            )
+        }
 
         return MiCredentials(
             userId = uid,
             ssecurity = ssecurity,
             serviceToken = serviceToken,
-            passToken = passFromBody,
+            passToken = effectivePass,
             deviceId = deviceId,
             region = PassportAuthUtils.resolveRegion(region),
+            cUserId = cUserId,
         )
     }
 
@@ -392,17 +496,42 @@ class MiAuth(
         deviceId: String,
     ): MiCredentials {
         val location = authResponse["location"]?.jsonPrimitive?.content
-            ?: throw MiAuthException("Login succeeded but no location URL (can't get serviceToken)")
+            ?: throw MiAuthException(
+                "Login succeeded but no location URL (can't get serviceToken)",
+                kind = MiAuthException.Kind.StsFailed,
+            )
         val userId = PassportAuthUtils.jsonUserId(authResponse)
         val ssecurity = authResponse["ssecurity"]?.jsonPrimitive?.content ?: ""
         val passToken = authResponse["passToken"]?.jsonPrimitive?.content ?: ""
+        if (passToken.isBlank()) {
+            throw MiAuthException(
+                "Login succeeded but no passToken — session cannot be refreshed later",
+                kind = MiAuthException.Kind.MissingPassToken,
+            )
+        }
+        val cUserId = authResponse["cUserId"]?.jsonPrimitive?.content
+            ?: authResponse["encryptedUserId"]?.jsonPrimitive?.content
+            ?: ""
+        val nonce = authResponse["nonce"]?.let { el ->
+            try {
+                el.jsonPrimitive.long.toString()
+            } catch (_: Exception) {
+                el.jsonPrimitive.content
+            }
+        }.orEmpty()
 
-        val (serviceToken, region) = followRedirectsCollectingServiceToken(
-            client,
-            PassportAuthUtils.absUrl(location),
+        val (serviceToken, region) = exchangeStsLocation(
+            client = client,
+            location = PassportAuthUtils.absUrl(location),
+            ssecurity = ssecurity,
+            nonce = nonce,
+            sid = PassportAuthUtils.DEFAULT_SID,
         )
         if (serviceToken.isEmpty()) {
-            throw MiAuthException("STS did not set serviceToken — location follow failed")
+            throw MiAuthException(
+                "STS did not set serviceToken — location follow failed",
+                kind = MiAuthException.Kind.StsFailed,
+            )
         }
 
         return MiCredentials(
@@ -412,12 +541,37 @@ class MiAuth(
             passToken = passToken,
             deviceId = deviceId,
             region = PassportAuthUtils.resolveRegion(region),
+            cUserId = cUserId,
         )
+    }
+
+    /**
+     * Prefer APK signed STS (`clientSign` + `_userIdNeedEncrypt`); fall back to bare redirect follow.
+     */
+    private suspend fun exchangeStsLocation(
+        client: HttpClient,
+        location: String,
+        ssecurity: String,
+        nonce: String,
+        sid: String,
+    ): Pair<String, String> {
+        if (ssecurity.isNotEmpty() && nonce.isNotEmpty()) {
+            val signed = PassportSts.signedLocationUrl(location, nonce, ssecurity)
+            val signedResult = followRedirectsCollectingServiceToken(client, signed, sid)
+            if (signedResult.first.isNotEmpty()) return signedResult
+        }
+        return followRedirectsCollectingServiceToken(client, location, sid)
     }
 
     override suspend fun followRedirectsCollectingServiceToken(
         client: HttpClient,
         startUrl: String,
+    ): Pair<String, String> = followRedirectsCollectingServiceToken(client, startUrl, PassportAuthUtils.DEFAULT_SID)
+
+    private suspend fun followRedirectsCollectingServiceToken(
+        client: HttpClient,
+        startUrl: String,
+        sid: String,
     ): Pair<String, String> {
         var serviceToken = ""
         var region = ""
@@ -429,10 +583,15 @@ class MiAuth(
             val cookieHeaders = (response.headers.getAll("Set-Cookie") ?: emptyList()) +
                 (response.headers.getAll("set-cookie") ?: emptyList())
             cookieHeaders.forEach { cookie ->
-                if (cookie.contains("serviceToken=")) {
-                    serviceToken = cookie.substringAfter("serviceToken=").substringBefore(";")
+                PassportSts.extractServiceTokenFromCookieHeader(cookie, sid)?.let {
+                    serviceToken = it
                 }
             }
+            // Some STS responses put tokens in plain headers (APK SimpleRequest headers map).
+            val headerToken = response.headers["serviceToken"]
+                ?: response.headers["${sid}_serviceToken"]
+            if (!headerToken.isNullOrBlank()) serviceToken = headerToken
+
             if (currentUrl.contains("p_ur=")) {
                 region = try {
                     parseQueryString(Url(currentUrl).encodedQuery)["p_ur"] ?: region
