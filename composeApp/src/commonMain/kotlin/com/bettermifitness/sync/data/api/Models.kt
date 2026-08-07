@@ -1,5 +1,6 @@
 package com.bettermifitness.sync.data.api
 
+import com.bettermifitness.sync.data.time.resolveOffsetSecondsFromMiUnits
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -53,6 +54,8 @@ data class HeartRateEntry(
 data class HeartRateSample(
     val timestamp: Long,
     val bpm: Int,
+    /** Mi `timezone` field: offset in units of 15 minutes (28 → UTC+7). */
+    val tzIn15Min: Int? = null,
 )
 
 // --- Sleep ---
@@ -80,6 +83,8 @@ data class SleepSession(
     val maxHrvMs: Int? = null,
     /** Epoch seconds when Mi analyzed HRV; falls back to wake time when writing. */
     val hrvAnalysisTimeSec: Long? = null,
+    /** Mi `timezone` field: offset in units of 15 minutes (28 → UTC+7). */
+    val tzIn15Min: Int? = null,
 )
 
 @Serializable
@@ -108,6 +113,8 @@ data class StepsRecord(
     val steps: Int,
     val distance: Double = 0.0,
     val calories: Double = 0.0,
+    /** Mi `timezone` from first sample in the hour bucket, if present. */
+    val tzIn15Min: Int? = null,
 )
 
 // --- SpO2 ---
@@ -116,6 +123,8 @@ data class StepsRecord(
 data class SpO2Sample(
     val timestamp: Long,
     val percentage: Int,
+    /** Mi `timezone` field: offset in units of 15 minutes. */
+    val tzIn15Min: Int? = null,
 )
 
 // --- Distance (meters), interval start = epoch seconds ---
@@ -125,6 +134,8 @@ data class DistanceSample(
     val startTime: Long,
     val endTime: Long,
     val meters: Double,
+    /** Mi `timezone` from first sample in the hour bucket, if present. */
+    val tzIn15Min: Int? = null,
 )
 
 // --- Active energy (kcal) ---
@@ -134,6 +145,8 @@ data class ActiveCaloriesSample(
     val startTime: Long,
     val endTime: Long,
     val kilocalories: Double,
+    /** Mi `timezone` from first sample in the hour bucket, if present. */
+    val tzIn15Min: Int? = null,
 )
 
 // --- Weight / body composition ---
@@ -146,6 +159,8 @@ data class WeightMeasurement(
     val muscleMassKg: Double? = null,
     val boneMassKg: Double? = null,
     val basalMetabolismKcal: Double? = null,
+    /** Mi `timezone` field: offset in units of 15 minutes. */
+    val tzIn15Min: Int? = null,
 )
 
 // --- Workouts ---
@@ -242,8 +257,12 @@ data class WorkoutSession(
     val gpsTzIn15Min: Int? = null,
     val gpsProtoType: Int? = null,
 ) {
-    /** Zone offset seconds from [tzIn15Min] (null → treat as UTC). */
-    fun zoneOffsetSeconds(): Int = (tzIn15Min ?: gpsTzIn15Min ?: 0) * 15 * 60
+    /**
+     * Zone offset seconds from Mi timezone fields.
+     * Prefer [tzIn15Min], then [gpsTzIn15Min]; missing → 0 (callers may apply device fallback).
+     */
+    fun zoneOffsetSeconds(): Int =
+        resolveOffsetSecondsFromMiUnits(tzIn15Min ?: gpsTzIn15Min, fallbackSeconds = 0)
 }
 
 @Serializable
@@ -263,6 +282,8 @@ data class BloodPressureSample(
     val systolicMmhg: Int,
     val diastolicMmhg: Int,
     val pulseBpm: Int? = null,
+    /** Mi `timezone` field: offset in units of 15 minutes. */
+    val tzIn15Min: Int? = null,
 )
 
 /** Mi TemperatureItem: body_temperature / skin_temperature (°C). */
@@ -271,6 +292,8 @@ data class TemperatureSample(
     val timestamp: Long,
     val bodyCelsius: Double? = null,
     val skinCelsius: Double? = null,
+    /** Mi `timezone` field: offset in units of 15 minutes. */
+    val tzIn15Min: Int? = null,
 )
 
 /** Mi Vo2MaxItem: vo2_max (mL/kg/min as integer in APK). */
@@ -278,4 +301,6 @@ data class TemperatureSample(
 data class Vo2MaxSample(
     val timestamp: Long,
     val mlPerKgMin: Double,
+    /** Mi `timezone` field: offset in units of 15 minutes. */
+    val tzIn15Min: Int? = null,
 )

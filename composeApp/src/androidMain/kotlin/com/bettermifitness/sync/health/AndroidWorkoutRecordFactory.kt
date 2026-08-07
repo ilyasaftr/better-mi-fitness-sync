@@ -299,12 +299,10 @@ class AndroidWorkoutRecordFactory {
         }
     }
 
-    private fun zoneOffsetOf(session: WorkoutSession): ZoneOffset {
-        val sec = session.zoneOffsetSeconds()
-        return try {
-            ZoneOffset.ofTotalSeconds(sec.coerceIn(-18 * 3600, 18 * 3600))
-        } catch (_: Exception) {
-            ZoneOffset.UTC
-        }
-    }
+    private fun zoneOffsetOf(session: WorkoutSession): ZoneOffset =
+        ZoneOffsetResolver.fromMiOrSystem(
+            tzIn15Min = session.tzIn15Min,
+            gpsTzIn15Min = session.gpsTzIn15Min,
+            at = Instant.ofEpochSecond(session.startTime),
+        )
 }
