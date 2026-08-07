@@ -61,6 +61,7 @@ object MiFitnessParsers {
                 HeartRateSample(
                     timestamp = obj["time"]?.jsonPrimitive?.long ?: entry.time,
                     bpm = obj["bpm"]?.jsonPrimitive?.int ?: return@mapNotNull null,
+                    tzIn15Min = obj.miTimezoneOrNull(),
                 )
             } catch (_: Exception) {
                 null
@@ -77,6 +78,7 @@ object MiFitnessParsers {
                 HeartRateSample(
                     timestamp = obj["date_time"]?.jsonPrimitive?.long ?: entry.time,
                     bpm = obj["bpm"]?.jsonPrimitive?.int ?: return@mapNotNull null,
+                    tzIn15Min = obj.miTimezoneOrNull(),
                 )
             } catch (_: Exception) {
                 null
@@ -90,6 +92,7 @@ object MiFitnessParsers {
                 SpO2Sample(
                     timestamp = obj["time"]?.jsonPrimitive?.long ?: entry.time,
                     percentage = obj["spo2"]?.jsonPrimitive?.int ?: return@mapNotNull null,
+                    tzIn15Min = obj.miTimezoneOrNull(),
                 )
             } catch (_: Exception) {
                 null
@@ -101,6 +104,7 @@ object MiFitnessParsers {
      */
     fun parseHourlySteps(entries: List<RawFitnessEntry>): List<StepsRecord> {
         val byHour = HashMap<Long, Int>()
+        val tzByHour = HashMap<Long, Int>()
         for (entry in entries) {
             try {
                 val o = json.parseToJsonElement(entry.value).jsonObject
@@ -108,13 +112,22 @@ object MiFitnessParsers {
                 val steps = o["steps"]?.jsonPrimitive?.int ?: continue
                 val hourStart = (t / 3600L) * 3600L
                 byHour[hourStart] = (byHour[hourStart] ?: 0) + steps
+                if (hourStart !in tzByHour) {
+                    o.miTimezoneOrNull()?.let { tzByHour[hourStart] = it }
+                }
             } catch (_: Exception) {
                 /* skip bad entry */
             }
         }
         return byHour.entries
             .filter { it.value > 0 }
-            .map { StepsRecord(date = it.key.toString(), steps = it.value) }
+            .map { (hour, steps) ->
+                StepsRecord(
+                    date = hour.toString(),
+                    steps = steps,
+                    tzIn15Min = tzByHour[hour],
+                )
+            }
     }
 
     /**
@@ -123,6 +136,7 @@ object MiFitnessParsers {
      */
     fun parseHourlyDistanceFromSteps(entries: List<RawFitnessEntry>): List<DistanceSample> {
         val byHour = HashMap<Long, Double>()
+        val tzByHour = HashMap<Long, Int>()
         for (entry in entries) {
             try {
                 val o = json.parseToJsonElement(entry.value).jsonObject
@@ -131,19 +145,28 @@ object MiFitnessParsers {
                 if (meters <= 0) continue
                 val hourStart = (t / 3600L) * 3600L
                 byHour[hourStart] = (byHour[hourStart] ?: 0.0) + meters
+                if (hourStart !in tzByHour) {
+                    o.miTimezoneOrNull()?.let { tzByHour[hourStart] = it }
+                }
             } catch (_: Exception) {
             }
         }
         return byHour.entries
             .filter { it.value > 0 }
             .map { (hour, meters) ->
-                DistanceSample(startTime = hour, endTime = hour + 3599, meters = meters)
+                DistanceSample(
+                    startTime = hour,
+                    endTime = hour + 3599,
+                    meters = meters,
+                    tzIn15Min = tzByHour[hour],
+                )
             }
     }
 
     /** Active energy from the dedicated `calories` key (kcal). */
     fun parseHourlyActiveCalories(entries: List<RawFitnessEntry>): List<ActiveCaloriesSample> {
         val byHour = HashMap<Long, Double>()
+        val tzByHour = HashMap<Long, Int>()
         for (entry in entries) {
             try {
                 val o = json.parseToJsonElement(entry.value).jsonObject
@@ -152,13 +175,21 @@ object MiFitnessParsers {
                 if (kcal <= 0) continue
                 val hourStart = (t / 3600L) * 3600L
                 byHour[hourStart] = (byHour[hourStart] ?: 0.0) + kcal
+                if (hourStart !in tzByHour) {
+                    o.miTimezoneOrNull()?.let { tzByHour[hourStart] = it }
+                }
             } catch (_: Exception) {
             }
         }
         return byHour.entries
             .filter { it.value > 0 }
             .map { (hour, kcal) ->
-                ActiveCaloriesSample(startTime = hour, endTime = hour + 3599, kilocalories = kcal)
+                ActiveCaloriesSample(
+                    startTime = hour,
+                    endTime = hour + 3599,
+                    kilocalories = kcal,
+                    tzIn15Min = tzByHour[hour],
+                )
             }
     }
 
@@ -175,6 +206,7 @@ object MiFitnessParsers {
                     muscleMassKg = o.doubleField("muscle_rate")?.takeIf { it in 1.0..200.0 },
                     boneMassKg = o.doubleField("bone_mass"),
                     basalMetabolismKcal = o.doubleField("basal_metabolism"),
+                    tzIn15Min = o.miTimezoneOrNull(),
                 )
             } catch (_: Exception) {
                 null
@@ -202,6 +234,7 @@ object MiFitnessParsers {
                     systolicMmhg = systolic,
                     diastolicMmhg = diastolic,
                     pulseBpm = o["pulse"]?.jsonPrimitive?.intOrNull,
+                    tzIn15Min = o.miTimezoneOrNull(),
                 )
             } catch (_: Exception) {
                 null
@@ -225,6 +258,7 @@ object MiFitnessParsers {
                         ?: return@mapNotNull null,
                     bodyCelsius = body,
                     skinCelsius = skin,
+                    tzIn15Min = o.miTimezoneOrNull(),
                 )
             } catch (_: Exception) {
                 null
@@ -247,6 +281,7 @@ object MiFitnessParsers {
                         ?: entry.time.takeIf { it > 0 }
                         ?: return@mapNotNull null,
                     mlPerKgMin = vo2,
+                    tzIn15Min = o.miTimezoneOrNull(),
                 )
             } catch (_: Exception) {
                 null
@@ -284,7 +319,7 @@ object MiFitnessParsers {
             val protoType = payload["proto_type"]?.jsonPrimitive?.intOrNull
                 ?: payload["sport_type"]?.jsonPrimitive?.intOrNull
             val did = payload["did"]?.jsonPrimitive?.content?.takeIf { it.isNotBlank() }
-            val tz = payload["timezone"]?.jsonPrimitive?.intOrNull
+            val tz = payload.miTimezoneOrNull()
             val gpsTime = payload["time"]?.jsonPrimitive?.longOrNull ?: startTs
             // FDS files exist when report version > 0 (Mi FitnessFDSDataGetter).
             val canFetchFds = version > 0 && !did.isNullOrBlank() && protoType != null && tz != null
@@ -377,6 +412,10 @@ object MiFitnessParsers {
         }
     }
 
+    /** Mi `timezone` field: offset in units of 15 minutes (28 → UTC+7). */
+    private fun JsonObject.miTimezoneOrNull(): Int? =
+        this["timezone"]?.jsonPrimitive?.intOrNull
+
     /** Rough elevation gain from min/max when Mi does not send ascent explicitly. */
     private fun elevationGain(minH: Double?, maxH: Double?, avgH: Double?): Double? {
         if (minH != null && maxH != null && maxH > minH && maxH != 0.0) {
@@ -451,6 +490,7 @@ object MiFitnessParsers {
                 minHrvMs = minHrv,
                 maxHrvMs = maxHrv,
                 hrvAnalysisTimeSec = hrvAnalysis,
+                tzIn15Min = obj.miTimezoneOrNull(),
             )
         } catch (_: Exception) {
             null
@@ -472,7 +512,7 @@ object MiFitnessParsers {
                 ?.takeIf { it > 0 }
                 ?: session.endTime.takeIf { it > 0 }
                 ?: return@mapNotNull null
-            HrvSample(timestamp = t, hrvMs = ms.toDouble())
+            HrvSample(timestamp = t, hrvMs = ms.toDouble(), tzIn15Min = session.tzIn15Min)
         }
 
     /**

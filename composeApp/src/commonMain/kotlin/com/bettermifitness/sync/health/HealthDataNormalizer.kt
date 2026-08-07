@@ -41,7 +41,7 @@ object HealthDataNormalizer {
             val t = toEpochSeconds(s.timestamp)
             if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
             if (s.bpm !in 20..250) return@mapNotNull null
-            HeartRateSample(timestamp = t, bpm = s.bpm)
+            HeartRateSample(timestamp = t, bpm = s.bpm, tzIn15Min = s.tzIn15Min)
         }
             .sortedBy { it.timestamp }
             // Last sample at a given second wins.
@@ -55,7 +55,7 @@ object HealthDataNormalizer {
             val t = toEpochSeconds(s.timestamp)
             if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
             if (s.percentage !in 50..100) return@mapNotNull null
-            SpO2Sample(timestamp = t, percentage = s.percentage)
+            SpO2Sample(timestamp = t, percentage = s.percentage, tzIn15Min = s.tzIn15Min)
         }
             .sortedBy { it.timestamp }
             .associateBy { it.timestamp }
@@ -68,7 +68,13 @@ object HealthDataNormalizer {
             val ts = r.date.toLongOrNull()?.let { toEpochSeconds(it) } ?: return@mapNotNull null
             if (!isPlausibleEpochSeconds(ts)) return@mapNotNull null
             if (r.steps <= 0 || r.steps > 200_000) return@mapNotNull null
-            StepsRecord(date = ts.toString(), steps = r.steps, distance = r.distance, calories = r.calories)
+            StepsRecord(
+                date = ts.toString(),
+                steps = r.steps,
+                distance = r.distance,
+                calories = r.calories,
+                tzIn15Min = r.tzIn15Min,
+            )
         }
             .sortedBy { it.date.toLong() }
             // Prefer higher step count for the same hour bucket (partial day re-sync).
@@ -108,6 +114,7 @@ object HealthDataNormalizer {
                 hrvAnalysisTimeSec = session.hrvAnalysisTimeSec
                     ?.let { toEpochSeconds(it) }
                     ?.takeIf { isPlausibleEpochSeconds(it) },
+                tzIn15Min = session.tzIn15Min,
             )
         }
             .sortedBy { it.startTime }
@@ -121,7 +128,7 @@ object HealthDataNormalizer {
             val t = toEpochSeconds(s.timestamp)
             if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
             if (s.hrvMs !in 5.0..300.0) return@mapNotNull null
-            HrvSample(timestamp = t, hrvMs = s.hrvMs)
+            HrvSample(timestamp = t, hrvMs = s.hrvMs, tzIn15Min = s.tzIn15Min)
         }
             .sortedBy { it.timestamp }
             .associateBy { it.timestamp }
@@ -146,7 +153,12 @@ object HealthDataNormalizer {
             val end = toEpochSeconds(s.endTime)
             if (!isPlausibleEpochSeconds(start) || end <= start) return@mapNotNull null
             if (s.meters <= 0 || s.meters > 500_000) return@mapNotNull null
-            DistanceSample(startTime = start, endTime = end, meters = s.meters)
+            DistanceSample(
+                startTime = start,
+                endTime = end,
+                meters = s.meters,
+                tzIn15Min = s.tzIn15Min,
+            )
         }
             .sortedBy { it.startTime }
             .groupBy { it.startTime }
@@ -159,7 +171,12 @@ object HealthDataNormalizer {
             val end = toEpochSeconds(s.endTime)
             if (!isPlausibleEpochSeconds(start) || end <= start) return@mapNotNull null
             if (s.kilocalories <= 0 || s.kilocalories > 50_000) return@mapNotNull null
-            ActiveCaloriesSample(startTime = start, endTime = end, kilocalories = s.kilocalories)
+            ActiveCaloriesSample(
+                startTime = start,
+                endTime = end,
+                kilocalories = s.kilocalories,
+                tzIn15Min = s.tzIn15Min,
+            )
         }
             .sortedBy { it.startTime }
             .groupBy { it.startTime }
@@ -179,6 +196,7 @@ object HealthDataNormalizer {
                 muscleMassKg = m.muscleMassKg?.takeIf { it in 1.0..200.0 },
                 boneMassKg = m.boneMassKg?.takeIf { it in 0.1..50.0 },
                 basalMetabolismKcal = m.basalMetabolismKcal?.takeIf { it in 200.0..10_000.0 },
+                tzIn15Min = m.tzIn15Min,
             )
         }
             .sortedBy { it.timestamp }
@@ -318,6 +336,7 @@ object HealthDataNormalizer {
                 systolicMmhg = s.systolicMmhg,
                 diastolicMmhg = s.diastolicMmhg,
                 pulseBpm = s.pulseBpm?.takeIf { it in 20..250 },
+                tzIn15Min = s.tzIn15Min,
             )
         }
             .sortedBy { it.timestamp }
@@ -332,7 +351,12 @@ object HealthDataNormalizer {
             val body = s.bodyCelsius?.takeIf { it in 30.0..45.0 }
             val skin = s.skinCelsius?.takeIf { it in 20.0..45.0 }
             if (body == null && skin == null) return@mapNotNull null
-            TemperatureSample(timestamp = t, bodyCelsius = body, skinCelsius = skin)
+            TemperatureSample(
+                timestamp = t,
+                bodyCelsius = body,
+                skinCelsius = skin,
+                tzIn15Min = s.tzIn15Min,
+            )
         }
             .sortedBy { it.timestamp }
             .associateBy { it.timestamp }
@@ -344,7 +368,7 @@ object HealthDataNormalizer {
             val t = toEpochSeconds(s.timestamp)
             if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
             if (s.mlPerKgMin !in 5.0..100.0) return@mapNotNull null
-            Vo2MaxSample(timestamp = t, mlPerKgMin = s.mlPerKgMin)
+            Vo2MaxSample(timestamp = t, mlPerKgMin = s.mlPerKgMin, tzIn15Min = s.tzIn15Min)
         }
             .sortedBy { it.timestamp }
             .associateBy { it.timestamp }

@@ -45,7 +45,6 @@ import com.bettermifitness.sync.data.api.Vo2MaxSample
 import com.bettermifitness.sync.data.api.WeightMeasurement
 import com.bettermifitness.sync.data.api.WorkoutSession
 import java.time.Instant
-import java.time.ZoneOffset
 
 actual class HealthWriter(private val context: Context) : HealthStore {
     private val client by lazy { HealthConnectClient.getOrCreate(context) }
@@ -101,12 +100,16 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val start = Instant.ofEpochSecond(ordered.first().timestamp)
             val end = Instant.ofEpochSecond(ordered.last().timestamp).plusSeconds(1)
             if (!end.isAfter(start)) return@mapNotNull null
+            val zo = ZoneOffsetResolver.fromMiOrSystem(
+                ordered.firstNotNullOfOrNull { it.tzIn15Min },
+                start,
+            )
 
             HeartRateRecord(
                 startTime = start,
                 endTime = end,
-                startZoneOffset = ZoneOffset.UTC,
-                endZoneOffset = ZoneOffset.UTC,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
                 samples = ordered.map { sample ->
                     HeartRateRecord.Sample(
                         time = Instant.ofEpochSecond(sample.timestamp),
@@ -116,7 +119,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.heartRateWindow(windowStart),
                     clientRecordVersion = HealthRecordIds.version(
-                        ordered.joinToString("|") { "${it.timestamp}:${it.bpm}" },
+                        ordered.joinToString("|") { "${it.timestamp}:${it.bpm}:${it.tzIn15Min}" },
                     ),
                 ),
             )
@@ -132,11 +135,15 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val time = Instant.ofEpochSecond(sample.timestamp)
             RestingHeartRateRecord(
                 time = time,
-                zoneOffset = ZoneOffset.UTC,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(sample.tzIn15Min, time),
                 beatsPerMinute = sample.bpm.toLong(),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.restingHeartRate(sample.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(sample.timestamp, sample.bpm),
+                    clientRecordVersion = HealthRecordIds.version(
+                        sample.timestamp,
+                        sample.bpm,
+                        sample.tzIn15Min,
+                    ),
                 ),
             )
         }
@@ -150,12 +157,13 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val start = Instant.ofEpochSecond(session.startTime)
             val end = Instant.ofEpochSecond(session.endTime)
             if (!end.isAfter(start)) return@mapNotNull null
+            val zo = ZoneOffsetResolver.fromMiOrSystem(session.tzIn15Min, start)
 
             SleepSessionRecord(
                 startTime = start,
                 endTime = end,
-                startZoneOffset = ZoneOffset.UTC,
-                endZoneOffset = ZoneOffset.UTC,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
                 stages = session.stages.mapNotNull { stage ->
                     val s = Instant.ofEpochSecond(stage.startTime)
                     val e = Instant.ofEpochSecond(stage.endTime)
@@ -171,6 +179,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                     clientRecordVersion = HealthRecordIds.version(
                         session.startTime,
                         session.endTime,
+                        session.tzIn15Min,
                         session.stages.joinToString { "${it.startTime}:${it.stage}" },
                     ),
                 ),
@@ -186,12 +195,13 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val ts = record.date.toLong()
             val start = Instant.ofEpochSecond(ts)
             val end = start.plusSeconds(3599) // One hour bucket
+            val zo = ZoneOffsetResolver.fromMiOrSystem(record.tzIn15Min, start)
 
             HcStepsRecord(
                 startTime = start,
                 endTime = end,
-                startZoneOffset = ZoneOffset.UTC,
-                endZoneOffset = ZoneOffset.UTC,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
                 count = record.steps.toLong(),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.steps(ts),
@@ -207,15 +217,22 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         val clean = HealthDataNormalizer.normalizeDistance(samples)
         if (clean.isEmpty()) return
         val records = clean.map { s ->
+            val start = Instant.ofEpochSecond(s.startTime)
+            val zo = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, start)
             DistanceRecord(
-                startTime = Instant.ofEpochSecond(s.startTime),
+                startTime = start,
                 endTime = Instant.ofEpochSecond(s.endTime),
-                startZoneOffset = ZoneOffset.UTC,
-                endZoneOffset = ZoneOffset.UTC,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
                 distance = Length.meters(s.meters),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.distance(s.startTime),
-                    clientRecordVersion = HealthRecordIds.version(s.startTime, s.endTime, s.meters),
+                    clientRecordVersion = HealthRecordIds.version(
+                        s.startTime,
+                        s.endTime,
+                        s.meters,
+                        s.tzIn15Min,
+                    ),
                 ),
             )
         }
@@ -226,11 +243,13 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         val clean = HealthDataNormalizer.normalizeActiveCalories(samples)
         if (clean.isEmpty()) return
         val records = clean.map { s ->
+            val start = Instant.ofEpochSecond(s.startTime)
+            val zo = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, start)
             ActiveCaloriesBurnedRecord(
-                startTime = Instant.ofEpochSecond(s.startTime),
+                startTime = start,
                 endTime = Instant.ofEpochSecond(s.endTime),
-                startZoneOffset = ZoneOffset.UTC,
-                endZoneOffset = ZoneOffset.UTC,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
                 energy = Energy.kilocalories(s.kilocalories),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.activeCalories(s.startTime),
@@ -238,6 +257,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                         s.startTime,
                         s.endTime,
                         s.kilocalories,
+                        s.tzIn15Min,
                     ),
                 ),
             )
@@ -249,26 +269,32 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         val clean = HealthDataNormalizer.normalizeWeight(measurements)
         if (clean.isEmpty()) return
         val weightRecords = clean.map { m ->
+            val time = Instant.ofEpochSecond(m.timestamp)
             WeightRecord(
-                time = Instant.ofEpochSecond(m.timestamp),
-                zoneOffset = ZoneOffset.UTC,
+                time = time,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(m.tzIn15Min, time),
                 weight = Mass.kilograms(m.weightKg),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.weight(m.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(m.timestamp, m.weightKg),
+                    clientRecordVersion = HealthRecordIds.version(
+                        m.timestamp,
+                        m.weightKg,
+                        m.tzIn15Min,
+                    ),
                 ),
             )
         }
         client.insertRecords(weightRecords)
         val fatRecords = clean.mapNotNull { m ->
             val fat = m.bodyFatPercent ?: return@mapNotNull null
+            val time = Instant.ofEpochSecond(m.timestamp)
             BodyFatRecord(
-                time = Instant.ofEpochSecond(m.timestamp),
-                zoneOffset = ZoneOffset.UTC,
+                time = time,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(m.tzIn15Min, time),
                 percentage = Percentage(fat),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.bodyFat(m.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(m.timestamp, fat),
+                    clientRecordVersion = HealthRecordIds.version(m.timestamp, fat, m.tzIn15Min),
                 ),
             )
         }
@@ -293,11 +319,15 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val time = Instant.ofEpochSecond(sample.timestamp)
             OxygenSaturationRecord(
                 time = time,
-                zoneOffset = ZoneOffset.UTC,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(sample.tzIn15Min, time),
                 percentage = Percentage(sample.percentage.toDouble()),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.spo2(sample.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(sample.timestamp, sample.percentage),
+                    clientRecordVersion = HealthRecordIds.version(
+                        sample.timestamp,
+                        sample.percentage,
+                        sample.tzIn15Min,
+                    ),
                 ),
             )
         }
@@ -308,9 +338,10 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         val clean = HealthDataNormalizer.normalizeBloodPressure(samples)
         if (clean.isEmpty()) return
         val records = clean.map { s ->
+            val time = Instant.ofEpochSecond(s.timestamp)
             BloodPressureRecord(
-                time = Instant.ofEpochSecond(s.timestamp),
-                zoneOffset = ZoneOffset.UTC,
+                time = time,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, time),
                 systolic = Pressure.millimetersOfMercury(s.systolicMmhg.toDouble()),
                 diastolic = Pressure.millimetersOfMercury(s.diastolicMmhg.toDouble()),
                 metadata = Metadata.manualEntry(
@@ -320,6 +351,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                         s.systolicMmhg,
                         s.diastolicMmhg,
                         s.pulseBpm,
+                        s.tzIn15Min,
                     ),
                 ),
             )
@@ -332,13 +364,14 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         if (clean.isEmpty()) return
         val bodyRecords = clean.mapNotNull { s ->
             val body = s.bodyCelsius ?: return@mapNotNull null
+            val time = Instant.ofEpochSecond(s.timestamp)
             BodyTemperatureRecord(
-                time = Instant.ofEpochSecond(s.timestamp),
-                zoneOffset = ZoneOffset.UTC,
+                time = time,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, time),
                 temperature = Temperature.celsius(body),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.bodyTemperature(s.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(s.timestamp, body),
+                    clientRecordVersion = HealthRecordIds.version(s.timestamp, body, s.tzIn15Min),
                 ),
             )
         }
@@ -349,11 +382,12 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val skin = s.skinCelsius ?: return@mapNotNull null
             val start = Instant.ofEpochSecond(s.timestamp)
             val end = start.plusSeconds(1)
+            val zo = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, start)
             SkinTemperatureRecord(
                 startTime = start,
                 endTime = end,
-                startZoneOffset = ZoneOffset.UTC,
-                endZoneOffset = ZoneOffset.UTC,
+                startZoneOffset = zo,
+                endZoneOffset = zo,
                 deltas = listOf(
                     SkinTemperatureRecord.Delta(
                         time = start,
@@ -363,7 +397,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 baseline = Temperature.celsius(skin),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.skinTemperature(s.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(s.timestamp, skin),
+                    clientRecordVersion = HealthRecordIds.version(s.timestamp, skin, s.tzIn15Min),
                 ),
             )
         }
@@ -374,14 +408,19 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         val clean = HealthDataNormalizer.normalizeVo2Max(samples)
         if (clean.isEmpty()) return
         val records = clean.map { s ->
+            val time = Instant.ofEpochSecond(s.timestamp)
             Vo2MaxRecord(
-                time = Instant.ofEpochSecond(s.timestamp),
-                zoneOffset = ZoneOffset.UTC,
+                time = time,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, time),
                 vo2MillilitersPerMinuteKilogram = s.mlPerKgMin,
                 measurementMethod = Vo2MaxRecord.MEASUREMENT_METHOD_OTHER,
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.vo2Max(s.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(s.timestamp, s.mlPerKgMin),
+                    clientRecordVersion = HealthRecordIds.version(
+                        s.timestamp,
+                        s.mlPerKgMin,
+                        s.tzIn15Min,
+                    ),
                 ),
             )
         }
@@ -393,13 +432,18 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         if (clean.isEmpty()) return
         // Mi overnight HRV is in ms; Health Connect stores RMSSD milliseconds.
         val records = clean.map { s ->
+            val time = Instant.ofEpochSecond(s.timestamp)
             HeartRateVariabilityRmssdRecord(
-                time = Instant.ofEpochSecond(s.timestamp),
-                zoneOffset = ZoneOffset.UTC,
+                time = time,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, time),
                 heartRateVariabilityMillis = s.hrvMs,
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.hrv(s.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(s.timestamp, s.hrvMs),
+                    clientRecordVersion = HealthRecordIds.version(
+                        s.timestamp,
+                        s.hrvMs,
+                        s.tzIn15Min,
+                    ),
                 ),
             )
         }

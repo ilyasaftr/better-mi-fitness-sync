@@ -236,6 +236,7 @@ class MiFitnessParsersTest {
                   "bed_timestamp": 1699999900,
                   "out_bed_timestamp": 1700036100,
                   "sleep_awake_duration": 0,
+                  "timezone": 32,
                   "items": [
                     {"start_time": 1700000000, "end_time": 1700018000, "state": 2},
                     {"start_time": 1700018000, "end_time": 1700036000, "state": 3}
@@ -250,6 +251,7 @@ class MiFitnessParsersTest {
         assertEquals(2, session.stages.size)
         assertTrue(session.stages.all { it.stage in 2..3 })
         assertEquals(null, session.avgHrvMs)
+        assertEquals(32, session.tzIn15Min)
     }
 
     @Test
@@ -336,5 +338,39 @@ class MiFitnessParsersTest {
             """.trimIndent(),
         )
         assertTrue(MiFitnessParsers.parseHrvSamples(listOf(entry)).isEmpty())
+    }
+
+    @Test
+    fun parseSleepSession_missingTimezone_isNull() {
+        val entry = RawFitnessEntry(
+            key = "sleep",
+            time = 1_700_003_600L,
+            value = """
+                {
+                  "bedtime": 1700000000,
+                  "wake_up_time": 1700036000,
+                  "items": [
+                    {"start_time": 1700000000, "end_time": 1700036000, "state": 2}
+                  ]
+                }
+            """.trimIndent(),
+        )
+        val session = MiFitnessParsers.parseSleepSession(entry)
+        assertNotNull(session)
+        assertEquals(null, session.tzIn15Min)
+    }
+
+    @Test
+    fun parseHeartRate_readsTimezoneWhenPresent() {
+        val samples = MiFitnessParsers.parseHeartRateSamples(
+            listOf(
+                RawFitnessEntry(
+                    time = 1_700_000_000L,
+                    value = """{"time":1700000010,"bpm":72,"timezone":28}""",
+                ),
+            ),
+        )
+        assertEquals(1, samples.size)
+        assertEquals(28, samples[0].tzIn15Min)
     }
 }
