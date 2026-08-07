@@ -432,13 +432,18 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         if (clean.isEmpty()) return
         // Mi overnight HRV is in ms; Health Connect stores RMSSD milliseconds.
         val records = clean.map { s ->
+            val time = Instant.ofEpochSecond(s.timestamp)
             HeartRateVariabilityRmssdRecord(
-                time = Instant.ofEpochSecond(s.timestamp),
-                zoneOffset = ZoneOffset.UTC,
+                time = time,
+                zoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, time),
                 heartRateVariabilityMillis = s.hrvMs,
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.hrv(s.timestamp),
-                    clientRecordVersion = HealthRecordIds.version(s.timestamp, s.hrvMs),
+                    clientRecordVersion = HealthRecordIds.version(
+                        s.timestamp,
+                        s.hrvMs,
+                        s.tzIn15Min,
+                    ),
                 ),
             )
         }

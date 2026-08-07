@@ -103,6 +103,8 @@ data class HrvSample(
     val timestamp: Long,
     /** Heart-rate variability in milliseconds (Mi UI unit). */
     val hrvMs: Double,
+    /** Mi sleep `timezone` (15-min units), when derived from a sleep session. */
+    val tzIn15Min: Int? = null,
 )
 
 // --- Steps ---

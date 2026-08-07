@@ -512,7 +512,7 @@ object MiFitnessParsers {
                 ?.takeIf { it > 0 }
                 ?: session.endTime.takeIf { it > 0 }
                 ?: return@mapNotNull null
-            HrvSample(timestamp = t, hrvMs = ms.toDouble())
+            HrvSample(timestamp = t, hrvMs = ms.toDouble(), tzIn15Min = session.tzIn15Min)
         }
 
     /**

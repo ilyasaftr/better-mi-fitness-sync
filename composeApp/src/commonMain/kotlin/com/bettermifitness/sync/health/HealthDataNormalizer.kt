@@ -128,7 +128,7 @@ object HealthDataNormalizer {
             val t = toEpochSeconds(s.timestamp)
             if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
             if (s.hrvMs !in 5.0..300.0) return@mapNotNull null
-            HrvSample(timestamp = t, hrvMs = s.hrvMs)
+            HrvSample(timestamp = t, hrvMs = s.hrvMs, tzIn15Min = s.tzIn15Min)
         }
             .sortedBy { it.timestamp }
             .associateBy { it.timestamp }
