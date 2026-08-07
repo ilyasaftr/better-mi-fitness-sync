@@ -387,33 +387,28 @@ struct HomeView: View {
             .padding(.leading, 4)
     }
 
-    // MARK: - Sticky primary CTA
+    // MARK: - Sticky primary CTA (shared chrome with Sync)
 
     private var stickyCta: some View {
-        VStack(spacing: 10) {
-            Divider()
-            Button {
-                performPrimaryAction()
-            } label: {
-                if store.state.isSyncing {
-                    HStack(spacing: 10) {
-                        ProgressView().tint(.white)
-                        Text("Syncing…")
-                    }
-                } else if store.state.healthNeedsAction {
-                    Text("Allow access")
-                } else if store.state.enabledMetricsCount == 0 {
-                    Text("Open Settings")
-                } else {
-                    Label("Sync now", systemImage: "arrow.triangle.2.circlepath")
-                }
+        StickyPrimaryBar(primaryEnabled: stickyPrimaryEnabled, primaryAction: performPrimaryAction) {
+            if store.state.isSyncing {
+                SyncingPrimaryLabel()
+            } else if store.state.healthNeedsAction {
+                Text("Allow access")
+            } else if store.state.enabledMetricsCount == 0 {
+                Text("Open Settings")
+            } else {
+                Label("Sync now", systemImage: "arrow.triangle.2.circlepath")
             }
-            .buttonStyle(PrimaryButtonStyle(enabled: true))
-            .padding(.horizontal, 20)
         }
-        .padding(.top, 8)
-        .padding(.bottom, 12)
-        .background(.bar)
+    }
+
+    /// Keep tappable while syncing so user can open the Sync screen.
+    private var stickyPrimaryEnabled: Bool {
+        store.state.isSyncing
+            || store.state.healthNeedsAction
+            || store.state.enabledMetricsCount == 0
+            || store.state.canSync
     }
 
     private func performPrimaryAction() {
@@ -430,6 +425,8 @@ struct HomeView: View {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 store.startSyncIfIdle()
             }
+            onSync()
+        } else if store.state.isSyncing {
             onSync()
         }
     }

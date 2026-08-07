@@ -47,36 +47,28 @@ struct SyncView: View {
                 .padding(.bottom, 16)
             }
 
-            // Sticky primary action (aligned with Home)
-            VStack(spacing: 10) {
-                Divider()
-                Button {
-                    store.startSync()
-                } label: {
+            // Sticky primary — same chrome as Home (`StickyPrimaryBar`).
+            StickyPrimaryBar(
+                primaryEnabled: !store.state.isSyncing && store.state.healthAvailable,
+                primaryAction: { store.startSync() },
+                label: {
                     if store.state.isSyncing {
-                        HStack(spacing: 10) {
-                            ProgressView().tint(.white)
-                            Text("Syncing…")
-                        }
+                        SyncingPrimaryLabel()
                     } else {
                         Label("Sync now", systemImage: "arrow.triangle.2.circlepath")
                     }
-                }
-                .buttonStyle(PrimaryButtonStyle(enabled: !store.state.isSyncing && store.state.healthAvailable))
-                .disabled(store.state.isSyncing || !store.state.healthAvailable)
-                .padding(.horizontal, 20)
-
-                if !store.state.healthAvailable {
-                    Button("Open \(store.state.healthServiceName)") {
-                        store.openHealth()
+                },
+                footer: {
+                    if !store.state.healthAvailable {
+                        Button("Open \(store.state.healthServiceName)") {
+                            store.openHealth()
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Brand.primary)
+                        .frame(maxWidth: .infinity)
                     }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Brand.primary)
                 }
-            }
-            .padding(.top, 8)
-            .padding(.bottom, 20)
-            .background(Brand.pageBackground.opacity(0.98))
+            )
         }
         .background(Brand.pageBackground.ignoresSafeArea())
         .navigationTitle("Sync")

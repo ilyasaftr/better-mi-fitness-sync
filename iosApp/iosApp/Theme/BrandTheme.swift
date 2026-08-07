@@ -128,3 +128,69 @@ struct BrandCard<Content: View>: View {
             .clipShape(RoundedRectangle(cornerRadius: Brand.cardRadius, style: .continuous))
     }
 }
+
+// MARK: - Sticky primary bar (shared Home + Sync)
+
+/// Bottom sticky primary action — system material bar (HIG toolbar pattern).
+/// Same chrome on every screen that pins a main CTA.
+struct StickyPrimaryBar<Label: View, Footer: View>: View {
+    var primaryEnabled: Bool = true
+    var primaryAction: () -> Void
+    @ViewBuilder var label: () -> Label
+    @ViewBuilder var footer: () -> Footer
+
+    init(
+        primaryEnabled: Bool = true,
+        primaryAction: @escaping () -> Void,
+        @ViewBuilder label: @escaping () -> Label,
+        @ViewBuilder footer: @escaping () -> Footer
+    ) {
+        self.primaryEnabled = primaryEnabled
+        self.primaryAction = primaryAction
+        self.label = label
+        self.footer = footer
+    }
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Divider()
+            Button(action: primaryAction) {
+                label()
+            }
+            .buttonStyle(PrimaryButtonStyle(enabled: primaryEnabled))
+            .disabled(!primaryEnabled)
+            .padding(.horizontal, 20)
+
+            footer()
+                .padding(.horizontal, 20)
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 12)
+        .background(.bar)
+    }
+}
+
+extension StickyPrimaryBar where Footer == EmptyView {
+    init(
+        primaryEnabled: Bool = true,
+        primaryAction: @escaping () -> Void,
+        @ViewBuilder label: @escaping () -> Label
+    ) {
+        self.init(
+            primaryEnabled: primaryEnabled,
+            primaryAction: primaryAction,
+            label: label,
+            footer: { EmptyView() }
+        )
+    }
+}
+
+/// Shared “Syncing…” primary label for sticky bars.
+struct SyncingPrimaryLabel: View {
+    var body: some View {
+        HStack(spacing: 10) {
+            ProgressView().tint(Brand.onPrimary)
+            Text("Syncing…")
+        }
+    }
+}
