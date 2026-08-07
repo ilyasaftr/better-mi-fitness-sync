@@ -354,7 +354,7 @@ private fun MetricRow(metric: SyncMetric, enabled: Boolean, onToggle: (Boolean) 
             modifier = Modifier.weight(1f),
         ) {
             AppIcon(
-                metric.iconRes,
+                com.bettermifitness.sync.ui.icons.AppIcons.forMetric(metric.key),
                 contentDescription = null,
                 tint = if (enabled) {
                     MaterialTheme.colorScheme.primary

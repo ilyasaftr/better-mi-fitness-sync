@@ -31,6 +31,19 @@ import org.jetbrains.compose.resources.painterResource
  * Tint with [AppIcon]; iOS requires Xcode phase `syncComposeResourcesForIos`.
  */
 object AppIcons {
+    fun forMetric(key: String): DrawableResource = when (key) {
+        "heart_rate", "hrv" -> MonitorHeart
+        "resting_heart_rate", "temperature" -> Favorite
+        "sleep" -> Bedtime
+        "steps" -> DirectionsWalk
+        "distance" -> Straighten
+        "active_calories" -> LocalFireDepartment
+        "spo2", "blood_pressure" -> Bloodtype
+        "weight" -> MonitorWeight
+        "workouts", "vo2_max" -> FitnessCenter
+        else -> Sync
+    }
+
     val Mail: DrawableResource get() = Res.drawable.ic_mail_24
     val Sync: DrawableResource get() = Res.drawable.ic_sync_24
     val ArrowBack: DrawableResource get() = Res.drawable.ic_arrow_back_24

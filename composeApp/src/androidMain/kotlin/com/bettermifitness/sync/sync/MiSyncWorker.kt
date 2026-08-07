@@ -41,6 +41,8 @@ class MiSyncWorker(
                 SyncOutcome.Skipped,
                 SyncOutcome.NotLoggedIn,
                 SyncOutcome.HealthUnavailable,
+                // Another path owns the run; do not queue retries that stack more work.
+                SyncOutcome.AlreadyRunning,
                 -> Result.success()
                 is SyncOutcome.Failed ->
                     if (outcome.shouldRetryBackground()) Result.retry() else Result.failure()

@@ -106,7 +106,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             errorMessage = state.errorMessage,
             onComplete = viewModel::completeBrowserLogin,
             onBack = {
-                if (!state.loginSucceeded) viewModel.goBackToCredentials()
+                if (!state.loginSucceeded) viewModel.goBackFromBrowser()
             },
         )
     }

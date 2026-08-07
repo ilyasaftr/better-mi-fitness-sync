@@ -70,6 +70,7 @@ class SyncOutcomeTest {
             SyncOutcome.PartialSuccess(1, 1, "Partial").toStatusCode(),
         )
         assertEquals("failed", SyncOutcome.Failed("x", retryable = true).toStatusCode())
+        assertEquals("already_running", SyncOutcome.AlreadyRunning.toStatusCode())
     }
 
     @Test

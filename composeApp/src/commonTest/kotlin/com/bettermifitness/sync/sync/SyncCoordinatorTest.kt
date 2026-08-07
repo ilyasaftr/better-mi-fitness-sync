@@ -14,6 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -151,12 +152,34 @@ class SyncCoordinatorTest {
         assertEquals(SyncOutcome.Skipped, outcome)
     }
 
+    @Test
+    fun concurrentRun_secondReturnsAlreadyRunning() = runBlocking {
+        val hold = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val release = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val prefs = FakePrefs()
+        val runner = BlockingSyncRunner(hold, release)
+        val coord = coordinator(prefs = prefs, token = "t", runner = runner)
+        val first = async {
+            coord.run(requestHealthPermissions = false, userInitiated = true)
+        }
+        hold.await()
+        assertTrue(coord.isRunning.value)
+        val second = coord.run(requestHealthPermissions = false, userInitiated = true)
+        assertEquals(SyncOutcome.AlreadyRunning, second)
+        // AlreadyRunning must not overwrite last sync prefs
+        assertEquals(null, prefs.lastStatus)
+        release.complete(Unit)
+        assertIs<SyncOutcome.Success>(first.await())
+        assertEquals(false, coord.isRunning.value)
+        assertEquals(SyncOutcome.STATUS_SUCCESS, prefs.lastStatus)
+    }
+
     private fun coordinator(
         prefs: FakePrefs,
         token: String?,
         sessionOk: Boolean = true,
         health: FakeHealth = FakeHealth(),
-        runner: FakeSyncRunner = FakeSyncRunner(),
+        runner: HealthSyncRunner = FakeSyncRunner(),
     ) = SyncCoordinator(
         session = FakeSession(sessionOk),
         credentials = FakeCredentials(token),
@@ -232,5 +255,27 @@ class SyncCoordinatorTest {
         override fun resetProgress() {
             resetCalled = true
         }
+    }
+
+    private class BlockingSyncRunner(
+        private val hold: kotlinx.coroutines.CompletableDeferred<Unit>,
+        private val release: kotlinx.coroutines.CompletableDeferred<Unit>,
+    ) : HealthSyncRunner {
+        private val progress = MutableStateFlow(SyncProgress())
+        override val syncProgress: StateFlow<SyncProgress> = progress.asStateFlow()
+        override suspend fun syncAll(from: String, to: String, enabled: Set<String>): SyncRunResult {
+            hold.complete(Unit)
+            release.await()
+            return SyncRunResult(
+                attempted = 1,
+                succeeded = 1,
+                failed = 0,
+                totalRecords = 1,
+                hadRetryableFailure = false,
+                hadAuthFailure = false,
+                errorMessages = emptyList(),
+            )
+        }
+        override fun resetProgress() = Unit
     }
 }

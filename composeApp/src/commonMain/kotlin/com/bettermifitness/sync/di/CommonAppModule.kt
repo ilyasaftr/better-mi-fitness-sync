@@ -67,7 +67,14 @@ fun commonAppModule(): Module = module {
             regionDiscovery = get(),
         )
     }
-    factory { HomeViewModel(session = get(), tokenStore = get(), healthAvailability = get()) }
+    factory {
+        HomeViewModel(
+            session = get(),
+            tokenStore = get(),
+            healthAvailability = get(),
+            syncCoordinator = get(),
+        )
+    }
     factory {
         SyncViewModel(
             repository = get(),

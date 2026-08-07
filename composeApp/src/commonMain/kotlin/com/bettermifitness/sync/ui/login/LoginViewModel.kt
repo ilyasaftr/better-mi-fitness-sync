@@ -42,6 +42,12 @@ class LoginViewModel(
 
     private var otpChallenge: LoginResult.OtpRequired? = null
 
+    /**
+     * When true, Back on browser returns to OTP (user chose browser from OTP).
+     * When false, Back returns to credentials (OTP was skipped — e.g. send rate-limited).
+     */
+    private var browserBackGoesToOtp: Boolean = false
+
     fun onEmailChange(value: String) {
         _uiState.update { it.copy(email = value) }
     }
@@ -64,6 +70,7 @@ class LoginViewModel(
                         otpChallenge = result
                         try {
                             result.sendOtp()
+                            browserBackGoesToOtp = false
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
@@ -73,10 +80,14 @@ class LoginViewModel(
                                 )
                             }
                         } catch (e: Exception) {
+                            // Rate-limit / send failure: skip OTP UI entirely.
+                            browserBackGoesToOtp = false
+                            otpChallenge = null
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
                                     step = LoginStep.BrowserFallback,
+                                    otpMaskedTarget = "",
                                     errorMessage = e.message
                                         ?: "Could not send verification email. Use browser login.",
                                 )
@@ -102,6 +113,7 @@ class LoginViewModel(
             } catch (e: Exception) {
                 val msg = e.message ?: "Verification failed"
                 if (shouldFallbackToBrowser(msg)) {
+                    browserBackGoesToOtp = true
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -187,13 +199,39 @@ class LoginViewModel(
     }
 
     fun goToBrowserFallback() {
+        // User left OTP intentionally (“Having trouble?”) — Back should restore OTP.
+        browserBackGoesToOtp = otpChallenge != null
         _uiState.update {
             it.copy(step = LoginStep.BrowserFallback, errorMessage = null)
         }
     }
 
+    /**
+     * Back from browser login:
+     * - OTP if the user opened browser from the OTP step
+     * - Credentials if OTP was skipped (e.g. email send rate-limited)
+     */
+    fun goBackFromBrowser() {
+        if (browserBackGoesToOtp && otpChallenge != null) {
+            _uiState.update {
+                it.copy(step = LoginStep.Otp, errorMessage = null)
+            }
+            return
+        }
+        browserBackGoesToOtp = false
+        otpChallenge = null
+        _uiState.update {
+            it.copy(
+                step = LoginStep.Credentials,
+                errorMessage = null,
+                otpMaskedTarget = "",
+            )
+        }
+    }
+
     fun goBackToCredentials() {
         otpChallenge = null
+        browserBackGoesToOtp = false
         _uiState.update {
             it.copy(
                 step = LoginStep.Credentials,

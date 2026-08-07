@@ -14,6 +14,7 @@ object SyncOutcomeLabels {
         SyncOutcome.STATUS_HEALTH_UNAVAILABLE -> "Health app needed"
         SyncOutcome.STATUS_SKIPPED -> "Nothing to do"
         SyncOutcome.STATUS_CANCELLED -> "Stopped"
+        SyncOutcome.STATUS_ALREADY_RUNNING -> "Sync in progress"
         null, "" -> "Not synced yet"
         else -> status.replace('_', ' ').replaceFirstChar { it.uppercase() }
     }
@@ -36,6 +37,8 @@ object SyncOutcomeLabels {
                 msg ?: "Turn on items in Settings, then Update"
             SyncOutcome.STATUS_CANCELLED ->
                 msg ?: "Sync was stopped"
+            SyncOutcome.STATUS_ALREADY_RUNNING ->
+                msg ?: "A sync is already running"
             null, "" -> "Tap Sync for your latest activity"
             else -> msg ?: title(status)
         }
@@ -58,5 +61,6 @@ fun SyncOutcome.userMessage(): String? = when (this) {
     SyncOutcome.Skipped -> "Nothing needed syncing"
     SyncOutcome.NotLoggedIn -> "Please sign in again"
     SyncOutcome.HealthUnavailable -> "Health app isn't available"
+    SyncOutcome.AlreadyRunning -> "A sync is already running"
     is SyncOutcome.Failed -> message ?: "Couldn't finish sync"
 }
