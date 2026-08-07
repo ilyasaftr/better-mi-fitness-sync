@@ -8,6 +8,7 @@ import com.bettermifitness.sync.data.preferences.SyncPreferences
 import com.bettermifitness.sync.data.preferences.TokenStore
 import com.bettermifitness.sync.health.HealthAvailability
 import com.bettermifitness.sync.health.HealthReadiness
+import com.bettermifitness.sync.sync.SyncCoordinator
 import com.bettermifitness.sync.sync.SyncOutcomeLabels
 import com.bettermifitness.sync.ui.SyncMetric
 import com.bettermifitness.sync.util.RelativeTime
@@ -35,6 +36,7 @@ data class HomeUiState(
     val rangeDays: Int = 7,
     val autoSync: Boolean = false,
     val canSync: Boolean = true,
+    val isSyncing: Boolean = false,
     val healthServiceName: String = "",
     val healthReady: Boolean = true,
     val healthStatusTitle: String = "",
@@ -47,6 +49,7 @@ class HomeViewModel(
     private val session: MiSessionManager,
     private val tokenStore: TokenStore,
     private val healthAvailability: HealthAvailability,
+    private val syncCoordinator: SyncCoordinator,
 ) : ViewModel() {
     private val syncPreferences: SyncPreferences get() = tokenStore.sync
 
@@ -101,46 +104,47 @@ class HomeViewModel(
     }
 
     val uiState: StateFlow<HomeUiState> = combine(
-        _profile,
-        _profileError,
-        prefs,
-        _loggedOut,
-        _health,
-    ) { profile, profileError, prefsSnap, loggedOut, health ->
-        HomeUiState(
-            profile = profile,
-            profileError = profileError,
-            lastSyncLabel = RelativeTime.format(prefsSnap.lastSync),
-            lastSyncStatusTitle = SyncOutcomeLabels.title(prefsSnap.lastSyncStatus),
-            lastSyncDetail = SyncOutcomeLabels.detail(
-                prefsSnap.lastSyncStatus,
-                prefsSnap.lastSyncMessage,
-            ),
-            lastSyncIsError = SyncOutcomeLabels.isError(prefsSnap.lastSyncStatus),
-            lastSyncIsWarning = SyncOutcomeLabels.isWarning(prefsSnap.lastSyncStatus),
-            lastBackgroundLabel = RelativeTime.format(prefsSnap.lastBg),
-            lastBackgroundDetail = SyncOutcomeLabels.detail(
-                prefsSnap.lastBgStatus,
-                prefsSnap.lastBgMessage,
-            ),
-            lastBackgroundIsError = SyncOutcomeLabels.isError(prefsSnap.lastBgStatus),
-            enabledMetricsCount = prefsSnap.enabled.size,
-            totalMetricsCount = SyncMetric.entries.size,
-            rangeDays = prefsSnap.rangeDays,
-            autoSync = prefsSnap.autoSync,
-            canSync = prefsSnap.enabled.isNotEmpty(),
-            healthServiceName = health.serviceName,
-            healthReady = health.isReady,
-            healthStatusTitle = health.statusTitle,
-            healthStatusDetail = health.statusDetail,
-            healthNeedsAction = !health.isReady,
-            loggedOut = loggedOut,
-        )
+        combine(_profile, _profileError, prefs, _loggedOut, _health) {
+                profile, profileError, prefsSnap, loggedOut, health ->
+            HomeUiState(
+                profile = profile,
+                profileError = profileError,
+                lastSyncLabel = RelativeTime.format(prefsSnap.lastSync),
+                lastSyncStatusTitle = SyncOutcomeLabels.title(prefsSnap.lastSyncStatus),
+                lastSyncDetail = SyncOutcomeLabels.detail(
+                    prefsSnap.lastSyncStatus,
+                    prefsSnap.lastSyncMessage,
+                ),
+                lastSyncIsError = SyncOutcomeLabels.isError(prefsSnap.lastSyncStatus),
+                lastSyncIsWarning = SyncOutcomeLabels.isWarning(prefsSnap.lastSyncStatus),
+                lastBackgroundLabel = RelativeTime.format(prefsSnap.lastBg),
+                lastBackgroundDetail = SyncOutcomeLabels.detail(
+                    prefsSnap.lastBgStatus,
+                    prefsSnap.lastBgMessage,
+                ),
+                lastBackgroundIsError = SyncOutcomeLabels.isError(prefsSnap.lastBgStatus),
+                enabledMetricsCount = prefsSnap.enabled.size,
+                totalMetricsCount = SyncMetric.entries.size,
+                rangeDays = prefsSnap.rangeDays,
+                autoSync = prefsSnap.autoSync,
+                canSync = prefsSnap.enabled.isNotEmpty(),
+                healthServiceName = health.serviceName,
+                healthReady = health.isReady,
+                healthStatusTitle = health.statusTitle,
+                healthStatusDetail = health.statusDetail,
+                healthNeedsAction = !health.isReady,
+                loggedOut = loggedOut,
+            )
+        },
+        syncCoordinator.isRunning,
+    ) { base, running ->
+        base.copy(isSyncing = running)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = HomeUiState(
             healthServiceName = healthAvailability.healthServiceName(),
+            isSyncing = syncCoordinator.isRunning.value,
         ),
     )
 
@@ -194,6 +198,21 @@ class HomeViewModel(
 
     fun openHealthService() {
         healthAvailability.openHealthService()
+    }
+
+    /**
+     * Starts a user foreground sync if none is running (single-flight).
+     * Call when Home CTA is tapped, then navigate to Sync to observe progress.
+     */
+    fun startSyncIfIdle() {
+        viewModelScope.launch {
+            if (syncCoordinator.isRunning.value) return@launch
+            syncCoordinator.run(
+                requestHealthPermissions = true,
+                resetProgress = true,
+                userInitiated = true,
+            )
+        }
     }
 
     fun logout() {

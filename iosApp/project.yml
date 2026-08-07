@@ -68,13 +68,3 @@ targets:
             fi
           fi
         basedOnDependencyAnalysis: false
-      # Static frameworks do not embed composeResources; copy them into the app product.
-      - name: "Sync Compose Resources"
-        script: |
-          if [ -z "${JAVA_HOME:-}" ] || [ ! -d "$JAVA_HOME" ]; then
-            export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
-          fi
-          export PATH="$JAVA_HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
-          cd "$SRCROOT/.."
-          ./gradlew :composeApp:syncComposeResourcesForIos
-        basedOnDependencyAnalysis: false

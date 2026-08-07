@@ -25,6 +25,7 @@ object BackgroundSync {
     const val STATUS_HEALTH_UNAVAILABLE = SyncOutcome.STATUS_HEALTH_UNAVAILABLE
     const val STATUS_CANCELLED = SyncOutcome.STATUS_CANCELLED
     const val STATUS_FAILED = SyncOutcome.STATUS_FAILED
+    const val STATUS_ALREADY_RUNNING = SyncOutcome.STATUS_ALREADY_RUNNING
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private val mutex = Mutex()

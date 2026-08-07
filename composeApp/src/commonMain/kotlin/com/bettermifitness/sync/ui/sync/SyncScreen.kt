@@ -220,7 +220,7 @@ private fun ItemRow(metric: SyncMetric, state: SyncState) {
                 modifier = Modifier.weight(1f),
             ) {
                 AppIcon(
-                    metric.iconRes,
+                    com.bettermifitness.sync.ui.icons.AppIcons.forMetric(metric.key),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(22.dp),

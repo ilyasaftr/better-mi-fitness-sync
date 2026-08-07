@@ -1,17 +1,8 @@
 import SwiftUI
-import ComposeApp
 
+/// Root content — native SwiftUI (Compose UI no longer hosted).
 struct ContentView: View {
     var body: some View {
-        ComposeView()
-            .ignoresSafeArea(.all)
+        RootView()
     }
-}
-
-struct ComposeView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController()
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }

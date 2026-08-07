@@ -12,11 +12,18 @@ import com.bettermifitness.sync.health.HealthPermissionRequester
 import com.bettermifitness.sync.health.HealthStore
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
 
 /**
  * Shared sync policy for UI, background tasks, and Shortcuts.
  * Depends on ISP ports so unit tests inject fakes without DataStore / Health SDKs.
+ *
+ * **Single-flight:** only one [run] executes at a time. Concurrent callers get
+ * [SyncOutcome.AlreadyRunning] immediately (no second Mi API / Health write storm).
  */
 class SyncCoordinator(
     private val session: SyncSessionPort,
@@ -41,6 +48,15 @@ class SyncCoordinator(
         repository = repository,
     )
 
+    private val runMutex = Mutex()
+    private val _isRunning = MutableStateFlow(false)
+    /** True while a [run] holds the single-flight lock (including permission prompts). */
+    val isRunning: StateFlow<Boolean> = _isRunning.asStateFlow()
+
+    private val _lastOutcome = MutableStateFlow<SyncOutcome?>(null)
+    /** Last finished outcome (not [SyncOutcome.AlreadyRunning]). */
+    val lastOutcome: StateFlow<SyncOutcome?> = _lastOutcome.asStateFlow()
+
     /**
      * @param rangeDaysOverride when > 0, overrides user range (e.g. BG 1-day refresh)
      * @param requireAutoSync when true, no-ops unless auto-sync is enabled
@@ -57,16 +73,29 @@ class SyncCoordinator(
         resetProgress: Boolean = false,
         userInitiated: Boolean = true,
     ): SyncOutcome {
-        val outcome = runInternal(
-            rangeDaysOverride = rangeDaysOverride,
-            requireAutoSync = requireAutoSync,
-            requestHealthPermissions = requestHealthPermissions,
-            recordAsBackground = recordAsBackground,
-            resetProgress = resetProgress,
-            userInitiated = userInitiated,
-        )
-        recordOutcome(outcome, recordAsBackground)
-        return outcome
+        if (!runMutex.tryLock()) {
+            return SyncOutcome.AlreadyRunning
+        }
+        _isRunning.value = true
+        try {
+            val outcome = runInternal(
+                rangeDaysOverride = rangeDaysOverride,
+                requireAutoSync = requireAutoSync,
+                requestHealthPermissions = requestHealthPermissions,
+                recordAsBackground = recordAsBackground,
+                resetProgress = resetProgress,
+                userInitiated = userInitiated,
+            )
+            // Do not clobber last sync prefs when we never started work.
+            if (outcome !is SyncOutcome.AlreadyRunning) {
+                recordOutcome(outcome, recordAsBackground)
+                _lastOutcome.value = outcome
+            }
+            return outcome
+        } finally {
+            _isRunning.value = false
+            runMutex.unlock()
+        }
     }
 
     private suspend fun runInternal(
@@ -209,6 +238,8 @@ sealed class SyncOutcome {
     data object Skipped : SyncOutcome()
     data object NotLoggedIn : SyncOutcome()
     data object HealthUnavailable : SyncOutcome()
+    /** Another [SyncCoordinator.run] is already in flight — do not start a second one. */
+    data object AlreadyRunning : SyncOutcome()
 
     data class Failed(
         val message: String?,
@@ -226,6 +257,7 @@ sealed class SyncOutcome {
         Skipped -> STATUS_SKIPPED
         NotLoggedIn -> STATUS_NOT_LOGGED_IN
         HealthUnavailable -> STATUS_HEALTH_UNAVAILABLE
+        AlreadyRunning -> STATUS_ALREADY_RUNNING
         is Failed -> STATUS_FAILED
     }
 
@@ -237,5 +269,6 @@ sealed class SyncOutcome {
         const val STATUS_HEALTH_UNAVAILABLE = "health_unavailable"
         const val STATUS_CANCELLED = "cancelled"
         const val STATUS_FAILED = "failed"
+        const val STATUS_ALREADY_RUNNING = "already_running"
     }
 }

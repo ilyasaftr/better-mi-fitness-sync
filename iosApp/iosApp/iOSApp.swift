@@ -6,7 +6,7 @@ struct iOSApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        // Start Koin so dependencies exist for both UI and background sync.
+        // Start Koin so dependencies exist for SwiftUI + background sync.
         MainViewControllerKt.doInitKoin()
         // Register BG handler + Kotlin↔Swift schedule bridge.
         BackgroundSyncManager.register()

@@ -76,6 +76,7 @@ fun HomeScreen(onSyncClick: () -> Unit, onSettingsClick: () -> Unit, onLogout: (
     val primaryLabel = when {
         state.healthNeedsAction -> "Allow access"
         !canUpdate -> "Open Settings"
+        state.isSyncing -> "Syncing…"
         else -> "Sync"
     }
 
@@ -111,10 +112,16 @@ fun HomeScreen(onSyncClick: () -> Unit, onSettingsClick: () -> Unit, onLogout: (
                     text = primaryLabel,
                     onClick = {
                         when {
-                            !canUpdate && !state.healthNeedsAction -> onSettingsClick()
-                            else -> onSyncClick()
+                            state.healthNeedsAction -> viewModel.openHealthService()
+                            !canUpdate -> onSettingsClick()
+                            // Start job first (single-flight); Sync screen only observes.
+                            else -> {
+                                if (!state.isSyncing) viewModel.startSyncIfIdle()
+                                onSyncClick()
+                            }
                         }
                     },
+                    loading = state.isSyncing,
                     // Settings-bound CTA: no sync icon (avoids looking like a second "Sync")
                     icon = if (!canUpdate && !state.healthNeedsAction) null else AppIcons.Sync,
                 )

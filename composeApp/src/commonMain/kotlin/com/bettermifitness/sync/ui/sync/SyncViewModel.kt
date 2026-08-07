@@ -30,7 +30,6 @@ data class SyncUiState(
     val rangeDays: Int = 7,
     val enabledMetrics: Set<String> = SyncPreferences.ALL_METRIC_KEYS,
     val progress: SyncProgress = SyncProgress(),
-    val didAutoSync: Boolean = false,
     val readinessChecked: Boolean = false,
 ) {
     val visibleMetrics: List<SyncMetric>
@@ -38,7 +37,8 @@ data class SyncUiState(
 }
 
 /**
- * Foreground sync UI: readiness + [SyncCoordinator] for the actual work.
+ * Foreground sync UI: observes shared [SyncCoordinator] + repository progress.
+ * Does **not** own single-flight — [SyncCoordinator.run] is the only gate.
  */
 class SyncViewModel(
     private val repository: HealthRepository,
@@ -56,9 +56,11 @@ class SyncViewModel(
         repository.syncProgress,
         syncPreferences.enabledMetrics,
         syncPreferences.syncRangeDays,
-    ) { local, progress, enabled, rangeDays ->
+        syncCoordinator.isRunning,
+    ) { local, progress, enabled, rangeDays, running ->
         SyncUiState(
-            isSyncing = local.isSyncing,
+            // App-wide: still true after leaving and re-entering Sync.
+            isSyncing = running,
             healthAvailable = local.healthAvailable,
             availabilityHint = local.availabilityHint,
             permissionError = local.permissionError,
@@ -68,7 +70,6 @@ class SyncViewModel(
             rangeDays = rangeDays,
             enabledMetrics = enabled,
             progress = progress,
-            didAutoSync = local.didAutoSync,
             readinessChecked = local.readinessChecked,
         )
     }.stateIn(
@@ -76,17 +77,22 @@ class SyncViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = SyncUiState(
             healthServiceName = healthAvailability.healthServiceName(),
+            isSyncing = syncCoordinator.isRunning.value,
         ),
     )
 
     init {
         viewModelScope.launch {
-            checkHealthAndMaybeAutoSync()
+            checkHealthReadiness()
         }
     }
 
     fun startSync() {
-        viewModelScope.launch { runSync() }
+        viewModelScope.launch {
+            // Fast path — coordinator still enforces single-flight.
+            if (syncCoordinator.isRunning.value) return@launch
+            runSync()
+        }
     }
 
     fun openHealthService() {
@@ -110,20 +116,31 @@ class SyncViewModel(
         else -> SyncState.Idle
     }
 
-    private suspend fun checkHealthAndMaybeAutoSync() {
+    /** Health check only — never auto-starts sync on screen enter (spam-safe). */
+    private suspend fun checkHealthReadiness() {
         try {
             val available = healthAvailability.isAvailable()
             val hint = healthAvailability.availabilityHint()
+            val perms = if (available) {
+                try {
+                    healthAvailability.hasWritePermissions()
+                } catch (_: Exception) {
+                    true
+                }
+            } else {
+                false
+            }
             _local.update {
                 it.copy(
                     healthAvailable = available,
-                    availabilityHint = hint,
+                    availabilityHint = when {
+                        !available -> hint
+                        !perms -> hint
+                            ?: "Write permissions incomplete — grant access and try again."
+                        else -> null
+                    },
                     readinessChecked = true,
                 )
-            }
-            if (available && !_local.value.didAutoSync) {
-                _local.update { it.copy(didAutoSync = true) }
-                runSync()
             }
         } catch (_: Exception) {
             _local.update {
@@ -137,10 +154,8 @@ class SyncViewModel(
     }
 
     private suspend fun runSync() {
-        if (_local.value.isSyncing) return
         _local.update {
             it.copy(
-                isSyncing = true,
                 permissionError = null,
                 outcomeMessage = null,
                 outcomeIsWarning = false,
@@ -154,6 +169,9 @@ class SyncViewModel(
                     userInitiated = true,
                 )
             ) {
+                SyncOutcome.AlreadyRunning -> {
+                    // Another caller owns the run; UI already shows isSyncing via coordinator.
+                }
                 is SyncOutcome.Failed ->
                     _local.update {
                         it.copy(
@@ -190,7 +208,6 @@ class SyncViewModel(
                     }
             }
         } finally {
-            _local.update { it.copy(isSyncing = false) }
             // Refresh Health Connect / HealthKit readiness after a permission prompt.
             try {
                 val available = healthAvailability.isAvailable()
@@ -214,14 +231,12 @@ class SyncViewModel(
     }
 
     private data class LocalSyncState(
-        val isSyncing: Boolean = false,
         val healthAvailable: Boolean = true,
         val availabilityHint: String? = null,
         val permissionError: String? = null,
         val outcomeMessage: String? = null,
         val outcomeIsWarning: Boolean = false,
         val healthServiceName: String = "",
-        val didAutoSync: Boolean = false,
         val readinessChecked: Boolean = false,
     )
 }
