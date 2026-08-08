@@ -46,6 +46,7 @@ import platform.HealthKit.HKCategoryType
 import platform.HealthKit.HKCategoryValueSleepAnalysisAsleepDeep
 import platform.HealthKit.HKCategoryValueSleepAnalysisAsleepREM
 import platform.HealthKit.HKCategoryValueSleepAnalysisAsleepCore
+import platform.HealthKit.HKCategoryValueSleepAnalysisAsleepUnspecified
 import platform.HealthKit.HKCategoryValueSleepAnalysisAwake
 import platform.HealthKit.HKCategoryValueSleepAnalysisInBed
 import platform.UIKit.UIApplication
@@ -145,7 +146,7 @@ actual class HealthWriter : HealthStore {
                     HealthDataNormalizer.MiSleepStageKind.DEEP -> HKCategoryValueSleepAnalysisAsleepDeep
                     HealthDataNormalizer.MiSleepStageKind.LIGHT -> HKCategoryValueSleepAnalysisAsleepCore
                     HealthDataNormalizer.MiSleepStageKind.REM -> HKCategoryValueSleepAnalysisAsleepREM
-                    HealthDataNormalizer.MiSleepStageKind.UNKNOWN -> HKCategoryValueSleepAnalysisAsleepCore
+                    HealthDataNormalizer.MiSleepStageKind.UNKNOWN -> HKCategoryValueSleepAnalysisAsleepUnspecified
                 }
                 HKCategorySample.categorySampleWithType(
                     type = sleepType,
