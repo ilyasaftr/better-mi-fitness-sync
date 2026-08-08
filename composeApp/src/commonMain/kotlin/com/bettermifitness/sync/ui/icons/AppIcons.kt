@@ -10,6 +10,7 @@ import mi_fitness_app.composeapp.generated.resources.ic_arrow_back_24
 import mi_fitness_app.composeapp.generated.resources.ic_bedtime_24
 import mi_fitness_app.composeapp.generated.resources.ic_bloodtype_24
 import mi_fitness_app.composeapp.generated.resources.ic_check_circle_24
+import mi_fitness_app.composeapp.generated.resources.ic_chevron_right_24
 import mi_fitness_app.composeapp.generated.resources.ic_content_copy_24
 import mi_fitness_app.composeapp.generated.resources.ic_content_paste_24
 import mi_fitness_app.composeapp.generated.resources.ic_directions_walk_24
@@ -21,8 +22,10 @@ import mi_fitness_app.composeapp.generated.resources.ic_logout_24
 import mi_fitness_app.composeapp.generated.resources.ic_mail_24
 import mi_fitness_app.composeapp.generated.resources.ic_monitor_heart_24
 import mi_fitness_app.composeapp.generated.resources.ic_monitor_weight_24
+import mi_fitness_app.composeapp.generated.resources.ic_settings_24
 import mi_fitness_app.composeapp.generated.resources.ic_straighten_24
 import mi_fitness_app.composeapp.generated.resources.ic_sync_24
+import mi_fitness_app.composeapp.generated.resources.ic_tune_24
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -61,6 +64,9 @@ object AppIcons {
     val Bloodtype: DrawableResource get() = Res.drawable.ic_bloodtype_24
     val MonitorWeight: DrawableResource get() = Res.drawable.ic_monitor_weight_24
     val FitnessCenter: DrawableResource get() = Res.drawable.ic_fitness_center_24
+    val Settings: DrawableResource get() = Res.drawable.ic_settings_24
+    val Tune: DrawableResource get() = Res.drawable.ic_tune_24
+    val ChevronRight: DrawableResource get() = Res.drawable.ic_chevron_right_24
 }
 
 @Composable

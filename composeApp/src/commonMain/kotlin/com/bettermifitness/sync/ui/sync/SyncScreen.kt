@@ -3,26 +3,27 @@ package com.bettermifitness.sync.ui.sync
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -32,22 +33,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.bettermifitness.sync.data.repository.SyncState
-import com.bettermifitness.sync.theme.BrandShapes
 import com.bettermifitness.sync.theme.BrandSpacing
 import com.bettermifitness.sync.ui.SyncMetric
 import com.bettermifitness.sync.ui.components.PrimaryButton
-import com.bettermifitness.sync.ui.components.StatusBanner
-import com.bettermifitness.sync.ui.components.StatusChip
-import com.bettermifitness.sync.ui.components.StatusTone
-import com.bettermifitness.sync.ui.components.statusToneColors
+import com.bettermifitness.sync.ui.components.StickyCtaBar
 import com.bettermifitness.sync.ui.icons.AppIcon
 import com.bettermifitness.sync.ui.icons.AppIcons
 import org.koin.mp.KoinPlatform
 
 /**
- * One update flow: progress + list of items + one button. No technical dashboards.
+ * Sync screen (parity with iOS SyncView): metric list + sticky Sync now.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,24 +53,19 @@ fun SyncScreen(onBack: () -> Unit) {
     val viewModel = remember { KoinPlatform.getKoin().get<SyncViewModel>() }
     val state by viewModel.uiState.collectAsState()
 
-    val rangeLabel = if (state.rangeDays == 1) "today" else "the last ${state.rangeDays} days"
     val healthName = state.healthServiceName.ifBlank { "Health" }
     val metrics = state.visibleMetrics
-    val states = metrics.map { viewModel.stateFor(state.progress, it.key) }
-    val done = states.count { it is SyncState.Success || it is SyncState.Error }
-    val success = states.count { it is SyncState.Success }
-    val failed = states.count { it is SyncState.Error }
-    val total = metrics.size
-    val progressFraction = if (total == 0) 0f else done.toFloat() / total.toFloat()
+    val daysLabel = if (state.rangeDays == 1) "1 day" else "${state.rangeDays} days"
 
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text("Sync", fontWeight = FontWeight.SemiBold) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -81,187 +74,172 @@ fun SyncScreen(onBack: () -> Unit) {
                 },
             )
         },
+        bottomBar = {
+            StickyCtaBar(modifier = Modifier.navigationBarsPadding()) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    PrimaryButton(
+                        text = if (state.isSyncing) "Syncing…" else "Sync now",
+                        onClick = viewModel::startSync,
+                        enabled = state.healthAvailable && metrics.isNotEmpty() && !state.isSyncing,
+                        loading = state.isSyncing,
+                        icon = AppIcons.Sync,
+                    )
+                    if (!state.healthAvailable) {
+                        TextButton(
+                            onClick = viewModel::openHealthService,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("Open $healthName")
+                        }
+                    }
+                }
+            }
+        },
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = BrandSpacing.ScreenHorizontal, vertical = 12.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(BrandSpacing.Section),
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = BrandSpacing.ScreenHorizontal)
+                .padding(top = 12.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                "Sync $rangeLabel from Mi Fitness to $healthName",
-                style = MaterialTheme.typography.bodyLarge,
+                "Last $daysLabel",
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            if (!state.healthAvailable || state.availabilityHint != null) {
-                StatusBanner(
-                    title = if (!state.healthAvailable) {
-                        "$healthName isn’t available"
-                    } else {
-                        "Please allow access"
-                    },
-                    detail = state.availabilityHint
-                        ?: "We need permission to save your activity.",
-                    tone = StatusTone.Error,
-                    actions = {
-                        Button(onClick = viewModel::openHealthService) {
-                            Text("Open $healthName")
-                        }
-                    },
-                )
+            state.permissionError?.let { err ->
+                CompactBanner(err, isError = true)
             }
-
-            state.permissionError?.let { error ->
-                StatusBanner(
-                    title = "Couldn’t get access",
-                    detail = error,
-                    tone = StatusTone.Error,
-                )
+            state.availabilityHint?.let { hint ->
+                CompactBanner(hint, isError = false)
             }
-
-            state.outcomeMessage?.let { message ->
-                StatusBanner(
-                    title = if (state.outcomeIsWarning) "Partly finished" else "All done",
-                    detail = message,
-                    tone = if (state.outcomeIsWarning) StatusTone.Warning else StatusTone.Success,
-                )
+            if (state.outcomeIsWarning) {
+                state.outcomeMessage?.let { CompactBanner(it, isError = false) }
             }
 
             if (metrics.isEmpty()) {
-                StatusBanner(
-                    title = "Nothing selected",
-                    detail = "Go back and choose what to sync in Settings.",
-                    tone = StatusTone.Warning,
+                Text(
+                    if (state.healthAvailable) {
+                        "No metrics enabled — open Settings."
+                    } else {
+                        "Preparing…"
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 40.dp),
                 )
             } else {
-                // Overall progress
-                if (state.isSyncing || done > 0) {
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = BrandShapes.Card,
-                        color = MaterialTheme.colorScheme.surface,
-                    ) {
-                        Column(
-                            Modifier.padding(BrandSpacing.CardPadding),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            Text(
-                                when {
-                                    state.isSyncing -> "Syncing… $done of $total"
-                                    failed > 0 -> "Finished · $success ok, $failed failed"
-                                    else -> "Finished · $success of $total"
-                                },
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.SemiBold,
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                ) {
+                    Column {
+                        metrics.forEachIndexed { index, metric ->
+                            MetricRow(
+                                metric = metric,
+                                syncState = viewModel.stateFor(state.progress, metric.key),
                             )
-                            LinearProgressIndicator(
-                                progress = {
-                                    if (state.isSyncing) {
-                                        progressFraction.coerceAtLeast(0.05f)
-                                    } else {
-                                        progressFraction
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth().height(8.dp),
-                            )
+                            if (index < metrics.lastIndex) {
+                                HorizontalDivider(Modifier.padding(start = 48.dp))
+                            }
                         }
                     }
                 }
-
-                metrics.forEach { metric ->
-                    ItemRow(metric, viewModel.stateFor(state.progress, metric.key))
-                }
             }
-
-            Spacer(Modifier.height(4.dp))
-
-            PrimaryButton(
-                text = if (state.isSyncing) "Syncing…" else "Sync",
-                onClick = viewModel::startSync,
-                enabled = state.healthAvailable && metrics.isNotEmpty(),
-                loading = state.isSyncing,
-            )
-
-            Text(
-                "Safe to sync more than once — we won’t double-count the same days.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(12.dp))
         }
     }
 }
 
 @Composable
-private fun ItemRow(metric: SyncMetric, state: SyncState) {
-    val tone = when (state) {
-        is SyncState.Success -> StatusTone.Success
-        is SyncState.Error -> StatusTone.Error
-        is SyncState.InProgress -> StatusTone.Info
-        is SyncState.Idle -> StatusTone.Neutral
+private fun CompactBanner(text: String, isError: Boolean) {
+    val color = if (isError) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.tertiary
     }
-    val colors = statusToneColors(tone)
-
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = BrandShapes.CardMd,
-        color = colors.container,
+        shape = RoundedCornerShape(12.dp),
+        color = color.copy(alpha = 0.12f),
     ) {
+        Text(
+            text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = color,
+            modifier = Modifier.padding(12.dp),
+        )
+    }
+}
+
+@Composable
+private fun MetricRow(metric: SyncMetric, syncState: SyncState) {
+    val (label, color) = when (syncState) {
+        is SyncState.InProgress -> "Syncing" to MaterialTheme.colorScheme.primary
+        is SyncState.Success -> "Done" to MaterialTheme.colorScheme.primary
+        is SyncState.Error -> "Failed" to MaterialTheme.colorScheme.error
+        is SyncState.Idle -> "Waiting" to MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(52.dp)
+            .padding(horizontal = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        AppIcon(
+            AppIcons.forMetric(metric.key),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(22.dp),
+        )
+        Text(
+            metric.label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.width(88.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f),
-            ) {
-                AppIcon(
-                    com.bettermifitness.sync.ui.icons.AppIcons.forMetric(metric.key),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp),
-                )
-                Spacer(Modifier.width(12.dp))
-                Column {
-                    Text(
-                        metric.label,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium,
-                        color = colors.onContainer,
-                    )
-                    Text(
-                        when (state) {
-                            is SyncState.Idle -> "Waiting"
-                            is SyncState.InProgress -> "Syncing…"
-                            is SyncState.Success ->
-                                if (state.count == 0) "Nothing new" else "Saved ${state.count}"
-                            is SyncState.Error -> state.message.take(80)
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colors.onContainer.copy(alpha = 0.85f),
-                        maxLines = 2,
-                    )
-                }
-            }
-            when (state) {
+            when (syncState) {
                 is SyncState.InProgress ->
-                    CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                    CircularProgressIndicator(Modifier.size(14.dp), strokeWidth = 2.dp)
                 is SyncState.Success ->
                     AppIcon(
                         AppIcons.CheckCircle,
                         null,
-                        Modifier.size(20.dp),
-                        tint = colors.accent,
+                        Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 is SyncState.Error ->
-                    StatusChip("Failed", StatusTone.Error)
-                is SyncState.Idle ->
-                    StatusChip("Soon", StatusTone.Neutral)
+                    AppIcon(
+                        AppIcons.ErrorOutline,
+                        null,
+                        Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                is SyncState.Idle -> { }
             }
+            Text(
+                label,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium,
+                color = color,
+                maxLines = 1,
+            )
         }
     }
 }

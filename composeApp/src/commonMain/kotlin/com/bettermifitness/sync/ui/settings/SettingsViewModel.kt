@@ -3,8 +3,11 @@ package com.bettermifitness.sync.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bettermifitness.sync.AutoSyncPlatform
+import com.bettermifitness.sync.data.MiSessionManager
 import com.bettermifitness.sync.data.preferences.SyncPreferences
+import com.bettermifitness.sync.data.preferences.TokenStore
 import com.bettermifitness.sync.health.HealthAvailability
+import com.bettermifitness.sync.health.HealthPermissionRequester
 import com.bettermifitness.sync.health.HealthReadiness
 import com.bettermifitness.sync.sync.SyncOutcomeLabels
 import com.bettermifitness.sync.util.RelativeTime
@@ -17,7 +20,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class SettingsUiState(
-    val enabledMetrics: Set<String> = SyncPreferences.ALL_METRIC_KEYS,
+    /**
+     * Real enabled set from DataStore once [prefsReady] is true.
+     * Do **not** default to all-on — that flashes wrong toggles before prefs load.
+     */
+    val enabledMetrics: Set<String> = emptySet(),
+    /** False until the first DataStore emission for metrics / range / auto-sync. */
+    val prefsReady: Boolean = false,
     val rangeDays: Int = 7,
     val autoSync: Boolean = false,
     val lastBackgroundSyncLabel: String = "Never",
@@ -39,11 +48,15 @@ data class SettingsUiState(
     val healthStatusTitle: String = "",
     val healthStatusDetail: String = "",
     val healthNeedsAction: Boolean = false,
+    val loggedOut: Boolean = false,
 )
 
 class SettingsViewModel(
     private val syncPreferences: SyncPreferences,
     private val healthAvailability: HealthAvailability,
+    private val healthPermissions: HealthPermissionRequester,
+    private val tokenStore: TokenStore,
+    private val session: MiSessionManager,
 ) : ViewModel() {
 
     private val showShortcutsHelp = AutoSyncPlatform.supportsShortcutsHelp()
@@ -52,6 +65,7 @@ class SettingsViewModel(
         LocalSettingsState(
             bgRefreshLabel = AutoSyncPlatform.backgroundRefreshStatusLabel(),
             canTestBgRefresh = AutoSyncPlatform.supportsOpportunisticRefreshTest(),
+            loggedOut = false,
         ),
     )
     private val _health = MutableStateFlow(
@@ -90,6 +104,7 @@ class SettingsViewModel(
     ) { config, lastSync, lastBg, local, health ->
         SettingsUiState(
             enabledMetrics = config.first,
+            prefsReady = true,
             rangeDays = config.second,
             autoSync = config.third,
             lastBackgroundSyncLabel = RelativeTime.format(lastBg.first),
@@ -111,11 +126,14 @@ class SettingsViewModel(
             healthStatusTitle = health.statusTitle,
             healthStatusDetail = health.statusDetail,
             healthNeedsAction = !health.isReady,
+            loggedOut = local.loggedOut,
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
+        // Eager so prefs load as soon as Settings opens (avoids all-on placeholder flash).
+        started = SharingStarted.Eagerly,
         initialValue = SettingsUiState(
+            prefsReady = false,
             bgRefreshLabel = _local.value.bgRefreshLabel,
             canTestBgRefresh = _local.value.canTestBgRefresh,
             showShortcutsHelp = showShortcutsHelp,
@@ -143,7 +161,17 @@ class SettingsViewModel(
     }
 
     fun openHealthService() {
-        healthAvailability.openHealthService()
+        viewModelScope.launch {
+            try {
+                healthPermissions.requestPermissions()
+            } catch (_: Exception) {
+                // Denied / failed — open Settings or Health Connect below.
+            }
+            if (!healthAvailability.hasWritePermissions()) {
+                healthAvailability.openHealthService()
+            }
+            refreshHealth()
+        }
     }
 
     fun setMetricEnabled(key: String, enabled: Boolean) {
@@ -188,6 +216,18 @@ class SettingsViewModel(
         }
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            tokenStore.clear()
+            session.clear()
+            _local.update { it.copy(loggedOut = true) }
+        }
+    }
+
+    fun consumeLoggedOut() {
+        _local.update { it.copy(loggedOut = false) }
+    }
+
     private fun mapBgTestStatus(status: String): String = when (status) {
         "success" -> "Test OK — last background refresh should update"
         "partial_success" -> "Partial OK — some metrics failed (see Sync screen)"
@@ -202,5 +242,6 @@ class SettingsViewModel(
         val canTestBgRefresh: Boolean = false,
         val bgTestStatus: String? = null,
         val bgTestRunning: Boolean = false,
+        val loggedOut: Boolean = false,
     )
 }

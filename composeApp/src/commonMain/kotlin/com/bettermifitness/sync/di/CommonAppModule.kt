@@ -72,6 +72,7 @@ fun commonAppModule(): Module = module {
             session = get(),
             tokenStore = get(),
             healthAvailability = get(),
+            healthPermissions = get(),
             syncCoordinator = get(),
         )
     }
@@ -79,6 +80,7 @@ fun commonAppModule(): Module = module {
         SyncViewModel(
             repository = get(),
             healthAvailability = get(),
+            healthPermissions = get(),
             syncPreferences = get(),
             syncCoordinator = get(),
         )
@@ -87,6 +89,9 @@ fun commonAppModule(): Module = module {
         SettingsViewModel(
             syncPreferences = get(),
             healthAvailability = get(),
+            healthPermissions = get(),
+            tokenStore = get(),
+            session = get(),
         )
     }
 }

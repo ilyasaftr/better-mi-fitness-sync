@@ -14,6 +14,7 @@ import com.bettermifitness.sync.data.api.WeightMeasurement
 import com.bettermifitness.sync.data.api.WorkoutSession
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDate
+import platform.Foundation.NSURL
 import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.HealthKit.HKCategoryTypeIdentifierSleepAnalysis
 import platform.HealthKit.HKCorrelation
@@ -46,6 +47,10 @@ import platform.HealthKit.HKCategoryValueSleepAnalysisAsleepREM
 import platform.HealthKit.HKCategoryValueSleepAnalysisAsleepCore
 import platform.HealthKit.HKCategoryValueSleepAnalysisAwake
 import platform.HealthKit.HKCategoryValueSleepAnalysisInBed
+import platform.UIKit.UIApplication
+import platform.UIKit.UIApplicationOpenSettingsURLString
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -471,13 +476,14 @@ actual class HealthWriter : HealthStore {
             healthStore.requestAuthorizationToShareTypes(
                 typesToShare = types,
                 readTypes = emptySet<platform.HealthKit.HKObjectType>(),
-            ) { success, error ->
-                if (success) {
-                    continuation.resume(Unit)
-                } else {
+            ) { _, error ->
+                // Apple’s success flag means the sheet finished — not that types were granted.
+                if (error != null) {
                     continuation.resumeWithException(
-                        Exception(error?.localizedDescription ?: "Permission denied")
+                        Exception(error.localizedDescription.ifBlank { "Permission request failed" }),
                     )
+                } else {
+                    continuation.resume(Unit)
                 }
             }
         }
@@ -490,13 +496,29 @@ actual class HealthWriter : HealthStore {
             !HKHealthStore.isHealthDataAvailable() ->
                 "Apple Health isn’t available on this device."
             !hasWritePermissions() ->
-                "Please allow this app to save data in Apple Health. Tap Sync to review access."
+                "Tap Allow access to review Apple Health write permissions."
             else -> null
         }
     }
 
+    /**
+     * After the system sheet (or when it will not show again), open this app’s Settings
+     * so the user can enable Health access under Privacy → Health.
+     */
     actual override fun openHealthService() {
-        // HealthKit has no public install/settings deep-link; permissions are system dialogs.
+        openAppSettings()
+    }
+
+    private fun openAppSettings() {
+        val url = NSURL.URLWithString(UIApplicationOpenSettingsURLString) ?: return
+        val open = {
+            val app = UIApplication.sharedApplication
+            if (app.canOpenURL(url)) {
+                app.openURL(url, options = emptyMap<Any?, Any>(), completionHandler = null)
+            }
+        }
+        // UIKit must be called on the main queue.
+        dispatch_async(dispatch_get_main_queue(), open)
     }
 
 

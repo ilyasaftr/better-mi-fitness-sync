@@ -102,9 +102,40 @@ struct SettingsView: View {
                     onLogout?()
                 }
             }
+
+            // Same About block as Android Settings: Version + Credit.
+            Section("About") {
+                LabeledContent("Version", value: appVersionLabel)
+                Link(destination: creditURL) {
+                    HStack {
+                        Text("Credit")
+                            .foregroundStyle(Brand.label)
+                        Spacer(minLength: 0)
+                        Text(creditName)
+                            .foregroundStyle(Brand.primary)
+                    }
+                }
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { store.refreshHealth() }
+    }
+
+    private var appVersionLabel: String {
+        let info = Bundle.main.infoDictionary
+        let name = (info?["CFBundleShortVersionString"] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let build = (info?["CFBundleVersion"] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let n = (name?.isEmpty == false) ? name! : "—"
+        let b = (build?.isEmpty == false) ? build! : "—"
+        return "\(n) (\(b))"
+    }
+
+    private var creditName: String { "Ilyasa Fathur Rahman (ilyasaftr)" }
+
+    private var creditURL: URL {
+        URL(string: "https://github.com/ilyasaftr")!
     }
 }
