@@ -140,13 +140,12 @@ actual class HealthWriter : HealthStore {
             val stageSamples = session.stages.map { stage ->
                 val start = NSDate.dateWithTimeIntervalSince1970(stage.startTime.toDouble())
                 val end = NSDate.dateWithTimeIntervalSince1970(stage.endTime.toDouble())
-                val value = when (stage.stage) {
-                    // Mi Fitness sleep states: 2=light/core, 3=deep, 4=REM, 5=awake
-                    5 -> HKCategoryValueSleepAnalysisAwake
-                    3 -> HKCategoryValueSleepAnalysisAsleepDeep
-                    4 -> HKCategoryValueSleepAnalysisAsleepREM
-                    2 -> HKCategoryValueSleepAnalysisAsleepCore
-                    else -> HKCategoryValueSleepAnalysisAsleepCore
+                val value = when (HealthDataNormalizer.miSleepStageKind(stage.stage)) {
+                    HealthDataNormalizer.MiSleepStageKind.AWAKE -> HKCategoryValueSleepAnalysisAwake
+                    HealthDataNormalizer.MiSleepStageKind.DEEP -> HKCategoryValueSleepAnalysisAsleepDeep
+                    HealthDataNormalizer.MiSleepStageKind.LIGHT -> HKCategoryValueSleepAnalysisAsleepCore
+                    HealthDataNormalizer.MiSleepStageKind.REM -> HKCategoryValueSleepAnalysisAsleepREM
+                    HealthDataNormalizer.MiSleepStageKind.UNKNOWN -> HKCategoryValueSleepAnalysisAsleepCore
                 }
                 HKCategorySample.categorySampleWithType(
                     type = sleepType,

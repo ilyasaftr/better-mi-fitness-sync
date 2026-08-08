@@ -91,7 +91,7 @@ data class SleepSession(
 data class SleepStage(
     val startTime: Long,
     val endTime: Long,
-    val stage: Int, // 2=light/core, 3=deep, 4=REM, 5=awake (Mi codes)
+    val stage: Int, // 2=deep, 3=light/core, 4=REM, 5=awake (Mi codes)
 )
 
 /**

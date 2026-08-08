@@ -504,18 +504,14 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         HealthConnectPermissionBridge.openHealthConnect?.invoke()
     }
 
-    /**
-     * Mi Fitness sleep states: 2=light/core, 3=deep, 4=REM, 5=awake
-     * (same mapping as iOS HealthWriter).
-     */
-    private fun mapSleepStage(stage: Int): Int {
-        return when (stage) {
-            5, 1 -> SleepSessionRecord.STAGE_TYPE_AWAKE
-            2 -> SleepSessionRecord.STAGE_TYPE_LIGHT
-            3 -> SleepSessionRecord.STAGE_TYPE_DEEP
-            4 -> SleepSessionRecord.STAGE_TYPE_REM
-            else -> SleepSessionRecord.STAGE_TYPE_UNKNOWN
+    /** Uses the shared raw Mi state mapping so Android and iOS stay consistent. */
+    private fun mapSleepStage(stage: Int): Int =
+        when (HealthDataNormalizer.miSleepStageKind(stage)) {
+            HealthDataNormalizer.MiSleepStageKind.AWAKE -> SleepSessionRecord.STAGE_TYPE_AWAKE
+            HealthDataNormalizer.MiSleepStageKind.DEEP -> SleepSessionRecord.STAGE_TYPE_DEEP
+            HealthDataNormalizer.MiSleepStageKind.LIGHT -> SleepSessionRecord.STAGE_TYPE_LIGHT
+            HealthDataNormalizer.MiSleepStageKind.REM -> SleepSessionRecord.STAGE_TYPE_REM
+            HealthDataNormalizer.MiSleepStageKind.UNKNOWN -> SleepSessionRecord.STAGE_TYPE_UNKNOWN
         }
-    }
 
 }
