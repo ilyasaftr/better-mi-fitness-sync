@@ -1,6 +1,8 @@
 package com.bettermifitness.sync
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.os.Build
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -49,8 +51,26 @@ actual object AutoSyncPlatform {
     }
 
     actual fun backgroundRefreshStatusLabel(): String {
-        return L10n.text(L10n.backgroundAndroidStatus)
+        return if (isDebuggable(requireContext()) || isAndroidEmulator()) {
+            L10n.text(L10n.backgroundAndroidStatus)
+        } else {
+            ""
+        }
     }
+
+    private fun isDebuggable(context: Context): Boolean =
+        context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+
+    private fun isAndroidEmulator(): Boolean =
+        Build.FINGERPRINT.startsWith("generic") ||
+            Build.FINGERPRINT.startsWith("unknown") ||
+            Build.MODEL.contains("google_sdk", ignoreCase = true) ||
+            Build.MODEL.contains("emulator", ignoreCase = true) ||
+            Build.MODEL.contains("android sdk built for", ignoreCase = true) ||
+            Build.MANUFACTURER.contains("genymotion", ignoreCase = true) ||
+            (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
+            Build.HARDWARE.contains("goldfish", ignoreCase = true) ||
+            Build.HARDWARE.contains("ranchu", ignoreCase = true)
 
     actual fun supportsOpportunisticRefreshTest(): Boolean = false
 
