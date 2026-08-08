@@ -85,7 +85,7 @@ struct SettingsView: View {
             Section("Status") {
                 // Keep rows minimal — titles/details live on Home / Sync.
                 LabeledContent("Last sync", value: store.state.lastSyncLabel)
-                LabeledContent("Last background", value: store.state.lastBackgroundSyncLabel)
+                LabeledContent("Last background sync", value: store.state.lastBackgroundSyncLabel)
             }
 
             if store.state.showShortcutsHelp {

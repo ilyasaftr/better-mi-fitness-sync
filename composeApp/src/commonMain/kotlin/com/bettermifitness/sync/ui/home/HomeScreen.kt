@@ -194,9 +194,11 @@ fun HomeScreen(onSyncClick: () -> Unit, onSettingsClick: () -> Unit, onLogout: (
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         StatusChip(
                             label = if (state.enabledMetricsCount == 0) {
-                                "No items"
+                                "No metrics"
+                            } else if (state.enabledMetricsCount == 1) {
+                                "1 metric"
                             } else {
-                                "${state.enabledMetricsCount} items"
+                                "${state.enabledMetricsCount} metrics"
                             },
                             tone = if (state.enabledMetricsCount == 0) {
                                 StatusTone.Warning
@@ -209,7 +211,7 @@ fun HomeScreen(onSyncClick: () -> Unit, onSettingsClick: () -> Unit, onLogout: (
                             tone = StatusTone.Neutral,
                         )
                         StatusChip(
-                            label = if (state.autoSync) "Auto on" else "Manual only",
+                            label = if (state.autoSync) "Auto-sync on" else "Manual",
                             tone = if (state.autoSync) StatusTone.Success else StatusTone.Neutral,
                         )
                     }
@@ -347,7 +349,7 @@ private fun buildSetupHint(state: HomeUiState): String {
         state.autoSync ->
             "Syncs $range. Auto-sync runs in the background when possible."
         else ->
-            "Syncs $range. Change items or auto-sync in Settings."
+            "Syncs $range. Change metrics or auto-sync in Settings."
     }
 }
 

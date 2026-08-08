@@ -37,7 +37,7 @@ struct SyncBetterMiFitnessIntent: AppIntent {
         case BackgroundSync.shared.STATUS_PARTIAL_SUCCESS:
             return IntentDialog("Sync finished with some metrics failed. Open the app for details.")
         case BackgroundSync.shared.STATUS_SKIPPED:
-            return IntentDialog("Nothing to sync (no data types enabled).")
+            return IntentDialog("Nothing to sync (no metrics enabled).")
         case BackgroundSync.shared.STATUS_NOT_LOGGED_IN:
             return IntentDialog("You’re not signed in. Open Better Mi Fitness Sync, sign in, then try again.")
         case BackgroundSync.shared.STATUS_HEALTH_UNAVAILABLE:

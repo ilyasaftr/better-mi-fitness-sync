@@ -121,15 +121,15 @@ struct HomeView: View {
                     ? "Allow access to \(s.healthServiceName)"
                     : s.healthStatusTitle,
                 detail: s.healthStatusDetail.isEmpty
-                    ? "Grant write access so this app can transfer data into \(s.healthServiceName)."
+                    ? "Grant write access so this app can write data to \(s.healthServiceName)."
                     : s.healthStatusDetail,
                 accent: Brand.danger
             )
         }
         if s.enabledMetricsCount == 0 {
             return BlockingBanner(
-                title: "Nothing selected to transfer",
-                detail: "Choose metric types and range in Settings. Viewed data lives in \(s.healthServiceName).",
+                title: "Nothing selected to sync",
+                detail: "Choose metrics and range in Settings. Viewed data lives in \(s.healthServiceName).",
                 accent: Brand.caution
             )
         }
@@ -235,12 +235,12 @@ struct HomeView: View {
         if s.enabledMetricsCount == 0 {
             return "None selected"
         }
-        let types = s.enabledMetricsCount == 1
-            ? "1 type"
-            : "\(s.enabledMetricsCount) types"
+        let metrics = s.enabledMetricsCount == 1
+            ? "1 metric"
+            : "\(s.enabledMetricsCount) metrics"
         let days = s.rangeDays == 1 ? "1 day" : "\(s.rangeDays) days"
-        let auto = s.autoSync ? "Auto on" : "Manual"
-        return "\(types) · \(days) · \(auto)"
+        let auto = s.autoSync ? "Auto-sync on" : "Manual"
+        return "\(metrics) · \(days) · \(auto)"
     }
 
     /// Settings-style row: matched rounded icon badges + title/detail stack.
@@ -313,7 +313,7 @@ struct HomeView: View {
                 )
                 Divider().padding(.leading, 14)
                 footnoteRow(
-                    title: "Background",
+                    title: "Background sync",
                     value: backgroundValue,
                     valueColor: store.state.lastBackgroundIsError ? Brand.danger : Brand.secondaryLabel
                 )
@@ -327,7 +327,7 @@ struct HomeView: View {
     private var lastSyncValue: String {
         let s = store.state
         if s.isSyncing {
-            return "In progress"
+            return "Syncing…"
         }
         let when = s.lastSyncLabel
         if when == "Never" {
