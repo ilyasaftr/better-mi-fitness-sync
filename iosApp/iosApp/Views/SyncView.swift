@@ -93,7 +93,7 @@ struct SyncView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
-    /// Fixed-height row: icon | title (1 line) | trailing status
+    /// Adaptive row: icon | title (up to 2 lines) | trailing status
     private func metricRow(_ row: SyncStore.MetricRow) -> some View {
         HStack(spacing: 12) {
             Image(systemName: MetricSymbol.name(for: row.id))
@@ -104,8 +104,8 @@ struct SyncView: View {
             Text(row.label)
                 .font(.body)
                 .foregroundStyle(Brand.label)
-                .lineLimit(1)
-                .truncationMode(.tail)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityLabel(row.label)
 
@@ -119,7 +119,7 @@ struct SyncView: View {
             .frame(minWidth: 88, alignment: .trailing)
         }
         .padding(.horizontal, 14)
-        .frame(height: 52)
+        .frame(minHeight: 52)
         .contentShape(Rectangle())
     }
 
