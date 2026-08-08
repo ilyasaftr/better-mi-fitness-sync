@@ -12,12 +12,12 @@ final class SettingsStore: ObservableObject {
         var enabledMetrics: Set<String> = []
         var rangeDays: Int32 = 7
         var autoSync: Bool = false
-        var lastBackgroundSyncLabel: String = "Never"
-        var lastBackgroundStatusTitle: String = "No attempt yet"
+        var lastBackgroundSyncLabel: String = L10n.homeNever
+        var lastBackgroundStatusTitle: String = L10n.outcomeNotSynced
         var lastBackgroundDetail: String = ""
         var lastBackgroundIsError: Bool = false
-        var lastSyncLabel: String = "Never"
-        var lastSyncStatusTitle: String = "No sync yet"
+        var lastSyncLabel: String = L10n.homeNever
+        var lastSyncStatusTitle: String = L10n.outcomeNotSynced
         var lastSyncDetail: String = ""
         var lastSyncIsError: Bool = false
         var lastSyncIsWarning: Bool = false
@@ -26,7 +26,7 @@ final class SettingsStore: ObservableObject {
         var bgTestStatus: String?
         var bgTestRunning: Bool = false
         var showShortcutsHelp: Bool = false
-        var healthServiceName: String = "Apple Health"
+        var healthServiceName: String = L10n.healthFallback
         var healthStatusTitle: String = ""
         var healthStatusDetail: String = ""
         var healthNeedsAction: Bool = false

@@ -68,12 +68,12 @@ struct LoginView: View {
                         .background(Brand.primary.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
-                    Text("Better Mi Fitness Sync")
+                    Text(L10n.loginTitle)
                         .font(.title.bold())
                         .foregroundStyle(Brand.label)
                         .multilineTextAlignment(.center)
 
-                    Text("Sign in with your Mi Account")
+                    Text(L10n.loginSubtitle)
                         .font(.body)
                         .foregroundStyle(Brand.secondaryLabel)
                         .multilineTextAlignment(.center)
@@ -82,14 +82,14 @@ struct LoginView: View {
                 .padding(.bottom, 28)
 
                 VStack(spacing: 14) {
-                    loginField(title: "Email or phone") {
+                    loginField(title: L10n.loginEmailOrPhone) {
                         TextField(
                             "",
                             text: Binding(
                                 get: { store.email },
                                 set: { store.onEmailChange($0) }
                             ),
-                            prompt: Text("Email or phone")
+                            prompt: Text(L10n.loginEmailOrPhone)
                                 .foregroundColor(Brand.placeholder)
                         )
                         .textContentType(.username)
@@ -103,14 +103,14 @@ struct LoginView: View {
                         .onSubmit { focusedField = .password }
                     }
 
-                    loginField(title: "Password") {
+                    loginField(title: L10n.loginPassword) {
                         SecureField(
                             "",
                             text: Binding(
                                 get: { store.password },
                                 set: { store.onPasswordChange($0) }
                             ),
-                            prompt: Text("Password")
+                            prompt: Text(L10n.loginPassword)
                                 .foregroundColor(Brand.placeholder)
                         )
                         .textContentType(.password)
@@ -127,7 +127,7 @@ struct LoginView: View {
                         if store.isLoading {
                             ProgressView().tint(.white)
                         } else {
-                            Text("Sign in")
+                            Text(L10n.loginSignIn)
                         }
                     }
                     .buttonStyle(PrimaryButtonStyle(enabled: canSignIn))
@@ -139,10 +139,7 @@ struct LoginView: View {
                     }
                 }
 
-                Text(
-                    "Your password is only sent to Xiaomi to sign in. " +
-                        "Account tokens stay on this device and are never shared with third parties."
-                )
+                Text(L10n.loginPrivacy)
                 .font(.caption)
                 .foregroundStyle(Brand.secondaryLabel)
                 .multilineTextAlignment(.center)
@@ -185,15 +182,15 @@ struct LoginView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .padding(.top, 12)
 
-                Text("Check your email")
+                Text(L10n.loginCheckEmail)
                     .font(.title2.bold())
                     .foregroundStyle(Brand.label)
 
                 Group {
                     if store.otpMaskedTarget.isEmpty {
-                        Text("We sent a verification code to your Mi Account.")
+                        Text(L10n.loginCodeSent)
                     } else {
-                        Text("We sent a verification code to\n\(store.otpMaskedTarget)")
+                        Text(L10n.loginCodeSentTo(store.otpMaskedTarget))
                     }
                 }
                 .font(.subheadline)
@@ -209,7 +206,7 @@ struct LoginView: View {
                     if store.isLoading {
                         ProgressView().tint(.white)
                     } else {
-                        Text("Verify")
+                        Text(L10n.loginVerify)
                     }
                 }
                 .buttonStyle(PrimaryButtonStyle(enabled: canVerifyOtp))
@@ -217,10 +214,10 @@ struct LoginView: View {
                 .padding(.top, 4)
 
                 HStack(spacing: 4) {
-                    Text("Didn't get it?")
+                    Text(L10n.loginDidntGet)
                         .font(.subheadline)
                         .foregroundStyle(Brand.secondaryLabel)
-                    Button("Resend") {
+                    Button(L10n.loginResend) {
                         store.resendOtp()
                     }
                     .font(.subheadline.weight(.semibold))
@@ -229,7 +226,7 @@ struct LoginView: View {
                 }
                 .padding(.top, 4)
 
-                Button("Having trouble? Use browser login instead") {
+                Button(L10n.loginBrowserTrouble) {
                     store.goToBrowserFallback()
                 }
                 .font(.subheadline)
@@ -247,16 +244,16 @@ struct LoginView: View {
             .frame(maxWidth: .infinity)
         }
         .scrollDismissesKeyboard(.interactively)
-        .navigationTitle("Verify your identity")
+        .navigationTitle(L10n.loginVerifyIdentity)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
                     store.goBackToCredentials()
                 } label: {
-                    Image(systemName: "chevron.left")
+                    Image(systemName: "chevron.backward")
                 }
-                .accessibilityLabel("Back")
+                .accessibilityLabel(L10n.back)
                 .disabled(store.isLoading)
             }
         }
@@ -280,8 +277,8 @@ struct LoginView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 54)
                 .opacity(0.02)
-                .accessibilityLabel("Verification code")
-                .accessibilityValue(otpCode.isEmpty ? "Empty" : "\(otpCode.count) of \(Self.otpLength) digits")
+                .accessibilityLabel(L10n.loginVerificationCode)
+                .accessibilityValue(otpCode.isEmpty ? L10n.loginEmpty : L10n.loginDigits(otpCode.count, Self.otpLength))
                 .onChange(of: otpCode) { value in
                     let digits = String(value.filter(\.isNumber).prefix(Self.otpLength))
                     if digits != value {
@@ -360,8 +357,8 @@ struct LoginView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    phaseBlock(title: "Step 1 · Sign in") {
-                        Text("Sign in with Xiaomi in the browser, then return here.")
+                    phaseBlock(title: L10n.loginStepOne) {
+                        Text(L10n.loginStepOneDetail)
                             .font(.subheadline)
                             .foregroundStyle(Brand.secondaryLabel)
                             .fixedSize(horizontal: false, vertical: true)
@@ -370,7 +367,7 @@ struct LoginView: View {
                             Button {
                                 openXiaomiLogin()
                             } label: {
-                                Label("Open Xiaomi login", systemImage: "arrow.up.right.square")
+                                Label(L10n.loginOpenXiaomi, systemImage: "arrow.up.right.square")
                             }
                             .buttonStyle(PrimaryButtonStyle(enabled: !store.isLoading))
                             .disabled(store.isLoading)
@@ -380,7 +377,7 @@ struct LoginView: View {
                                 loginUrlCopied = true
                             } label: {
                                 Label(
-                                    loginUrlCopied ? "Link copied" : "Copy login link",
+                                    loginUrlCopied ? L10n.loginLinkCopied : L10n.loginCopyLink,
                                     systemImage: loginUrlCopied ? "checkmark" : "link"
                                 )
                             }
@@ -390,8 +387,8 @@ struct LoginView: View {
                         .padding(.top, 4)
                     }
 
-                    phaseBlock(title: "Step 2 · Finish here") {
-                        Text("In Safari, copy the page link after you see “ok”. Then tap the button below to paste it.")
+                    phaseBlock(title: L10n.loginStepTwo) {
+                        Text(L10n.loginStepTwoDetail)
                             .font(.subheadline)
                             .foregroundStyle(Brand.secondaryLabel)
                             .fixedSize(horizontal: false, vertical: true)
@@ -419,7 +416,7 @@ struct LoginView: View {
                     if store.isLoading {
                         ProgressView().tint(.white)
                     } else {
-                        Label("Complete login", systemImage: "checkmark.circle.fill")
+                        Label(L10n.loginComplete, systemImage: "checkmark.circle.fill")
                     }
                 }
                 .buttonStyle(PrimaryButtonStyle(enabled: canCompleteBrowser))
@@ -430,16 +427,16 @@ struct LoginView: View {
             }
             .background(.bar)
         }
-        .navigationTitle("Browser login")
+        .navigationTitle(L10n.loginBrowserTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
                     store.goBackFromBrowser()
                 } label: {
-                    Image(systemName: "chevron.left")
+                    Image(systemName: "chevron.backward")
                 }
-                .accessibilityLabel("Back")
+                .accessibilityLabel(L10n.back)
                 .disabled(store.isLoading)
             }
         }
@@ -490,7 +487,7 @@ struct LoginView: View {
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Link pasted")
+                        Text(L10n.loginLinkPasted)
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(Brand.label)
                         Text(redirectUrlSummary(trimmedBrowserUrl))
@@ -511,7 +508,7 @@ struct LoginView: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Paste a different link")
+                    .accessibilityLabel(L10n.loginPasteDifferent)
                     .disabled(store.isLoading)
 
                     Button {
@@ -525,7 +522,7 @@ struct LoginView: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Remove pasted link")
+                    .accessibilityLabel(L10n.loginRemoveLink)
                     .disabled(store.isLoading)
                 }
                 .padding(14)
@@ -546,15 +543,15 @@ struct LoginView: View {
                             .font(.body.weight(.semibold))
                             .foregroundStyle(Brand.primary)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Tap to paste the link")
+                            Text(L10n.loginTapPaste)
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(Brand.label)
-                            Text("Copy it from Safari first")
+                            Text(L10n.loginCopyFromBrowser)
                                 .font(.caption)
                                 .foregroundStyle(Brand.secondaryLabel)
                         }
                         Spacer(minLength: 0)
-                        Image(systemName: "chevron.right")
+                        Image(systemName: "chevron.forward")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(Brand.secondaryLabel.opacity(0.6))
                     }
@@ -574,7 +571,7 @@ struct LoginView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(store.isLoading)
-                .accessibilityLabel("Tap to paste the link from Safari")
+                .accessibilityLabel(L10n.loginTapPaste)
             }
 
             if let pasteHint, !pasteHint.isEmpty {
@@ -583,11 +580,11 @@ struct LoginView: View {
                     .foregroundStyle(Brand.danger)
                     .fixedSize(horizontal: false, vertical: true)
             } else if hasValidBrowserUrl {
-                Text("You’re set — tap Complete login below.")
+                Text(L10n.loginReady)
                     .font(.caption)
                     .foregroundStyle(Brand.secondaryLabel)
             } else {
-                Text("Tip: the link should come from the address bar after Xiaomi shows “ok”.")
+                Text(L10n.loginTip)
                     .font(.caption)
                     .foregroundStyle(Brand.secondaryLabel)
             }
@@ -608,7 +605,7 @@ struct LoginView: View {
 
         guard let pasted else {
             browserUrl = ""
-            pasteHint = "Nothing to paste yet. In Safari, copy the page link, then tap here again."
+            pasteHint = L10n.loginNothingToPaste
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
             return
         }
@@ -658,9 +655,9 @@ struct LoginView: View {
     private static func invalidRedirectMessage(for pasted: String) -> String {
         let lower = pasted.lowercased()
         if lower.hasPrefix("http://") || lower.hasPrefix("https://") {
-            return "That link isn’t the right one. After Xiaomi shows “ok”, copy the link from the address bar and try again."
+            return L10n.loginInvalidLink
         }
-        return "That isn’t a web link. Copy the full page link from Safari’s address bar, then tap paste again."
+        return L10n.loginNotWebLink
     }
 
     /// Short host-style summary — never the full query string.

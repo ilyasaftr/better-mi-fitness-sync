@@ -8,7 +8,7 @@ struct SyncView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Last \(store.state.rangeDays) days")
+                    Text(L10n.syncLast(Int(store.state.rangeDays)) )
                         .font(.subheadline)
                         .foregroundStyle(Brand.secondaryLabel)
                         .padding(.horizontal, 4)
@@ -55,12 +55,12 @@ struct SyncView: View {
                     if store.state.isSyncing {
                         SyncingPrimaryLabel()
                     } else {
-                        Label("Sync now", systemImage: "arrow.triangle.2.circlepath")
+                        Label(L10n.syncNow, systemImage: "arrow.triangle.2.circlepath")
                     }
                 },
                 footer: {
                     if !store.state.healthAvailable {
-                        Button("Open \(store.state.healthServiceName)") {
+                        Button(L10n.openHealth(store.state.healthServiceName)) {
                             store.openHealth()
                         }
                         .font(.subheadline.weight(.semibold))
@@ -71,12 +71,12 @@ struct SyncView: View {
             )
         }
         .background(Brand.pageBackground.ignoresSafeArea())
-        .navigationTitle("Sync")
+        .navigationTitle(L10n.syncTitle)
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private var emptyMetrics: some View {
-        Text(store.state.readinessChecked ? "No metrics enabled — open Settings." : "Preparing…")
+        Text(store.state.readinessChecked ? L10n.syncNoMetrics : L10n.syncPreparing)
             .font(.subheadline)
             .foregroundStyle(Brand.secondaryLabel)
             .frame(maxWidth: .infinity)
@@ -128,13 +128,13 @@ struct SyncView: View {
     private func shortStatus(_ row: SyncStore.MetricRow) -> String {
         switch row.kind {
         case "progress":
-            return "Syncing"
+            return L10n.syncStatusSyncing
         case "success":
-            return "Done"
+            return L10n.syncStatusDone
         case "error":
-            return "Failed"
+            return L10n.syncStatusFailed
         default:
-            return "Waiting"
+            return L10n.syncStatusWaiting
         }
     }
 

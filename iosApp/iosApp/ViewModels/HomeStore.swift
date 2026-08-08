@@ -9,15 +9,15 @@ final class HomeStore: ObservableObject {
     private var subscription: FlowSubscription?
 
     struct HomeSnapshot {
-        var profileName: String = "Mi account"
+        var profileName: String = L10n.homeAccount
         var profileError: String?
-        var lastSyncLabel: String = "Never"
-        var lastSyncStatusTitle: String = "No sync yet"
-        var lastSyncDetail: String = "Run a sync to see results here"
+        var lastSyncLabel: String = L10n.homeNever
+        var lastSyncStatusTitle: String = L10n.outcomeNotSynced
+        var lastSyncDetail: String = L10n.outcomeIdleDetail
         var lastSyncIsError: Bool = false
         var lastSyncIsWarning: Bool = false
-        var lastBackgroundLabel: String = "Never"
-        var lastBackgroundDetail: String = "Background sync has not run yet"
+        var lastBackgroundLabel: String = L10n.homeNever
+        var lastBackgroundDetail: String = L10n.outcomeIdleDetail
         var lastBackgroundIsError: Bool = false
         var enabledMetricsCount: Int32 = 0
         var totalMetricsCount: Int32 = 0
@@ -25,7 +25,7 @@ final class HomeStore: ObservableObject {
         var autoSync: Bool = false
         var canSync: Bool = true
         var isSyncing: Bool = false
-        var healthServiceName: String = "Apple Health"
+        var healthServiceName: String = L10n.healthFallback
         var healthReady: Bool = true
         var healthStatusTitle: String = ""
         var healthStatusDetail: String = ""

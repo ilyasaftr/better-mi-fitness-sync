@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before release. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">戻る</string>
+    <string name="open_health">%sを開く</string>
+    <string name="health_fallback">ヘルス</string>
+    <string name="health_allow_access">アクセスを許可</string>
+    <string name="health_ready">準備完了</string>
+    <string name="health_checking">確認中…</string>
+    <string name="health_not_available">このデバイスではヘルスサービスを利用できません。</string>
+    <string name="health_permissions_incomplete">書き込み権限が不完全です — アクセスを許可してからもう一度お試しください。</string>
+    <string name="health_status_check_failed">ヘルスサービスの状態を確認できませんでした。</string>
+    <string name="health_write_failed">ヘルスサービスを利用できません。</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Mi Accountでサインイン</string>
+    <string name="login_email_or_phone">メールアドレスまたは電話番号</string>
+    <string name="login_password">パスワード</string>
+    <string name="login_sign_in">サインイン</string>
+    <string name="login_privacy">パスワードはサインインのためにXiaomiにのみ送信されます。アカウントトークンはこのデバイスに保存され、第三者と共有されることはありません。</string>
+    <string name="login_verify_identity">本人確認</string>
+    <string name="login_check_email">メールを確認してください</string>
+    <string name="login_code_sent">Mi Accountに確認コードを送信しました。</string>
+    <string name="login_code_sent_to">確認コードを送信しました\n%s</string>
+    <string name="login_verify">確認</string>
+    <string name="login_didnt_get">届きませんでしたか？</string>
+    <string name="login_resend">再送信</string>
+    <string name="login_browser_trouble">問題がありますか？ブラウザログインをお試しください</string>
+    <string name="login_browser_title">ブラウザログイン</string>
+    <string name="login_complete">ログイン完了</string>
+    <string name="login_step_one">ステップ1 · サインイン</string>
+    <string name="login_step_one_detail">ブラウザでXiaomiにサインインし、ここに戻ってください。</string>
+    <string name="login_open_xiaomi">Xiaomiログインを開く</string>
+    <string name="login_link_copied">リンクをコピーしました</string>
+    <string name="login_copy_link">ログインリンクをコピー</string>
+    <string name="login_step_two">ステップ2 · ここで完了</string>
+    <string name="login_step_two_detail">ブラウザで「ok」が表示されたら、ページのリンクをコピーして、下のボタンをタップして貼り付けてください。</string>
+    <string name="login_link_pasted">リンクを貼り付けました</string>
+    <string name="login_paste_different">別のリンクを貼り付ける</string>
+    <string name="login_remove_link">貼り付けたリンクを削除</string>
+    <string name="login_tap_paste">タップしてリンクを貼り付け</string>
+    <string name="login_copy_from_browser">まずブラウザからコピーしてください</string>
+    <string name="login_ready">準備完了 — 下の「ログイン完了」をタップしてください。</string>
+    <string name="login_tip">ヒント：リンクはXiaomiが「ok」を表示した後のアドレスバーのものです。</string>
+    <string name="login_nothing_to_paste">まだ貼り付けるものがありません。ブラウザでページのリンクをコピーし、ここをもう一度タップしてください。</string>
+    <string name="login_invalid_link">そのリンクは正しくありません。Xiaomiが「ok」を表示した後、アドレスバーからリンクをコピーしてもう一度お試しください。</string>
+    <string name="login_not_web_link">これはウェブリンクではありません。ブラウザのアドレスバーから完全なページリンクをコピーし、もう一度貼り付けてください。</string>
+    <string name="login_verification_code">確認コード</string>
+    <string name="login_empty">空</string>
+    <string name="login_digits">%2$d桁中%1$d桁</string>
+    <string name="login_send_code_failed">確認メールを送信できませんでした。ブラウザログインをお使いください。</string>
+    <string name="login_failed">ログイン失敗</string>
+    <string name="login_verification_failed">確認に失敗しました</string>
+    <string name="login_browser_required">メールコードは承認されましたが、Xiaomiがこのデバイスを信頼するためにブラウザログインが必要です。下にリダイレクトURLを貼り付けてください。</string>
+    <string name="login_code_resent">コードを再送信しました！</string>
+    <string name="login_resend_failed">再送信に失敗しました: %s</string>
+    <string name="login_paste_redirect">まずアドレスバーから完全なリダイレクトURLを貼り付けてください。</string>
+    <string name="login_browser_finish_failed">そのURLからブラウザログインを完了できませんでした。完全なsts-hlth URLを貼り付けてください。</string>
+    <string name="login_missing_pass_token">ログインがpassTokenを返しませんでした。そのためアプリは日をまたいでサインイン状態を維持できません。もう一度試すか、別のログイン方法をお使いください。</string>
+    <string name="login_missing_device_id">ログインにデバイスIDがありません — もう一度お試しください。</string>
+
+    <!-- Home -->
+    <string name="home_account">あなたのアカウント</string>
+    <string name="home_signed_in">サインイン済み</string>
+    <string name="home_connected">Mi Account · 接続済み</string>
+    <string name="home_loading_profile">プロフィールを取得中…</string>
+    <string name="home_setup">セットアップ</string>
+    <string name="home_activity">アクティビティ</string>
+    <string name="home_sync_options">同期オプション</string>
+    <string name="home_none_selected">未選択</string>
+    <string name="home_metric_one">1つの項目</string>
+    <string name="home_metric_many">%d個の項目</string>
+    <string name="home_day_one">1日</string>
+    <string name="home_day_many">%d日</string>
+    <string name="home_auto_on">自動同期オン</string>
+    <string name="home_manual">手動</string>
+    <string name="home_nothing_selected_title">同期する項目が選択されていません</string>
+    <string name="home_nothing_selected_detail">設定で項目と期間を選択してください。データは%sに保存されます。</string>
+    <string name="home_allow_access_detail">このアプリが%sにデータを書き込めるよう、書き込みアクセスを許可してください。</string>
+    <string name="home_last_sync">最終同期</string>
+    <string name="home_background_sync">バックグラウンド同期</string>
+    <string name="home_never">なし</string>
+    <string name="home_syncing">同期中…</string>
+    <string name="home_sync_now">今すぐ同期</string>
+    <string name="home_open_settings">設定を開く</string>
+    <string name="home_failed_suffix">%s · 失敗</string>
+    <string name="home_partial_suffix">%s · 一部</string>
+    <string name="home_settings_accessibility">設定</string>
+    <string name="home_health_accessibility">%sを開いてアクセスを許可します</string>
+    <string name="home_health_ready_accessibility">ヘルス接続先の準備完了</string>
+    <string name="home_settings_hint">同期オプションを変更するために設定を開きます</string>
+
+    <!-- Sync -->
+    <string name="sync_title">同期</string>
+    <string name="sync_last_one_day">過去1日</string>
+    <string name="sync_last_n_days">過去%d日</string>
+    <string name="sync_now">今すぐ同期</string>
+    <string name="sync_open_health">%sを開く</string>
+    <string name="sync_no_metrics">有効な項目がありません — 設定を開いてください。</string>
+    <string name="sync_preparing">準備中…</string>
+    <string name="sync_status_syncing">同期中</string>
+    <string name="sync_status_done">完了</string>
+    <string name="sync_status_failed">失敗</string>
+    <string name="sync_status_waiting">待機中</string>
+    <string name="sync_records">%d件</string>
+    <string name="sync_failed">同期に失敗しました</string>
+    <string name="sync_not_logged_in">ログインしていません — サインインしてからもう一度お試しください</string>
+    <string name="sync_nothing_to_sync">同期するものがありません（設定で項目を有効にしてください）</string>
+    <string name="sync_all_metrics_synced">有効な項目をすべて同期しました</string>
+    <string name="sync_health_unavailable">%sを利用できません。</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">心拍数</string>
+    <string name="metric_resting_heart_rate">安静時心拍数</string>
+    <string name="metric_sleep">睡眠</string>
+    <string name="metric_hrv">心拍変動</string>
+    <string name="metric_steps">歩数</string>
+    <string name="metric_distance">距離</string>
+    <string name="metric_active_calories">アクティブカロリー</string>
+    <string name="metric_spo2">血中酸素（SpO2）</string>
+    <string name="metric_weight">体重・体脂肪</string>
+    <string name="metric_workouts">ワークアウト</string>
+    <string name="metric_blood_pressure">血圧</string>
+    <string name="metric_temperature">体温・皮膚温</string>
+    <string name="metric_vo2_max">最大酸素摂取量（VO2 Max）</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">たった今</string>
+    <string name="time_minute_ago">%d分前</string>
+    <string name="time_hour_one_ago">1時間前</string>
+    <string name="time_hour_many_ago">%d時間前</string>
+    <string name="time_yesterday">昨日</string>
+    <string name="time_day_one_ago">1日前</string>
+    <string name="time_day_many_ago">%d日前</string>
+    <string name="time_unknown">不明</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">最新の状態です</string>
+    <string name="outcome_almost_done">もう少しです</string>
+    <string name="outcome_could_not_finish">完了できませんでした</string>
+    <string name="outcome_partial_label">一部</string>
+    <string name="outcome_please_sign_in">サインインしてください</string>
+    <string name="outcome_health_needed">ヘルスアプリが必要です</string>
+    <string name="outcome_nothing_to_do">実行するものがありません</string>
+    <string name="outcome_stopped">停止済み</string>
+    <string name="outcome_in_progress">同期中</string>
+    <string name="outcome_not_synced">まだ同期されていません</string>
+    <string name="outcome_success_detail">Mi FitnessからHealthへ同期しました</string>
+    <string name="outcome_partial_detail">一部のアイテムが失敗しました — もう一度同期してください</string>
+    <string name="outcome_failed_detail">接続を確認してもう一度お試しください</string>
+    <string name="outcome_login_detail">Mi Accountでサインインしてください</string>
+    <string name="outcome_health_detail">まずヘルスアプリを開くかインストールしてください</string>
+    <string name="outcome_skipped_detail">設定で項目を有効にしてから更新してください</string>
+    <string name="outcome_cancelled_detail">同期が停止されました</string>
+    <string name="outcome_running_detail">同期はすでに実行中です</string>
+    <string name="outcome_idle_detail">最新のアクティビティを取得するには同期をタップ</string>
+    <string name="outcome_nothing_needed">同期が必要なものはありませんでした</string>
+    <string name="outcome_sign_in_again">もう一度サインインしてください</string>
+    <string name="outcome_health_unavailable">ヘルスアプリを利用できません</string>
+
+    <!-- Settings -->
+    <string name="settings_title">設定</string>
+    <string name="settings_sync_options_loading">同期オプション</string>
+    <string name="settings_section_sync_range">同期範囲</string>
+    <string name="settings_section_auto_sync">自動同期</string>
+    <string name="settings_section_metrics">項目</string>
+    <string name="settings_section_status">ステータス</string>
+    <string name="settings_section_shortcuts">ショートカット</string>
+    <string name="settings_section_account">アカウント</string>
+    <string name="settings_section_about">アプリについて</string>
+    <string name="settings_days_picker">日数</string>
+    <string name="settings_range_1_day">1日</string>
+    <string name="settings_range_n_days">%d日</string>
+    <string name="settings_background_auto_sync">バックグラウンド自動同期</string>
+    <string name="settings_test_background_refresh">バックグラウンド更新をテスト</string>
+    <string name="settings_running_refresh">1日分を更新中…</string>
+    <string name="settings_test_ok">テストOK — 最終バックグラウンド更新が更新されるはずです</string>
+    <string name="settings_partial_ok">一部OK — 一部の項目が失敗しました（同期画面を確認してください）</string>
+    <string name="settings_skipped">スキップ（自動同期をオンにしてサインインを維持してください）</string>
+    <string name="settings_not_signed_in">サインインしていません</string>
+    <string name="settings_cancelled">キャンセル済み</string>
+    <string name="settings_failed_status">失敗（%s）</string>
+    <string name="settings_last_sync">最終同期</string>
+    <string name="settings_last_background_sync">最終バックグラウンド同期</string>
+    <string name="settings_shortcuts_help">"Sync Better Mi Fitness" App IntentまたはShortcutsを使って手動バックグラウンド実行ができます。</string>
+    <string name="settings_log_out">ログアウト</string>
+    <string name="settings_version">バージョン</string>
+    <string name="settings_credit">クレジット</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">バックグラウンド同期はWorkManagerを使用します（ネットワーク利用可能時に約1時間ごと、正確な時刻ではありません）。</string>
+    <string name="background_simulator_status">シミュレーター：システムはBGAppRefreshを自動実行しません。「1日分更新をテスト」またはbettermifitness://debug/bg-refreshをお使いください</string>
+    <string name="background_on">バックグラウンドApp更新がオンです</string>
+    <string name="background_off">バックグラウンドApp更新がオフです — 設定 → 一般 → バックグラウンドApp更新で有効にしてください</string>
+    <string name="background_restricted">このデバイスではバックグラウンドApp更新が制限されています</string>
+    <string name="background_unknown">バックグラウンドApp更新の状態が不明です</string>
+    <string name="background_unknown_status">不明</string>
+</resources>

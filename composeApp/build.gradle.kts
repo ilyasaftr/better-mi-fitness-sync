@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.androidMultiplatformLibrary)
+    alias(libs.plugins.mokoResources)
 }
 
 kotlin {
@@ -34,6 +35,8 @@ kotlin {
             isStatic = true
             // Avoid "Cannot infer a bundle ID … use -Xbinary=bundleId="
             binaryOption("bundleId", "com.bettermifitness.sync.ComposeApp")
+            // Export moko APIs (StringDesc.localized(), etc.) to SwiftUI.
+            export(libs.moko.resources)
         }
     }
 
@@ -58,6 +61,10 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.jetbrains.navigation.compose)
             implementation(project(":miclient"))
+
+            // Shared i18n SSOT (system locale on Android + iOS)
+            api(libs.moko.resources)
+            api(libs.moko.resources.compose)
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
@@ -95,4 +102,12 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
     }
+}
+
+// moko-resources: one strings catalog for Compose + SwiftUI (system language).
+multiplatformResources {
+    resourcesPackage.set("com.bettermifitness.sync")
+    resourcesClassName.set("MR")
+    iosBaseLocalizationRegion.set("en")
+    iosMinimalDeploymentTarget.set("16.0")
 }

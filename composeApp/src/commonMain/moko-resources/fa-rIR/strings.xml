@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — Requires native-speaker review before production use. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">بازگشت</string>
+    <string name="open_health">باز کردن %s</string>
+    <string name="health_fallback">Health</string>
+    <string name="health_allow_access">اجازه دسترسی</string>
+    <string name="health_ready">آماده</string>
+    <string name="health_checking">در حال بررسی…</string>
+    <string name="health_not_available">سرویس Health در این دستگاه در دسترس نیست.</string>
+    <string name="health_permissions_incomplete">مجوزهای نوشتن ناقص است — دسترسی بدهید و دوباره تلاش کنید.</string>
+    <string name="health_status_check_failed">بررسی وضعیت سرویس Health امکان‌پذیر نبود.</string>
+    <string name="health_write_failed">سرویس Health در دسترس نیست.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">با Mi Account خود وارد شوید</string>
+    <string name="login_email_or_phone">ایمیل یا تلفن</string>
+    <string name="login_password">رمز عبور</string>
+    <string name="login_sign_in">ورود</string>
+    <string name="login_privacy">رمز عبور شما فقط برای ورود به Xiaomi ارسال می‌شود. توکن‌های حساب در این دستگاه می‌مانند و هرگز با اشخاص ثالث به اشتراک گذاشته نمی‌شوند.</string>
+    <string name="login_verify_identity">هویت خود را تأیید کنید</string>
+    <string name="login_check_email">ایمیل خود را بررسی کنید</string>
+    <string name="login_code_sent">ما یک کد تأیید به Mi Account شما ارسال کردیم.</string>
+    <string name="login_code_sent_to">ما یک کد تأیید ارسال کردیم\n%s</string>
+    <string name="login_verify">تأیید</string>
+    <string name="login_didnt_get">دریافت نکردید؟</string>
+    <string name="login_resend">ارسال مجدد</string>
+    <string name="login_browser_trouble">مشکل دارید؟ از ورود با مرورگر استفاده کنید</string>
+    <string name="login_browser_title">ورود با مرورگر</string>
+    <string name="login_complete">تکمیل ورود</string>
+    <string name="login_step_one">مرحله ۱ · ورود</string>
+    <string name="login_step_one_detail">در مرورگر با Xiaomi وارد شوید، سپس به اینجا بازگردید.</string>
+    <string name="login_open_xiaomi">باز کردن ورود Xiaomi</string>
+    <string name="login_link_copied">لینک کپی شد</string>
+    <string name="login_copy_link">کپی لینک ورود</string>
+    <string name="login_step_two">مرحله ۲ · اینجا تکمیل کنید</string>
+    <string name="login_step_two_detail">در مرورگر، پس از مشاهده "ok" لینک صفحه را کپی کنید. سپس برای جای‌گذاری پایین ضربه بزنید.</string>
+    <string name="login_link_pasted">لینک جای‌گذاری شد</string>
+    <string name="login_paste_different">لینک دیگری جای‌گذاری کنید</string>
+    <string name="login_remove_link">حذف لینک جای‌گذاری شده</string>
+    <string name="login_tap_paste">برای جای‌گذاری لینک ضربه بزنید</string>
+    <string name="login_copy_from_browser">ابتدا از مرورگر کپی کنید</string>
+    <string name="login_ready">آماده — پایین روی تکمیل ورود ضربه بزنید.</string>
+    <string name="login_tip">نکته: لینک باید پس از نمایش "ok" توسط Xiaomi از نوار آدرس باشد.</string>
+    <string name="login_nothing_to_paste">هنوز چیزی برای جای‌گذاری نیست. در مرورگر لینک صفحه را کپی کنید، سپس اینجا ضربه بزنید.</string>
+    <string name="login_invalid_link">این لینک صحیح نیست. پس از نمایش "ok" توسط Xiaomi، لینک را از نوار آدرس کپی کنید و دوباره تلاش کنید.</string>
+    <string name="login_not_web_link">این یک لینک وب نیست. لینک کامل صفحه را از نوار آدرس مرورگر کپی کنید، سپس روی جای‌گذاری ضربه بزنید.</string>
+    <string name="login_verification_code">کد تأیید</string>
+    <string name="login_empty">خالی</string>
+    <string name="login_digits">%1$d از %2$d رقم</string>
+    <string name="login_send_code_failed">ارسال ایمیل تأیید ممکن نبود. از ورود با مرورگر استفاده کنید.</string>
+    <string name="login_failed">ورود ناموفق</string>
+    <string name="login_verification_failed">تأیید ناموفق</string>
+    <string name="login_browser_required">کد ایمیل پذیرفته شد، اما Xiaomi برای اعتماد به این دستگاه نیاز به یک ورود مرورگر دارد. URL بازهدایت را در زیر جای‌گذاری کنید.</string>
+    <string name="login_code_resent">کد مجدداً ارسال شد!</string>
+    <string name="login_resend_failed">ارسال مجدد ناموفق: %s</string>
+    <string name="login_paste_redirect">ابتدا URL کامل بازهدایت را از نوار آدرس جای‌گذاری کنید.</string>
+    <string name="login_browser_finish_failed">تکمیل ورود مرورگر از آن URL ممکن نبود. URL کامل sts-hlth را جای‌گذاری کنید.</string>
+    <string name="login_missing_pass_token">ورود passToken برنگرداند، بنابراین برنامه نمی‌تواند چند روز وارد بماند. دوباره تلاش کنید یا روش ورود دیگری استفاده کنید.</string>
+    <string name="login_missing_device_id">device id در ورود یافت نشد — دوباره تلاش کنید.</string>
+
+    <!-- Home -->
+    <string name="home_account">حساب شما</string>
+    <string name="home_signed_in">وارد شده</string>
+    <string name="home_connected">Mi Account · متصل</string>
+    <string name="home_loading_profile">در حال دریافت پروفایل…</string>
+    <string name="home_setup">راه‌اندازی</string>
+    <string name="home_activity">فعالیت</string>
+    <string name="home_sync_options">گزینه‌های همگام‌سازی</string>
+    <string name="home_none_selected">هیچ‌کدام انتخاب نشده</string>
+    <string name="home_metric_one">۱ معیار</string>
+    <string name="home_metric_many">%d معیار</string>
+    <string name="home_day_one">۱ روز</string>
+    <string name="home_day_many">%d روز</string>
+    <string name="home_auto_on">همگام‌سازی خودکار روشن</string>
+    <string name="home_manual">دستی</string>
+    <string name="home_nothing_selected_title">چیزی برای همگام‌سازی انتخاب نشده</string>
+    <string name="home_nothing_selected_detail">در تنظیمات معیارها و بازه را انتخاب کنید. داده‌های مشاهده‌شده در %s می‌مانند.</string>
+    <string name="home_allow_access_detail">به این برنامه دسترسی نوشتن بدهید تا بتواند داده‌ها را در %s بنویسد.</string>
+    <string name="home_last_sync">آخرین همگام‌سازی</string>
+    <string name="home_background_sync">همگام‌سازی پس‌زمینه</string>
+    <string name="home_never">هرگز</string>
+    <string name="home_syncing">در حال همگام‌سازی…</string>
+    <string name="home_sync_now">همگام‌سازی الان</string>
+    <string name="home_open_settings">باز کردن تنظیمات</string>
+    <string name="home_failed_suffix">%s · ناموفق</string>
+    <string name="home_partial_suffix">%s · ناقص</string>
+    <string name="home_settings_accessibility">تنظیمات</string>
+    <string name="home_health_accessibility">%s را برای دسترسی باز می‌کند</string>
+    <string name="home_health_ready_accessibility">مقصد Health آماده</string>
+    <string name="home_settings_hint">تنظیمات را برای تغییر گزینه‌های همگام‌سازی باز می‌کند</string>
+
+    <!-- Sync -->
+    <string name="sync_title">همگام‌سازی</string>
+    <string name="sync_last_one_day">۱ روز گذشته</string>
+    <string name="sync_last_n_days">%d روز گذشته</string>
+    <string name="sync_now">همگام‌سازی الان</string>
+    <string name="sync_open_health">باز کردن %s</string>
+    <string name="sync_no_metrics">هیچ معیاری فعال نیست — تنظیمات را باز کنید.</string>
+    <string name="sync_preparing">در حال آماده‌سازی…</string>
+    <string name="sync_status_syncing">در حال همگام‌سازی</string>
+    <string name="sync_status_done">انجام شد</string>
+    <string name="sync_status_failed">ناموفق</string>
+    <string name="sync_status_waiting">در انتظار</string>
+    <string name="sync_records">%d رکورد</string>
+    <string name="sync_failed">همگام‌سازی ناموفق</string>
+    <string name="sync_not_logged_in">وارد نشده‌اید — وارد شوید و دوباره تلاش کنید</string>
+    <string name="sync_nothing_to_sync">چیزی برای همگام‌سازی نیست (معیارها را در تنظیمات فعال کنید)</string>
+    <string name="sync_all_metrics_synced">همه معیارهای فعال همگام‌سازی شدند</string>
+    <string name="sync_health_unavailable">%s در دسترس نیست.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">ضربان قلب</string>
+    <string name="metric_resting_heart_rate">ضربان قلب در حال استراحت</string>
+    <string name="metric_sleep">خواب</string>
+    <string name="metric_hrv">تغییرپذیری ضربان قلب</string>
+    <string name="metric_steps">گام‌ها</string>
+    <string name="metric_distance">مسافت</string>
+    <string name="metric_active_calories">کالری فعال</string>
+    <string name="metric_spo2">اکسیژن خون (SpO2)</string>
+    <string name="metric_weight">وزن &amp; چربی بدن</string>
+    <string name="metric_workouts">تمرینات</string>
+    <string name="metric_blood_pressure">فشار خون</string>
+    <string name="metric_temperature">دمای بدن / پوست</string>
+    <string name="metric_vo2_max">حداکثر مصرف اکسیژن (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">همین الان</string>
+    <string name="time_minute_ago">%d دقیقه پیش</string>
+    <string name="time_hour_one_ago">۱ ساعت پیش</string>
+    <string name="time_hour_many_ago">%d ساعت پیش</string>
+    <string name="time_yesterday">دیروز</string>
+    <string name="time_day_one_ago">۱ روز پیش</string>
+    <string name="time_day_many_ago">%d روز پیش</string>
+    <string name="time_unknown">نامشخص</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">به‌روز هستید</string>
+    <string name="outcome_almost_done">تقریباً تمام</string>
+    <string name="outcome_could_not_finish">تکمیل ممکن نبود</string>
+    <string name="outcome_partial_label">ناقص</string>
+    <string name="outcome_please_sign_in">لطفاً وارد شوید</string>
+    <string name="outcome_health_needed">برنامه Health لازم است</string>
+    <string name="outcome_nothing_to_do">کاری برای انجام نیست</string>
+    <string name="outcome_stopped">متوقف شد</string>
+    <string name="outcome_in_progress">همگام‌سازی در حال انجام</string>
+    <string name="outcome_not_synced">هنوز همگام‌سازی نشده</string>
+    <string name="outcome_success_detail">Mi Fitness با Health همگام‌سازی شد</string>
+    <string name="outcome_partial_detail">برخی موارد ناموفق بودند — دوباره همگام‌سازی کنید</string>
+    <string name="outcome_failed_detail">اتصال خود را بررسی کنید و دوباره تلاش کنید</string>
+    <string name="outcome_login_detail">با Mi Account خود وارد شوید</string>
+    <string name="outcome_health_detail">ابتدا برنامه Health را باز یا نصب کنید</string>
+    <string name="outcome_skipped_detail">موارد را در تنظیمات روشن کنید، سپس به‌روزرسانی کنید</string>
+    <string name="outcome_cancelled_detail">همگام‌سازی متوقف شد</string>
+    <string name="outcome_running_detail">یک همگام‌سازی در حال اجراست</string>
+    <string name="outcome_idle_detail">برای آخرین فعالیت‌تان روی همگام‌سازی ضربه بزنید</string>
+    <string name="outcome_nothing_needed">نیازی به همگام‌سازی نبود</string>
+    <string name="outcome_sign_in_again">لطفاً دوباره وارد شوید</string>
+    <string name="outcome_health_unavailable">برنامه Health در دسترس نیست</string>
+
+    <!-- Settings -->
+    <string name="settings_title">تنظیمات</string>
+    <string name="settings_sync_options_loading">گزینه‌های همگام‌سازی</string>
+    <string name="settings_section_sync_range">بازه همگام‌سازی</string>
+    <string name="settings_section_auto_sync">همگام‌سازی خودکار</string>
+    <string name="settings_section_metrics">معیارها</string>
+    <string name="settings_section_status">وضعیت</string>
+    <string name="settings_section_shortcuts">میانبرها</string>
+    <string name="settings_section_account">حساب</string>
+    <string name="settings_section_about">درباره</string>
+    <string name="settings_days_picker">روز</string>
+    <string name="settings_range_1_day">۱ روز</string>
+    <string name="settings_range_n_days">%d روز</string>
+    <string name="settings_background_auto_sync">همگام‌سازی خودکار پس‌زمینه</string>
+    <string name="settings_test_background_refresh">آزمایش بازخوانی پس‌زمینه</string>
+    <string name="settings_running_refresh">در حال اجرای بازخوانی ۱ روزه…</string>
+    <string name="settings_test_ok">آزمایش موفق — آخرین بازخوانی پس‌زمینه باید به‌روز شود</string>
+    <string name="settings_partial_ok">تا حدی موفق — برخی معیارها ناموفق بودند (صفحه همگام‌سازی را ببینید)</string>
+    <string name="settings_skipped">رد شد (همگام‌سازی خودکار را روشن و وارد بمانید)</string>
+    <string name="settings_not_signed_in">وارد نشده</string>
+    <string name="settings_cancelled">لغو شد</string>
+    <string name="settings_failed_status">ناموفق (%s)</string>
+    <string name="settings_last_sync">آخرین همگام‌سازی</string>
+    <string name="settings_last_background_sync">آخرین همگام‌سازی پس‌زمینه</string>
+    <string name="settings_shortcuts_help">از "Sync Better Mi Fitness" App Intent یا Shortcuts برای اجرای دستی پس‌زمینه استفاده کنید.</string>
+    <string name="settings_log_out">خروج</string>
+    <string name="settings_version">نسخه</string>
+    <string name="settings_credit">اعتبار</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">همگام‌سازی پس‌زمینه از WorkManager استفاده می‌کند (~هر ساعت وقتی شبکه در دسترس است؛ زمان دقیق نیست).</string>
+    <string name="background_simulator_status">Simulator: سیستم هرگز خودکار BGAppRefresh اجرا نمی‌کند. از "Test 1-day refresh" یا bettermifitness://debug/bg-refresh استفاده کنید</string>
+    <string name="background_on">Background App Refresh روشن است</string>
+    <string name="background_off">Background App Refresh خاموش است — در Settings → General → Background App Refresh فعال کنید</string>
+    <string name="background_restricted">Background App Refresh در این دستگاه محدود شده</string>
+    <string name="background_unknown">وضعیت Background App Refresh نامشخص</string>
+    <string name="background_unknown_status">نامشخص</string>
+</resources>

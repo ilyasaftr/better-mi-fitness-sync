@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before release. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">Назад</string>
+    <string name="open_health">Открыть %s</string>
+    <string name="health_fallback">Здоровье</string>
+    <string name="health_allow_access">Разрешить доступ</string>
+    <string name="health_ready">Готово</string>
+    <string name="health_checking">Проверка…</string>
+    <string name="health_not_available">Служба здоровья недоступна на этом устройстве.</string>
+    <string name="health_permissions_incomplete">Разрешения на запись неполные — предоставьте доступ и попробуйте снова.</string>
+    <string name="health_status_check_failed">Не удалось проверить состояние службы здоровья.</string>
+    <string name="health_write_failed">Служба здоровья недоступна.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Войти с помощью Mi Account</string>
+    <string name="login_email_or_phone">Email или телефон</string>
+    <string name="login_password">Пароль</string>
+    <string name="login_sign_in">Войти</string>
+    <string name="login_privacy">Ваш пароль отправляется только в Xiaomi для входа. Токены аккаунта хранятся на этом устройстве и никогда не передаются третьим лицам.</string>
+    <string name="login_verify_identity">Подтвердите личность</string>
+    <string name="login_check_email">Проверьте почту</string>
+    <string name="login_code_sent">Мы отправили код подтверждения на ваш Mi Account.</string>
+    <string name="login_code_sent_to">Мы отправили код подтверждения на\n%s</string>
+    <string name="login_verify">Подтвердить</string>
+    <string name="login_didnt_get">Не получили?</string>
+    <string name="login_resend">Отправить повторно</string>
+    <string name="login_browser_trouble">Возникли проблемы? Используйте вход через браузер</string>
+    <string name="login_browser_title">Вход через браузер</string>
+    <string name="login_complete">Завершить вход</string>
+    <string name="login_step_one">Шаг 1 · Войдите</string>
+    <string name="login_step_one_detail">Войдите в аккаунт Xiaomi в браузере, затем вернитесь сюда.</string>
+    <string name="login_open_xiaomi">Открыть вход Xiaomi</string>
+    <string name="login_link_copied">Ссылка скопирована</string>
+    <string name="login_copy_link">Скопировать ссылку для входа</string>
+    <string name="login_step_two">Шаг 2 · Завершите здесь</string>
+    <string name="login_step_two_detail">В браузере скопируйте ссылку страницы после появления «ok». Затем нажмите ниже, чтобы вставить её.</string>
+    <string name="login_link_pasted">Ссылка вставлена</string>
+    <string name="login_paste_different">Вставить другую ссылку</string>
+    <string name="login_remove_link">Удалить вставленную ссылку</string>
+    <string name="login_tap_paste">Нажмите, чтобы вставить ссылку</string>
+    <string name="login_copy_from_browser">Сначала скопируйте её из браузера</string>
+    <string name="login_ready">Всё готово — нажмите «Завершить вход» ниже.</string>
+    <string name="login_tip">Совет: ссылка должна быть из адресной строки после того, как Xiaomi покажет «ok».</string>
+    <string name="login_nothing_to_paste">Пока нечего вставить. В браузере скопируйте ссылку страницы, затем нажмите здесь снова.</string>
+    <string name="login_invalid_link">Эта ссылка неверная. После того как Xiaomi покажет «ok», скопируйте ссылку из адресной строки и попробуйте снова.</string>
+    <string name="login_not_web_link">Это не веб-ссылка. Скопируйте полную ссылку страницы из адресной строки браузера, затем вставьте снова.</string>
+    <string name="login_verification_code">Код подтверждения</string>
+    <string name="login_empty">Пусто</string>
+    <string name="login_digits">%1$d из %2$d цифр</string>
+    <string name="login_send_code_failed">Не удалось отправить письмо с кодом. Используйте вход через браузер.</string>
+    <string name="login_failed">Ошибка входа</string>
+    <string name="login_verification_failed">Ошибка подтверждения</string>
+    <string name="login_browser_required">Код из письма принят, но Xiaomi требует одноразовый вход через браузер для доверия этому устройству. Вставьте URL перенаправления ниже.</string>
+    <string name="login_code_resent">Код отправлен повторно!</string>
+    <string name="login_resend_failed">Повторная отправка не удалась: %s</string>
+    <string name="login_paste_redirect">Сначала вставьте полный URL перенаправления из адресной строки.</string>
+    <string name="login_browser_finish_failed">Не удалось завершить вход через браузер по этому URL. Вставьте полный URL sts-hlth.</string>
+    <string name="login_missing_pass_token">Вход не вернул passToken, поэтому приложение не сможет оставаться авторизованным. Попробуйте снова или используйте другой способ входа.</string>
+    <string name="login_missing_device_id">Вход не получил ID устройства — попробуйте снова.</string>
+
+    <!-- Home -->
+    <string name="home_account">Ваш аккаунт</string>
+    <string name="home_signed_in">Выполнен вход</string>
+    <string name="home_connected">Mi Account · Подключён</string>
+    <string name="home_loading_profile">Получение профиля…</string>
+    <string name="home_setup">Настройка</string>
+    <string name="home_activity">Активность</string>
+    <string name="home_sync_options">Параметры синхронизации</string>
+    <string name="home_none_selected">Ничего не выбрано</string>
+    <string name="home_metric_one">1 показатель</string>
+    <string name="home_metric_many">%d показателей</string>
+    <string name="home_day_one">1 день</string>
+    <string name="home_day_many">%d дней</string>
+    <string name="home_auto_on">Автосинхронизация включена</string>
+    <string name="home_manual">Вручную</string>
+    <string name="home_nothing_selected_title">Не выбрано ничего для синхронизации</string>
+    <string name="home_nothing_selected_detail">Выберите показатели и диапазон в Настройках. Данные хранятся в %s.</string>
+    <string name="home_allow_access_detail">Предоставьте доступ на запись, чтобы приложение могло записывать данные в %s.</string>
+    <string name="home_last_sync">Последняя синхронизация</string>
+    <string name="home_background_sync">Фоновая синхронизация</string>
+    <string name="home_never">Никогда</string>
+    <string name="home_syncing">Синхронизация…</string>
+    <string name="home_sync_now">Синхронизировать</string>
+    <string name="home_open_settings">Открыть Настройки</string>
+    <string name="home_failed_suffix">%s · Ошибка</string>
+    <string name="home_partial_suffix">%s · Частично</string>
+    <string name="home_settings_accessibility">Настройки</string>
+    <string name="home_health_accessibility">Открывает %s для предоставления доступа</string>
+    <string name="home_health_ready_accessibility">Приёмник данных здоровья готов</string>
+    <string name="home_settings_hint">Открывает Настройки для изменения параметров синхронизации</string>
+
+    <!-- Sync -->
+    <string name="sync_title">Синхронизация</string>
+    <string name="sync_last_one_day">За последний 1 день</string>
+    <string name="sync_last_n_days">За последние %d дней</string>
+    <string name="sync_now">Синхронизировать</string>
+    <string name="sync_open_health">Открыть %s</string>
+    <string name="sync_no_metrics">Нет включённых показателей — откройте Настройки.</string>
+    <string name="sync_preparing">Подготовка…</string>
+    <string name="sync_status_syncing">Синхронизация</string>
+    <string name="sync_status_done">Готово</string>
+    <string name="sync_status_failed">Ошибка</string>
+    <string name="sync_status_waiting">Ожидание</string>
+    <string name="sync_records">%d записей</string>
+    <string name="sync_failed">Синхронизация не удалась</string>
+    <string name="sync_not_logged_in">Не выполнен вход — войдите и попробуйте снова</string>
+    <string name="sync_nothing_to_sync">Нечего синхронизировать (включите показатели в Настройках)</string>
+    <string name="sync_all_metrics_synced">Все включённые показатели синхронизированы</string>
+    <string name="sync_health_unavailable">%s недоступен.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">Пульс</string>
+    <string name="metric_resting_heart_rate">Пульс в покое</string>
+    <string name="metric_sleep">Сон</string>
+    <string name="metric_hrv">Вариабельность сердечного ритма</string>
+    <string name="metric_steps">Шаги</string>
+    <string name="metric_distance">Расстояние</string>
+    <string name="metric_active_calories">Активные калории</string>
+    <string name="metric_spo2">Кислород в крови (SpO2)</string>
+    <string name="metric_weight">Вес и жировая масса</string>
+    <string name="metric_workouts">Тренировки</string>
+    <string name="metric_blood_pressure">Давление</string>
+    <string name="metric_temperature">Температура тела / кожи</string>
+    <string name="metric_vo2_max">Максимальное потребление кислорода (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Только что</string>
+    <string name="time_minute_ago">%d мин. назад</string>
+    <string name="time_hour_one_ago">1 час назад</string>
+    <string name="time_hour_many_ago">%d ч. назад</string>
+    <string name="time_yesterday">Вчера</string>
+    <string name="time_day_one_ago">1 день назад</string>
+    <string name="time_day_many_ago">%d дн. назад</string>
+    <string name="time_unknown">Неизвестно</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">Всё актуально</string>
+    <string name="outcome_almost_done">Почти готово</string>
+    <string name="outcome_could_not_finish">Не удалось завершить</string>
+    <string name="outcome_partial_label">Частично</string>
+    <string name="outcome_please_sign_in">Войдите в аккаунт</string>
+    <string name="outcome_health_needed">Нужно приложение здоровья</string>
+    <string name="outcome_nothing_to_do">Нечего делать</string>
+    <string name="outcome_stopped">Остановлено</string>
+    <string name="outcome_in_progress">Синхронизация выполняется</string>
+    <string name="outcome_not_synced">Ещё не синхронизировано</string>
+    <string name="outcome_success_detail">Mi Fitness синхронизирован с Health</string>
+    <string name="outcome_partial_detail">Некоторые элементы не удались — попробуйте синхронизировать снова</string>
+    <string name="outcome_failed_detail">Проверьте подключение и попробуйте снова</string>
+    <string name="outcome_login_detail">Войдите с помощью Mi Account</string>
+    <string name="outcome_health_detail">Сначала откройте или установите приложение здоровья</string>
+    <string name="outcome_skipped_detail">Включите показатели в Настройках, затем обновите</string>
+    <string name="outcome_cancelled_detail">Синхронизация была остановлена</string>
+    <string name="outcome_running_detail">Синхронизация уже выполняется</string>
+    <string name="outcome_idle_detail">Нажмите «Синхронизировать» для получения последних данных</string>
+    <string name="outcome_nothing_needed">Ничего не требовало синхронизации</string>
+    <string name="outcome_sign_in_again">Войдите снова</string>
+    <string name="outcome_health_unavailable">Приложение здоровья недоступно</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_sync_options_loading">Параметры синхронизации</string>
+    <string name="settings_section_sync_range">Диапазон синхронизации</string>
+    <string name="settings_section_auto_sync">Автосинхронизация</string>
+    <string name="settings_section_metrics">Показатели</string>
+    <string name="settings_section_status">Состояние</string>
+    <string name="settings_section_shortcuts">Быстрые команды</string>
+    <string name="settings_section_account">Аккаунт</string>
+    <string name="settings_section_about">О приложении</string>
+    <string name="settings_days_picker">Дней</string>
+    <string name="settings_range_1_day">1 день</string>
+    <string name="settings_range_n_days">%d дней</string>
+    <string name="settings_background_auto_sync">Фоновая автосинхронизация</string>
+    <string name="settings_test_background_refresh">Тест фонового обновления</string>
+    <string name="settings_running_refresh">Выполняется обновление за 1 день…</string>
+    <string name="settings_test_ok">Тест пройден — последнее фоновое обновление должно обновиться</string>
+    <string name="settings_partial_ok">Частичный успех — некоторые показатели не удались (см. экран синхронизации)</string>
+    <string name="settings_skipped">Пропущено (включите автосинхронизацию и оставайтесь авторизованным)</string>
+    <string name="settings_not_signed_in">Вход не выполнен</string>
+    <string name="settings_cancelled">Отменено</string>
+    <string name="settings_failed_status">Ошибка (%s)</string>
+    <string name="settings_last_sync">Последняя синхронизация</string>
+    <string name="settings_last_background_sync">Последняя фоновая синхронизация</string>
+    <string name="settings_shortcuts_help">Используйте App Intent «Sync Better Mi Fitness» или Быстрые команды для ручного фонового запуска.</string>
+    <string name="settings_log_out">Выйти</string>
+    <string name="settings_version">Версия</string>
+    <string name="settings_credit">Авторство</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">Фоновая синхронизация использует WorkManager (примерно раз в час при наличии сети; время не точное).</string>
+    <string name="background_simulator_status">Симулятор: система не запускает BGAppRefresh автоматически. Используйте «Тест обновления за 1 день» или bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">Фоновое обновление приложения включено</string>
+    <string name="background_off">Фоновое обновление приложения выключено — включите в Настройки → Основные → Обновление контента</string>
+    <string name="background_restricted">Фоновое обновление приложения ограничено на этом устройстве</string>
+    <string name="background_unknown">Состояние фонового обновления неизвестно</string>
+    <string name="background_unknown_status">Неизвестно</string>
+</resources>

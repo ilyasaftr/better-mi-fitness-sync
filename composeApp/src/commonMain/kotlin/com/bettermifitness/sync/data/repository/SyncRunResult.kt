@@ -1,4 +1,6 @@
 package com.bettermifitness.sync.data.repository
+import com.bettermifitness.sync.i18n.L10n
+
 
 /**
  * Aggregate result of a multi-metric sync pass (each metric fails independently).
@@ -18,15 +20,15 @@ data class SyncRunResult(
     val isEmpty: Boolean get() = attempted == 0
 
     fun summary(): String = when {
-        isEmpty -> "Nothing to sync"
-        isFullSuccess -> "Synced $succeeded metric${if (succeeded == 1) "" else "s"} ($totalRecords records)"
+        isEmpty -> L10n.text(L10n.outcomeNothingToDo)
+        isFullSuccess -> L10n.text(L10n.outcomeSuccessDetail)
         isPartialSuccess ->
-            "Partial: $succeeded ok, $failed failed" +
+            L10n.text(L10n.outcomePartialLabel) +
                 errorMessages.firstOrNull()?.let { " — $it" }.orEmpty()
         isTotalFailure ->
             errorMessages.firstOrNull()
-                ?: "All $failed metrics failed"
-        else -> "Sync finished"
+                ?: L10n.text(L10n.outcomeCouldNotFinish)
+        else -> L10n.text(L10n.outcomeInProgress)
     }
 
     companion object {

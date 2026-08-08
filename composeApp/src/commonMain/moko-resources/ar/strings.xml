@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before production use. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">رجوع</string>
+    <string name="open_health">فتح %s</string>
+    <string name="health_fallback">الصحة</string>
+    <string name="health_allow_access">السماح بالوصول</string>
+    <string name="health_ready">جاهز</string>
+    <string name="health_checking">جارٍ التحقّق…</string>
+    <string name="health_not_available">خدمة الصحة غير متوفّرة على هذا الجهاز.</string>
+    <string name="health_permissions_incomplete">أذونات الكتابة غير مكتملة — امنح الوصول وأعد المحاولة.</string>
+    <string name="health_status_check_failed">تعذّر التحقّق من حالة خدمة الصحة.</string>
+    <string name="health_write_failed">خدمة الصحة غير متوفّرة.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">سجّل الدخول بحساب Mi Account</string>
+    <string name="login_email_or_phone">البريد الإلكتروني أو الهاتف</string>
+    <string name="login_password">كلمة المرور</string>
+    <string name="login_sign_in">تسجيل الدخول</string>
+    <string name="login_privacy">يُرسَل كلمة مرورك إلى Xiaomi فقط لتسجيل الدخول. تبقى رموز الحساب على هذا الجهاز ولا تُشارَك مع أطراف ثالثة.</string>
+    <string name="login_verify_identity">تحقّق من هويتك</string>
+    <string name="login_check_email">تحقّق من بريدك الإلكتروني</string>
+    <string name="login_code_sent">أرسلنا رمز تحقّق إلى حساب Mi Account الخاص بك.</string>
+    <string name="login_code_sent_to">أرسلنا رمز تحقّق إلى\n%s</string>
+    <string name="login_verify">تحقّق</string>
+    <string name="login_didnt_get">لم يصلك الرمز؟</string>
+    <string name="login_resend">إعادة الإرسال</string>
+    <string name="login_browser_trouble">تواجه مشكلة؟ استخدم تسجيل الدخول عبر المتصفّح</string>
+    <string name="login_browser_title">تسجيل الدخول عبر المتصفّح</string>
+    <string name="login_complete">إتمام تسجيل الدخول</string>
+    <string name="login_step_one">الخطوة 1 · تسجيل الدخول</string>
+    <string name="login_step_one_detail">سجّل الدخول بحساب Xiaomi في المتصفّح، ثم عُد إلى هنا.</string>
+    <string name="login_open_xiaomi">فتح صفحة تسجيل دخول Xiaomi</string>
+    <string name="login_link_copied">تم نسخ الرابط</string>
+    <string name="login_copy_link">نسخ رابط تسجيل الدخول</string>
+    <string name="login_step_two">الخطوة 2 · الإنهاء هنا</string>
+    <string name="login_step_two_detail">في المتصفّح، انسخ رابط الصفحة بعد أن ترى "ok". ثم اضغط أدناه للصقه.</string>
+    <string name="login_link_pasted">تم لصق الرابط</string>
+    <string name="login_paste_different">لصق رابط مختلف</string>
+    <string name="login_remove_link">إزالة الرابط الملصوق</string>
+    <string name="login_tap_paste">اضغط للصق الرابط</string>
+    <string name="login_copy_from_browser">انسخه من المتصفّح أولاً</string>
+    <string name="login_ready">كل شيء جاهز — اضغط إتمام تسجيل الدخول أدناه.</string>
+    <string name="login_tip">ملاحظة: يجب أن يكون الرابط من شريط العنوان بعد أن تظهر كلمة "ok" من Xiaomi.</string>
+    <string name="login_nothing_to_paste">لا يوجد شيء للصق بعد. في المتصفّح، انسخ رابط الصفحة ثم اضغط هنا مجدّداً.</string>
+    <string name="login_invalid_link">هذا ليس الرابط الصحيح. بعد أن تظهر كلمة "ok" من Xiaomi، انسخ الرابط من شريط العنوان وأعد المحاولة.</string>
+    <string name="login_not_web_link">هذا ليس رابط ويب. انسخ رابط الصفحة الكامل من شريط عنوان المتصفّح، ثم اضغط لصق مجدّداً.</string>
+    <string name="login_verification_code">رمز التحقّق</string>
+    <string name="login_empty">فارغ</string>
+    <string name="login_digits">%1$d من %2$d أرقام</string>
+    <string name="login_send_code_failed">تعذّر إرسال بريد التحقّق. استخدم تسجيل الدخول عبر المتصفّح.</string>
+    <string name="login_failed">فشل تسجيل الدخول</string>
+    <string name="login_verification_failed">فشل التحقّق</string>
+    <string name="login_browser_required">تم قبول رمز البريد الإلكتروني، لكن Xiaomi لا يزال يحتاج تسجيل دخول لمرة واحدة عبر المتصفّح للوثوق بهذا الجهاز. الصق رابط إعادة التوجيه أدناه.</string>
+    <string name="login_code_resent">تم إعادة إرسال الرمز!</string>
+    <string name="login_resend_failed">فشل إعادة الإرسال: %s</string>
+    <string name="login_paste_redirect">الصق رابط إعادة التوجيه الكامل من شريط العنوان أولاً.</string>
+    <string name="login_browser_finish_failed">تعذّر إتمام تسجيل الدخول عبر المتصفّح من هذا الرابط. الصق رابط sts-hlth الكامل.</string>
+    <string name="login_missing_pass_token">لم يُعِد تسجيل الدخول passToken، لذا لن يبقى التطبيق مسجّلاً عبر الأيام. أعد المحاولة أو استخدم طريقة تسجيل الدخول الأخرى.</string>
+    <string name="login_missing_device_id">تسجيل الدخول يفتقد معرّف الجهاز — أعد المحاولة.</string>
+
+    <!-- Home -->
+    <string name="home_account">حسابك</string>
+    <string name="home_signed_in">تم تسجيل الدخول</string>
+    <string name="home_connected">Mi Account · متصل</string>
+    <string name="home_loading_profile">جارٍ تحميل ملفك الشخصي…</string>
+    <string name="home_setup">الإعداد</string>
+    <string name="home_activity">النشاط</string>
+    <string name="home_sync_options">خيارات المزامنة</string>
+    <string name="home_none_selected">لم يُحدَّد شيء</string>
+    <string name="home_metric_one">مقياس واحد</string>
+    <string name="home_metric_many">%d مقاييس</string>
+    <string name="home_day_one">يوم واحد</string>
+    <string name="home_day_many">%d أيام</string>
+    <string name="home_auto_on">المزامنة التلقائية مفعّلة</string>
+    <string name="home_manual">يدوي</string>
+    <string name="home_nothing_selected_title">لم يُحدَّد شيء للمزامنة</string>
+    <string name="home_nothing_selected_detail">اختر المقاييس والنطاق في الإعدادات. البيانات المعروضة موجودة في %s.</string>
+    <string name="home_allow_access_detail">امنح إذن الكتابة حتى يتمكّن هذا التطبيق من كتابة البيانات إلى %s.</string>
+    <string name="home_last_sync">آخر مزامنة</string>
+    <string name="home_background_sync">المزامنة في الخلفية</string>
+    <string name="home_never">أبداً</string>
+    <string name="home_syncing">جارٍ المزامنة…</string>
+    <string name="home_sync_now">مزامنة الآن</string>
+    <string name="home_open_settings">فتح الإعدادات</string>
+    <string name="home_failed_suffix">%s · فشل</string>
+    <string name="home_partial_suffix">%s · جزئي</string>
+    <string name="home_settings_accessibility">الإعدادات</string>
+    <string name="home_health_accessibility">يفتح %s للسماح بالوصول</string>
+    <string name="home_health_ready_accessibility">وجهة الصحة جاهزة</string>
+    <string name="home_settings_hint">يفتح الإعدادات لتغيير خيارات المزامنة</string>
+
+    <!-- Sync -->
+    <string name="sync_title">المزامنة</string>
+    <string name="sync_last_one_day">آخر يوم واحد</string>
+    <string name="sync_last_n_days">آخر %d أيام</string>
+    <string name="sync_now">مزامنة الآن</string>
+    <string name="sync_open_health">فتح %s</string>
+    <string name="sync_no_metrics">لا توجد مقاييس مفعّلة — افتح الإعدادات.</string>
+    <string name="sync_preparing">جارٍ التحضير…</string>
+    <string name="sync_status_syncing">جارٍ المزامنة</string>
+    <string name="sync_status_done">تم</string>
+    <string name="sync_status_failed">فشل</string>
+    <string name="sync_status_waiting">في الانتظار</string>
+    <string name="sync_records">%d سجلات</string>
+    <string name="sync_failed">فشلت المزامنة</string>
+    <string name="sync_not_logged_in">لم يتم تسجيل الدخول — سجّل الدخول وأعد المحاولة</string>
+    <string name="sync_nothing_to_sync">لا يوجد شيء للمزامنة (فعّل المقاييس في الإعدادات)</string>
+    <string name="sync_all_metrics_synced">تمت مزامنة جميع المقاييس المفعّلة</string>
+    <string name="sync_health_unavailable">%s غير متوفّر.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">معدّل ضربات القلب</string>
+    <string name="metric_resting_heart_rate">معدّل ضربات القلب أثناء الراحة</string>
+    <string name="metric_sleep">النوم</string>
+    <string name="metric_hrv">تباين معدل ضربات القلب</string>
+    <string name="metric_steps">الخطوات</string>
+    <string name="metric_distance">المسافة</string>
+    <string name="metric_active_calories">السعرات الحرارية النشطة</string>
+    <string name="metric_spo2">أكسجين الدم (SpO2)</string>
+    <string name="metric_weight">الوزن ودهون الجسم</string>
+    <string name="metric_workouts">التمارين</string>
+    <string name="metric_blood_pressure">ضغط الدم</string>
+    <string name="metric_temperature">حرارة الجسم / البشرة</string>
+    <string name="metric_vo2_max">الحد الأقصى لاستهلاك الأكسجين (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">الآن</string>
+    <string name="time_minute_ago">قبل %d دقيقة</string>
+    <string name="time_hour_one_ago">قبل ساعة</string>
+    <string name="time_hour_many_ago">قبل %d ساعات</string>
+    <string name="time_yesterday">أمس</string>
+    <string name="time_day_one_ago">قبل يوم</string>
+    <string name="time_day_many_ago">قبل %d أيام</string>
+    <string name="time_unknown">غير معروف</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">بياناتك محدّثة</string>
+    <string name="outcome_almost_done">على وشك الانتهاء</string>
+    <string name="outcome_could_not_finish">تعذّر الإنهاء</string>
+    <string name="outcome_partial_label">جزئي</string>
+    <string name="outcome_please_sign_in">يرجى تسجيل الدخول</string>
+    <string name="outcome_health_needed">تطبيق الصحة مطلوب</string>
+    <string name="outcome_nothing_to_do">لا يوجد ما يُنفَّذ</string>
+    <string name="outcome_stopped">تم الإيقاف</string>
+    <string name="outcome_in_progress">المزامنة قيد التنفيذ</string>
+    <string name="outcome_not_synced">لم تتم المزامنة بعد</string>
+    <string name="outcome_success_detail">تمت مزامنة Mi Fitness إلى تطبيق الصحة</string>
+    <string name="outcome_partial_detail">فشلت بعض العناصر — أعد المزامنة</string>
+    <string name="outcome_failed_detail">تحقّق من اتصالك وأعد المحاولة</string>
+    <string name="outcome_login_detail">سجّل الدخول بحساب Mi Account</string>
+    <string name="outcome_health_detail">افتح أو ثبّت تطبيق الصحة أولاً</string>
+    <string name="outcome_skipped_detail">فعّل العناصر في الإعدادات، ثم حدّث</string>
+    <string name="outcome_cancelled_detail">تم إيقاف المزامنة</string>
+    <string name="outcome_running_detail">المزامنة قيد التشغيل بالفعل</string>
+    <string name="outcome_idle_detail">اضغط مزامنة لعرض آخر نشاطك</string>
+    <string name="outcome_nothing_needed">لا يوجد شيء يحتاج مزامنة</string>
+    <string name="outcome_sign_in_again">يرجى تسجيل الدخول مجدّداً</string>
+    <string name="outcome_health_unavailable">تطبيق الصحة غير متوفّر</string>
+
+    <!-- Settings -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_sync_options_loading">خيارات المزامنة</string>
+    <string name="settings_section_sync_range">نطاق المزامنة</string>
+    <string name="settings_section_auto_sync">المزامنة التلقائية</string>
+    <string name="settings_section_metrics">المقاييس</string>
+    <string name="settings_section_status">الحالة</string>
+    <string name="settings_section_shortcuts">الاختصارات</string>
+    <string name="settings_section_account">الحساب</string>
+    <string name="settings_section_about">حول</string>
+    <string name="settings_days_picker">الأيام</string>
+    <string name="settings_range_1_day">يوم واحد</string>
+    <string name="settings_range_n_days">%d أيام</string>
+    <string name="settings_background_auto_sync">المزامنة التلقائية في الخلفية</string>
+    <string name="settings_test_background_refresh">اختبار التحديث في الخلفية</string>
+    <string name="settings_running_refresh">جارٍ تشغيل تحديث يوم واحد…</string>
+    <string name="settings_test_ok">نجح الاختبار — يجب أن يتحدّث آخر تحديث في الخلفية</string>
+    <string name="settings_partial_ok">نجاح جزئي — فشلت بعض المقاييس (راجع شاشة المزامنة)</string>
+    <string name="settings_skipped">تم التخطّي (فعّل المزامنة التلقائية وابقَ مسجّلاً)</string>
+    <string name="settings_not_signed_in">لم يتم تسجيل الدخول</string>
+    <string name="settings_cancelled">تم الإلغاء</string>
+    <string name="settings_failed_status">فشل (%s)</string>
+    <string name="settings_last_sync">آخر مزامنة</string>
+    <string name="settings_last_background_sync">آخر مزامنة في الخلفية</string>
+    <string name="settings_shortcuts_help">استخدم App Intent "Sync Better Mi Fitness" أو Shortcuts لتشغيل المزامنة في الخلفية يدوياً.</string>
+    <string name="settings_log_out">تسجيل الخروج</string>
+    <string name="settings_version">الإصدار</string>
+    <string name="settings_credit">الإسهام</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">تستخدم المزامنة في الخلفية WorkManager (تقريباً كل ساعة عند توفّر الشبكة؛ ليست بتوقيت دقيق).</string>
+    <string name="background_simulator_status">المحاكي: لا يُشغّل النظام BGAppRefresh تلقائياً. استخدم "اختبار تحديث يوم واحد" أو bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">تحديث التطبيق في الخلفية مفعّل</string>
+    <string name="background_off">تحديث التطبيق في الخلفية معطّل — فعّله من الإعدادات ← عام ← تحديث التطبيق في الخلفية</string>
+    <string name="background_restricted">تحديث التطبيق في الخلفية مقيّد على هذا الجهاز</string>
+    <string name="background_unknown">حالة تحديث التطبيق في الخلفية غير معروفة</string>
+    <string name="background_unknown_status">غير معروف</string>
+</resources>

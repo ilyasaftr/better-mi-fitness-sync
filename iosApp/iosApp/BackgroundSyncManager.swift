@@ -66,18 +66,18 @@ enum BackgroundSyncManager {
     static func backgroundRefreshStatusLabel() -> String {
         if isDebugRefreshEnabled {
             #if targetEnvironment(simulator)
-            return "Simulator: system never auto-fires BGAppRefresh. Use “Test 1-day refresh” or bettermifitness://debug/bg-refresh"
+            return L10n.backgroundSimulator
             #endif
         }
         switch UIApplication.shared.backgroundRefreshStatus {
         case .available:
-            return "Background App Refresh is on"
+            return L10n.backgroundOn
         case .denied:
-            return "Background App Refresh is off — enable it in Settings → General → Background App Refresh"
+            return L10n.backgroundOff
         case .restricted:
-            return "Background App Refresh is restricted on this device"
+            return L10n.backgroundRestricted
         @unknown default:
-            return "Background App Refresh status unknown"
+            return L10n.backgroundUnknown
         }
     }
 

@@ -41,7 +41,7 @@ struct HomeView: View {
                 } label: {
                     Image(systemName: "gearshape")
                 }
-                .accessibilityLabel("Settings")
+                .accessibilityLabel(L10n.homeSettingsAccessibility)
             }
         }
         .onAppear { store.refresh() }
@@ -100,9 +100,9 @@ struct HomeView: View {
             return err
         }
         if store.state.profileName != "Mi account" {
-            return "Mi Account · Connected"
+            return L10n.homeConnected
         }
-        return "Getting your profile…"
+        return L10n.homeLoadingProfile
     }
 
     // MARK: - Blocking banner (permission / empty plan only)
@@ -118,18 +118,16 @@ struct HomeView: View {
         if s.healthNeedsAction {
             return BlockingBanner(
                 title: s.healthStatusTitle.isEmpty
-                    ? "Allow access to \(s.healthServiceName)"
+                    ? L10n.openHealth(s.healthServiceName)
                     : s.healthStatusTitle,
-                detail: s.healthStatusDetail.isEmpty
-                    ? "Grant write access so this app can write data to \(s.healthServiceName)."
-                    : s.healthStatusDetail,
+                detail: L10n.homeAllowAccessDetail(s.healthServiceName),
                 accent: Brand.danger
             )
         }
         if s.enabledMetricsCount == 0 {
             return BlockingBanner(
-                title: "Nothing selected to sync",
-                detail: "Choose metrics and range in Settings. Viewed data lives in \(s.healthServiceName).",
+                title: L10n.homeNothingSelectedTitle,
+                detail: L10n.homeNothingSelectedDetail(s.healthServiceName),
                 accent: Brand.caution
             )
         }
@@ -157,7 +155,7 @@ struct HomeView: View {
     private var bridgeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Plain setup label — avoid product jargon like "Bridge".
-            sectionLabel("Setup")
+            sectionLabel(L10n.homeSetup)
 
             VStack(spacing: 0) {
                 healthRow
@@ -198,19 +196,19 @@ struct HomeView: View {
         .disabled(!store.state.healthNeedsAction)
         .accessibilityHint(
             store.state.healthNeedsAction
-                ? "Opens \(store.state.healthServiceName) to allow access"
-                : "Health destination ready"
+                ? L10n.homeHealthAccessibility(store.state.healthServiceName)
+                : L10n.homeHealthReadyAccessibility
         )
     }
 
     private var healthRowValue: String {
         if store.state.healthNeedsAction {
-            return "Allow access"
+            return L10n.healthAllowAccess
         }
         if store.state.healthReady {
-            return "Ready"
+            return L10n.healthReady
         }
-        return store.state.healthStatusTitle.isEmpty ? "Checking…" : store.state.healthStatusTitle
+        return store.state.healthStatusTitle.isEmpty ? L10n.healthChecking : store.state.healthStatusTitle
     }
 
     private var planRow: some View {
@@ -219,7 +217,7 @@ struct HomeView: View {
                 // iOS Settings-style “options” control; pairs with heart as a matched set.
                 systemImage: "slider.horizontal.3",
                 badgeColor: syncOptionsBadgeColor,
-                title: "Sync options",
+                title: L10n.homeSyncOptions,
                 detail: planSummary,
                 detailColor: store.state.enabledMetricsCount == 0 ? Brand.caution : Brand.secondaryLabel,
                 trailing: nil,
@@ -227,19 +225,19 @@ struct HomeView: View {
             )
         }
         .buttonStyle(.plain)
-        .accessibilityHint("Opens Settings to change sync options")
+        .accessibilityHint(L10n.homeSettingsHint)
     }
 
     private var planSummary: String {
         let s = store.state
         if s.enabledMetricsCount == 0 {
-            return "None selected"
+            return L10n.homeNoneSelected
         }
         let metrics = s.enabledMetricsCount == 1
-            ? "1 metric"
-            : "\(s.enabledMetricsCount) metrics"
-        let days = s.rangeDays == 1 ? "1 day" : "\(s.rangeDays) days"
-        let auto = s.autoSync ? "Auto-sync on" : "Manual"
+            ? L10n.homeMetricOne
+            : L10n.homeMetricMany(Int(s.enabledMetricsCount))
+        let days = s.rangeDays == 1 ? L10n.homeDayOne : L10n.homeDayMany(Int(s.rangeDays))
+        let auto = s.autoSync ? L10n.homeAutoOn : L10n.homeManual
         return "\(metrics) · \(days) · \(auto)"
     }
 
@@ -288,7 +286,7 @@ struct HomeView: View {
             }
 
             if showChevron {
-                Image(systemName: "chevron.right")
+                Image(systemName: "chevron.forward")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Brand.secondaryLabel.opacity(0.7))
                     .accessibilityHidden(true)
@@ -303,17 +301,17 @@ struct HomeView: View {
 
     private var activityFootnote: some View {
         VStack(alignment: .leading, spacing: 8) {
-            sectionLabel("Activity")
+            sectionLabel(L10n.homeActivity)
 
             VStack(spacing: 0) {
                 footnoteRow(
-                    title: "Last sync",
+                    title: L10n.homeLastSync,
                     value: lastSyncValue,
                     valueColor: lastSyncColor
                 )
                 Divider().padding(.leading, 14)
                 footnoteRow(
-                    title: "Background sync",
+                    title: L10n.homeBackgroundSync,
                     value: backgroundValue,
                     valueColor: store.state.lastBackgroundIsError ? Brand.danger : Brand.secondaryLabel
                 )
@@ -327,18 +325,18 @@ struct HomeView: View {
     private var lastSyncValue: String {
         let s = store.state
         if s.isSyncing {
-            return "Syncing…"
+            return L10n.homeSyncing
         }
         let when = s.lastSyncLabel
-        if when == "Never" {
-            return "Never"
+        if when == L10n.homeNever {
+            return L10n.homeNever
         }
         // Success: time alone — "Just now · OK" is redundant.
         if s.lastSyncIsError {
-            return "\(when) · Failed"
+            return L10n.homeFailed(when)
         }
         if s.lastSyncIsWarning {
-            return "\(when) · Partial"
+            return L10n.homePartial(when)
         }
         return when
     }
@@ -354,7 +352,7 @@ struct HomeView: View {
     private var backgroundValue: String {
         let label = store.state.lastBackgroundLabel
         if store.state.lastBackgroundIsError {
-            return "\(label) · Failed"
+            return L10n.homeFailed(label)
         }
         return label
     }
@@ -394,11 +392,11 @@ struct HomeView: View {
             if store.state.isSyncing {
                 SyncingPrimaryLabel()
             } else if store.state.healthNeedsAction {
-                Text("Allow access")
+                Text(L10n.healthAllowAccess)
             } else if store.state.enabledMetricsCount == 0 {
-                Text("Open Settings")
+                Text(L10n.homeOpenSettings)
             } else {
-                Label("Sync now", systemImage: "arrow.triangle.2.circlepath")
+                Label(L10n.homeSyncNow, systemImage: "arrow.triangle.2.circlepath")
             }
         }
     }

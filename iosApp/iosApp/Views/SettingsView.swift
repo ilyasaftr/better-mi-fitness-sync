@@ -1,4 +1,5 @@
 import SwiftUI
+import ComposeApp
 
 struct SettingsView: View {
     @StateObject private var store = SettingsStore()
@@ -17,27 +18,27 @@ struct SettingsView: View {
                         Text(store.state.healthStatusDetail)
                             .font(.subheadline)
                             .foregroundStyle(Brand.secondaryLabel)
-                        Button("Open \(store.state.healthServiceName)") {
+                        Button(L10n.openHealth(store.state.healthServiceName)) {
                             store.openHealth()
                         }
                     }
                 }
             }
 
-            Section("Sync range") {
-                Picker("Days", selection: Binding(
+            Section(L10n.settingsSectionSyncRange) {
+                Picker(L10n.settingsDaysPicker, selection: Binding(
                     get: { Int(store.state.rangeDays) },
                     set: { store.setRangeDays($0) }
                 )) {
                     ForEach(rangeOptions, id: \.self) { d in
-                        Text("\(d) day\(d == 1 ? "" : "s")").tag(d)
+                        Text(d == 1 ? L10n.settingsRange1Day : L10n.settingsRangeNDays(d)).tag(d)
                     }
                 }
                 .pickerStyle(.segmented)
             }
 
-            Section("Auto-sync") {
-                Toggle("Background auto-sync", isOn: Binding(
+            Section(L10n.settingsSectionAutoSync) {
+                Toggle(L10n.settingsBackgroundAutoSync, isOn: Binding(
                     get: { store.state.autoSync },
                     set: { store.setAutoSync($0) }
                 ))
@@ -53,7 +54,7 @@ struct SettingsView: View {
                         if store.state.bgTestRunning {
                             ProgressView()
                         } else {
-                            Text("Test background refresh")
+                            Text(L10n.settingsTestBackgroundRefresh)
                         }
                     }
                     .disabled(!store.state.autoSync || store.state.bgTestRunning)
@@ -65,13 +66,12 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Metrics") {
+            Section(L10n.settingsSectionMetrics) {
                 ForEach(Array(zip(store.metricKeys, store.metricLabels)), id: \.0) { key, label in
                     Toggle(isOn: Binding(
                         get: { store.state.enabledMetrics.contains(key) },
                         set: { store.setMetric(key, enabled: $0) }
                     )) {
-                        // Match Sync screen: brand orange metric icons (not system list tint).
                         Label {
                             Text(label)
                         } icon: {
@@ -82,42 +82,40 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Status") {
-                // Keep rows minimal — titles/details live on Home / Sync.
-                LabeledContent("Last sync", value: store.state.lastSyncLabel)
-                LabeledContent("Last background sync", value: store.state.lastBackgroundSyncLabel)
+            Section(L10n.settingsSectionStatus) {
+                LabeledContent(L10n.settingsLastSync, value: store.state.lastSyncLabel)
+                LabeledContent(L10n.settingsLastBackgroundSync, value: store.state.lastBackgroundSyncLabel)
             }
 
             if store.state.showShortcutsHelp {
-                Section("Shortcuts") {
-                    Text("Use the “Sync Better Mi Fitness” App Intent or Shortcuts for manual background runs.")
+                Section(L10n.settingsSectionShortcuts) {
+                    Text(L10n.settingsShortcutsHelp)
                         .font(.caption)
                         .foregroundStyle(Brand.secondaryLabel)
                 }
             }
 
-            Section("Account") {
-                Button("Log out", role: .destructive) {
+            Section(L10n.settingsSectionAccount) {
+                Button(L10n.settingsLogOut, role: .destructive) {
                     store.logout()
                     onLogout?()
                 }
             }
 
-            // Same About block as Android Settings: Version + Credit.
-            Section("About") {
-                LabeledContent("Version", value: appVersionLabel)
+            Section(L10n.settingsSectionAbout) {
+                LabeledContent(L10n.settingsVersion, value: appVersionLabel)
                 Link(destination: creditURL) {
                     HStack {
-                        Text("Credit")
+                        Text(L10n.settingsCredit)
                             .foregroundStyle(Brand.label)
                         Spacer(minLength: 0)
-                        Text(creditName)
+                        Text(L10n.settingsCreditName)
                             .foregroundStyle(Brand.primary)
                     }
                 }
             }
         }
-        .navigationTitle("Settings")
+        .navigationTitle(L10n.settingsTitle)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { store.refreshHealth() }
     }
@@ -132,8 +130,6 @@ struct SettingsView: View {
         let b = (build?.isEmpty == false) ? build! : "—"
         return "\(n) (\(b))"
     }
-
-    private var creditName: String { "Ilyasa Fathur Rahman (ilyasaftr)" }
 
     private var creditURL: URL {
         URL(string: "https://github.com/ilyasaftr")!

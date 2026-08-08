@@ -25,6 +25,9 @@ androidx-activityCompose = "1.13.0"
 androidx-lifecycle = "2.10.0"
 work-manager = "2.11.2"
 
+# Shared i18n (Android + iOS native UI SSOT)
+moko-resources = "0.26.4"
+
 [libraries]
 # Compose Multiplatform — explicit coordinates (compose.* aliases deprecated since CMP 1.10)
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
@@ -66,6 +69,10 @@ androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycl
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidx-lifecycle" }
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work-manager" }
 
+# moko-resources — shared strings/plurals for Compose + SwiftUI
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
+moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
+
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
@@ -74,3 +81,4 @@ kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.8" }
+mokoResources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }

@@ -24,7 +24,7 @@ struct RootView: View {
             case .loading:
                 ZStack {
                     Brand.pageBackground.ignoresSafeArea()
-                    ProgressView("Loading…")
+                    ProgressView(L10n.homeLoadingProfile)
                         .tint(Brand.primary)
                 }
             case .loggedOut:

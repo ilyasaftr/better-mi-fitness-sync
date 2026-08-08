@@ -7,6 +7,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.sync.MiSyncWorker
 import java.util.concurrent.TimeUnit
 
@@ -48,7 +49,7 @@ actual object AutoSyncPlatform {
     }
 
     actual fun backgroundRefreshStatusLabel(): String {
-        return "Background sync uses WorkManager (~hourly when network is available; not exact-time)."
+        return L10n.text(L10n.backgroundAndroidStatus)
     }
 
     actual fun supportsOpportunisticRefreshTest(): Boolean = false

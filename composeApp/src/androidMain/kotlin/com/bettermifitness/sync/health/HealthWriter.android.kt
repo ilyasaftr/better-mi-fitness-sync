@@ -1,5 +1,6 @@
 package com.bettermifitness.sync.health
 
+import com.bettermifitness.sync.i18n.L10n
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectFeatures
@@ -470,18 +471,15 @@ actual class HealthWriter(private val context: Context) : HealthStore {
 
     actual override suspend fun requestPermissions() {
         val launcher = HealthConnectPermissionBridge.requestPermissions
-            ?: throw IllegalStateException("Health Connect permission launcher not ready")
+            ?: throw IllegalStateException(L10n.text(L10n.healthPermissionsIncomplete))
         val needed = availableWritePermissions()
         if (needed.isEmpty()) {
-            throw Exception("Health Connect has no writable data types available on this phone.")
+            throw Exception(L10n.text(L10n.healthNotAvailable))
         }
         val granted = launcher(needed)
         val missing = needed - granted
         if (missing.isNotEmpty()) {
-            throw Exception(
-                "Health Connect write permission not granted. " +
-                    "Tap Allow access in this app, then enable the toggles.",
-            )
+            throw Exception(L10n.text(L10n.healthPermissionsIncomplete))
         }
     }
 
@@ -493,13 +491,12 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 if (hasWritePermissions()) {
                     null
                 } else {
-                    "Tap Allow access so Health Connect can show the permission screen. " +
-                        "This app appears under App permissions after that request."
+                    L10n.textFmt(L10n.homeAllowAccessDetail, healthServiceName())
                 }
             HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED ->
-                "Update Health Connect from the Play Store, then try again."
+                L10n.text(L10n.healthNotAvailable)
             else ->
-                "Install Health Connect from the Play Store so we can save your activity."
+                L10n.text(L10n.healthNotAvailable)
         }
     }
 

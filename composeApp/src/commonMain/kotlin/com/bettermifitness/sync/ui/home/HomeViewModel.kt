@@ -2,6 +2,7 @@ package com.bettermifitness.sync.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.data.MiSessionManager
 import com.bettermifitness.sync.data.api.MeResponse
 import com.bettermifitness.sync.data.preferences.SyncPreferences
@@ -24,13 +25,13 @@ import kotlinx.coroutines.launch
 data class HomeUiState(
     val profile: MeResponse? = null,
     val profileError: String? = null,
-    val lastSyncLabel: String = "Never",
-    val lastSyncStatusTitle: String = "No sync yet",
-    val lastSyncDetail: String = "Run a sync to see results here",
+    val lastSyncLabel: String = L10n.text(L10n.homeNever),
+    val lastSyncStatusTitle: String = L10n.text(L10n.outcomeNotSynced),
+    val lastSyncDetail: String = L10n.text(L10n.outcomeIdleDetail),
     val lastSyncIsError: Boolean = false,
     val lastSyncIsWarning: Boolean = false,
-    val lastBackgroundLabel: String = "Never",
-    val lastBackgroundDetail: String = "Background sync has not run yet",
+    val lastBackgroundLabel: String = L10n.text(L10n.homeNever),
+    val lastBackgroundDetail: String = L10n.text(L10n.outcomeIdleDetail),
     val lastBackgroundIsError: Boolean = false,
     /** 0 until prefs load — do not assume all metrics on (matches Settings). */
     val enabledMetricsCount: Int = 0,
@@ -159,7 +160,7 @@ class HomeViewModel(
     fun loadProfile() {
         viewModelScope.launch {
             if (!session.isActive) {
-                _profileError.value = "Session not ready"
+                _profileError.value = L10n.text(L10n.homeSignedIn)
                 return@launch
             }
             try {
@@ -173,13 +174,13 @@ class HomeViewModel(
                         _profileError.value = null
                         return@launch
                     } catch (retry: Exception) {
-                        _profileError.value = retry.message ?: "Failed to load profile"
+                        _profileError.value = retry.message ?: L10n.text(L10n.homeSignedIn)
                         return@launch
                     }
                 }
                 _profileError.value = refresh.userMessage
             } catch (e: Exception) {
-                _profileError.value = e.message ?: "Failed to load profile"
+                _profileError.value = e.message ?: L10n.text(L10n.homeSignedIn)
             }
         }
     }
@@ -193,7 +194,7 @@ class HomeViewModel(
                     available = false,
                     permissionsGranted = false,
                     serviceName = healthAvailability.healthServiceName(),
-                    hint = "Could not check health service status.",
+                    hint = L10n.text(L10n.healthStatusCheckFailed),
                 )
             }
         }

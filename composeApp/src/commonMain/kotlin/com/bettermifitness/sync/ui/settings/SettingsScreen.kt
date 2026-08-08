@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.platform.appVersionLabel
 import com.bettermifitness.sync.theme.BrandShapes
 import com.bettermifitness.sync.theme.BrandSpacing
@@ -50,20 +51,18 @@ import com.bettermifitness.sync.ui.icons.AppIcon
 import com.bettermifitness.sync.ui.icons.AppIcons
 import org.koin.mp.KoinPlatform
 
-private const val CREDIT_NAME = "Ilyasa Fathur Rahman (ilyasaftr)"
 private const val CREDIT_URL = "https://github.com/ilyasaftr"
 
 /**
- * Settings (parity with iOS SettingsView):
- * Sync range → Auto-sync → Metrics → Status → Shortcuts → Account.
- * No extra section subtitles/body copy that iOS does not show.
+ * Settings (parity with iOS SettingsView).
+ * User-visible chrome uses moko [L10n] (system language SSOT).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(onBack: () -> Unit, onLogout: () -> Unit = {}) {
     val viewModel = remember { KoinPlatform.getKoin().get<SettingsViewModel>() }
     val state by viewModel.uiState.collectAsState()
-    val healthName = state.healthServiceName.ifBlank { "Health" }
+    val healthName = state.healthServiceName.ifBlank { L10n.string(L10n.healthFallback) }
 
     LaunchedEffect(state.loggedOut) {
         if (state.loggedOut) {
@@ -77,14 +76,19 @@ fun SettingsScreen(onBack: () -> Unit, onLogout: () -> Unit = {}) {
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Settings", fontWeight = FontWeight.SemiBold) },
+                title = {
+                    Text(
+                        L10n.string(L10n.settingsTitle),
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        AppIcon(AppIcons.ArrowBack, contentDescription = "Back")
+                        AppIcon(AppIcons.ArrowBack, contentDescription = L10n.string(L10n.back))
                     }
                 },
             )
@@ -108,13 +112,12 @@ fun SettingsScreen(onBack: () -> Unit, onLogout: () -> Unit = {}) {
                             onClick = viewModel::openHealthService,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Text("Open $healthName")
+                            Text(L10n.stringFmt(L10n.openHealth, healthName))
                         }
                     },
                 )
             }
 
-            // Order matches iOS SettingsView.
             if (state.prefsReady) {
                 HowFarBackCard(
                     rangeDays = state.rangeDays,
@@ -130,7 +133,7 @@ fun SettingsScreen(onBack: () -> Unit, onLogout: () -> Unit = {}) {
                     onToggle = viewModel::setMetricEnabled,
                 )
             } else {
-                SettingsGroup(title = "Sync options") {
+                SettingsGroup(title = L10n.string(L10n.settingsSyncOptionsLoading)) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -157,13 +160,16 @@ fun SettingsScreen(onBack: () -> Unit, onLogout: () -> Unit = {}) {
 
 @Composable
 private fun StatusCard(state: SettingsUiState) {
-    SettingsGroup(title = "Status") {
-        StatusRow(label = "Last sync", value = state.lastSyncLabel)
+    SettingsGroup(title = L10n.string(L10n.settingsSectionStatus)) {
+        StatusRow(label = L10n.string(L10n.settingsLastSync), value = state.lastSyncLabel)
         HorizontalDivider(
             Modifier.padding(start = 14.dp),
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
         )
-        StatusRow(label = "Last background sync", value = state.lastBackgroundSyncLabel)
+        StatusRow(
+            label = L10n.string(L10n.settingsLastBackgroundSync),
+            value = state.lastBackgroundSyncLabel,
+        )
     }
 }
 
@@ -194,7 +200,7 @@ private fun WhatToSyncCard(
     enabledMetrics: Set<String>,
     onToggle: (String, Boolean) -> Unit,
 ) {
-    SettingsGroup(title = "Metrics") {
+    SettingsGroup(title = L10n.string(L10n.settingsSectionMetrics)) {
         SyncMetric.entries.forEachIndexed { index, metric ->
             MetricRow(
                 metric = metric,
@@ -213,16 +219,19 @@ private fun WhatToSyncCard(
 
 @Composable
 private fun HowFarBackCard(rangeDays: Int, onRangeSelected: (Int) -> Unit) {
-    // One row like iOS segmented Sync range (1 / 7 / 14 / 30).
     val options = listOf(1, 7, 14, 30)
-    SettingsGroup(title = "Sync range") {
+    SettingsGroup(title = L10n.string(L10n.settingsSectionSyncRange)) {
         SingleChoiceSegmentedButtonRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 12.dp),
         ) {
             options.forEachIndexed { index, days ->
-                val label = if (days == 1) "1 day" else "$days days"
+                val label = if (days == 1) {
+                    L10n.string(L10n.settingsRange1Day)
+                } else {
+                    L10n.stringFmt(L10n.settingsRangeNDays, days)
+                }
                 SegmentedButton(
                     selected = rangeDays == days,
                     onClick = { onRangeSelected(days) },
@@ -249,7 +258,7 @@ private fun AutoSyncCard(
     onAutoSyncChange: (Boolean) -> Unit,
     onTestBg: () -> Unit,
 ) {
-    SettingsGroup(title = "Auto-sync") {
+    SettingsGroup(title = L10n.string(L10n.settingsSectionAutoSync)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -258,7 +267,7 @@ private fun AutoSyncCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                "Background auto-sync",
+                L10n.string(L10n.settingsBackgroundAutoSync),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f).padding(end = 12.dp),
@@ -269,7 +278,6 @@ private fun AutoSyncCard(
             )
         }
 
-        // iOS shows platform bg-refresh status when available (no long explainer copy).
         if (state.bgRefreshLabel.isNotBlank()) {
             HorizontalDivider(
                 Modifier.padding(start = 14.dp),
@@ -297,7 +305,7 @@ private fun AutoSyncCard(
                     CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.size(8.dp))
                 }
-                Text("Test background refresh")
+                Text(L10n.string(L10n.settingsTestBackgroundRefresh))
             }
             state.bgTestStatus?.let { status ->
                 Text(
@@ -313,10 +321,9 @@ private fun AutoSyncCard(
 
 @Composable
 private fun ShortcutsHelpCard() {
-    // Match iOS short caption only.
-    SettingsGroup(title = "Shortcuts") {
+    SettingsGroup(title = L10n.string(L10n.settingsSectionShortcuts)) {
         Text(
-            "Use the “Sync Better Mi Fitness” App Intent or Shortcuts for manual background runs.",
+            L10n.string(L10n.settingsShortcutsHelp),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
@@ -326,7 +333,7 @@ private fun ShortcutsHelpCard() {
 
 @Composable
 private fun AccountCard(onLogout: () -> Unit) {
-    SettingsGroup(title = "Account") {
+    SettingsGroup(title = L10n.string(L10n.settingsSectionAccount)) {
         TextButton(
             onClick = onLogout,
             modifier = Modifier
@@ -341,7 +348,7 @@ private fun AccountCard(onLogout: () -> Unit) {
             )
             Spacer(Modifier.size(8.dp))
             Text(
-                "Log out",
+                L10n.string(L10n.settingsLogOut),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -349,13 +356,12 @@ private fun AccountCard(onLogout: () -> Unit) {
     }
 }
 
-/** Same About block as iOS SettingsView: Version + Credit. */
 @Composable
 private fun AboutCard() {
     val uriHandler = LocalUriHandler.current
     val version = remember { appVersionLabel() }
-    SettingsGroup(title = "About") {
-        StatusRow(label = "Version", value = version)
+    SettingsGroup(title = L10n.string(L10n.settingsSectionAbout)) {
+        StatusRow(label = L10n.string(L10n.settingsVersion), value = version)
         HorizontalDivider(
             Modifier.padding(start = 14.dp),
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
@@ -369,12 +375,12 @@ private fun AboutCard() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                "Credit",
+                L10n.string(L10n.settingsCredit),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                CREDIT_NAME,
+                L10n.string(L10n.settingsCreditName),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -435,7 +441,7 @@ private fun MetricRow(metric: SyncMetric, enabled: Boolean, onToggle: (Boolean) 
             )
             Spacer(Modifier.size(12.dp))
             Text(
-                metric.label,
+                L10n.metric(metric.key),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )

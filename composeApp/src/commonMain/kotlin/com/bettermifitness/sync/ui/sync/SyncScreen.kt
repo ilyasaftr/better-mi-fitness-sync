@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.data.repository.SyncState
 import com.bettermifitness.sync.theme.BrandSpacing
 import com.bettermifitness.sync.ui.SyncMetric
@@ -53,23 +54,23 @@ fun SyncScreen(onBack: () -> Unit) {
     val viewModel = remember { KoinPlatform.getKoin().get<SyncViewModel>() }
     val state by viewModel.uiState.collectAsState()
 
-    val healthName = state.healthServiceName.ifBlank { "Health" }
+    val healthName = state.healthServiceName.ifBlank { L10n.string(L10n.healthFallback) }
     val metrics = state.visibleMetrics
-    val daysLabel = if (state.rangeDays == 1) "1 day" else "${state.rangeDays} days"
+    val daysLabel = if (state.rangeDays == 1) L10n.string(L10n.syncLastOneDay) else L10n.stringFmt(L10n.syncLastNDays, state.rangeDays)
 
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Sync", fontWeight = FontWeight.SemiBold) },
+                title = { Text(L10n.string(L10n.syncTitle), fontWeight = FontWeight.SemiBold) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        AppIcon(AppIcons.ArrowBack, contentDescription = "Back")
+                        AppIcon(AppIcons.ArrowBack, contentDescription = L10n.string(L10n.back))
                     }
                 },
             )
@@ -78,7 +79,7 @@ fun SyncScreen(onBack: () -> Unit) {
             StickyCtaBar(modifier = Modifier.navigationBarsPadding()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     PrimaryButton(
-                        text = if (state.isSyncing) "Syncing…" else "Sync now",
+                        text = if (state.isSyncing) L10n.string(L10n.homeSyncing) else L10n.string(L10n.syncNow),
                         onClick = viewModel::startSync,
                         enabled = state.healthAvailable && metrics.isNotEmpty() && !state.isSyncing,
                         loading = state.isSyncing,
@@ -89,7 +90,7 @@ fun SyncScreen(onBack: () -> Unit) {
                             onClick = viewModel::openHealthService,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Text("Open $healthName")
+                            Text(L10n.textFmt(L10n.syncOpenHealth, healthName))
                         }
                     }
                 }
@@ -124,9 +125,9 @@ fun SyncScreen(onBack: () -> Unit) {
             if (metrics.isEmpty()) {
                 Text(
                     if (state.healthAvailable) {
-                        "No metrics enabled — open Settings."
+                        L10n.string(L10n.syncNoMetrics)
                     } else {
-                        "Preparing…"
+                        L10n.string(L10n.syncPreparing)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -181,10 +182,10 @@ private fun CompactBanner(text: String, isError: Boolean) {
 @Composable
 private fun MetricRow(metric: SyncMetric, syncState: SyncState) {
     val (label, color) = when (syncState) {
-        is SyncState.InProgress -> "Syncing" to MaterialTheme.colorScheme.primary
-        is SyncState.Success -> "Done" to MaterialTheme.colorScheme.primary
-        is SyncState.Error -> "Failed" to MaterialTheme.colorScheme.error
-        is SyncState.Idle -> "Waiting" to MaterialTheme.colorScheme.onSurfaceVariant
+        is SyncState.InProgress -> L10n.string(L10n.syncStatusSyncing) to MaterialTheme.colorScheme.primary
+        is SyncState.Success -> L10n.string(L10n.syncStatusDone) to MaterialTheme.colorScheme.primary
+        is SyncState.Error -> L10n.string(L10n.syncStatusFailed) to MaterialTheme.colorScheme.error
+        is SyncState.Idle -> L10n.string(L10n.syncStatusWaiting) to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Row(
@@ -202,7 +203,7 @@ private fun MetricRow(metric: SyncMetric, syncState: SyncState) {
             modifier = Modifier.size(22.dp),
         )
         Text(
-            metric.label,
+            L10n.metric(metric.key),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,

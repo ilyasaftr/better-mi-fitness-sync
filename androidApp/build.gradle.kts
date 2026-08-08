@@ -33,6 +33,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    // Keep all moko locales in the APK/AAB (system language can switch without redownload).
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 // AGP 9 built-in Kotlin: configure JVM target without kotlin-android plugin.
