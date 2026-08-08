@@ -36,10 +36,16 @@ object HealthDataNormalizer {
         return seconds in 946_684_800L..4_102_444_800L
     }
 
-    fun normalizeHeartRate(samples: List<HeartRateSample>): List<HeartRateSample> {
+    private fun usablePoint(epochSec: Long, nowSec: Long): Boolean =
+        isPlausibleEpochSeconds(epochSec) && HealthTimePolicy.isNotFuture(epochSec, nowSec)
+
+    fun normalizeHeartRate(
+        samples: List<HeartRateSample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<HeartRateSample> {
         return samples.mapNotNull { s ->
             val t = toEpochSeconds(s.timestamp)
-            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (!usablePoint(t, nowEpochSeconds)) return@mapNotNull null
             if (s.bpm !in 20..250) return@mapNotNull null
             HeartRateSample(timestamp = t, bpm = s.bpm, tzIn15Min = s.tzIn15Min)
         }
@@ -50,10 +56,13 @@ object HealthDataNormalizer {
             .sortedBy { it.timestamp }
     }
 
-    fun normalizeSpO2(samples: List<SpO2Sample>): List<SpO2Sample> {
+    fun normalizeSpO2(
+        samples: List<SpO2Sample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<SpO2Sample> {
         return samples.mapNotNull { s ->
             val t = toEpochSeconds(s.timestamp)
-            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (!usablePoint(t, nowEpochSeconds)) return@mapNotNull null
             if (s.percentage !in 50..100) return@mapNotNull null
             SpO2Sample(timestamp = t, percentage = s.percentage, tzIn15Min = s.tzIn15Min)
         }
@@ -63,10 +72,14 @@ object HealthDataNormalizer {
             .sortedBy { it.timestamp }
     }
 
-    fun normalizeSteps(records: List<StepsRecord>): List<StepsRecord> {
+    fun normalizeSteps(
+        records: List<StepsRecord>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<StepsRecord> {
         return records.mapNotNull { r ->
             val ts = r.date.toLongOrNull()?.let { toEpochSeconds(it) } ?: return@mapNotNull null
-            if (!isPlausibleEpochSeconds(ts)) return@mapNotNull null
+            // Hour bucket start must not be in the future (HC interval start).
+            if (!usablePoint(ts, nowEpochSeconds)) return@mapNotNull null
             if (r.steps <= 0 || r.steps > 200_000) return@mapNotNull null
             StepsRecord(
                 date = ts.toString(),
@@ -83,37 +96,47 @@ object HealthDataNormalizer {
             .sortedBy { it.date.toLong() }
     }
 
-    fun normalizeSleep(sessions: List<SleepSession>): List<SleepSession> {
+    fun normalizeSleep(
+        sessions: List<SleepSession>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<SleepSession> {
         return sessions.mapNotNull { session ->
             val start = toEpochSeconds(session.startTime)
-            val end = toEpochSeconds(session.endTime)
-            if (!isPlausibleEpochSeconds(start) || !isPlausibleEpochSeconds(end)) return@mapNotNull null
-            if (end <= start) return@mapNotNull null
+            val endRaw = toEpochSeconds(session.endTime)
+            if (!isPlausibleEpochSeconds(start)) return@mapNotNull null
+            val clamped = HealthTimePolicy.clampInterval(start, endRaw, nowEpochSeconds)
+                ?: return@mapNotNull null
+            val (clampedStart, end) = clamped
             val stages = session.stages.mapNotNull { stage ->
                 val s = toEpochSeconds(stage.startTime)
                 val e = toEpochSeconds(stage.endTime)
                 if (e <= s) return@mapNotNull null
-                if (s < start || e > end) return@mapNotNull null
+                if (s < clampedStart || e > end) return@mapNotNull null
+                if (!HealthTimePolicy.isNotFuture(e, nowEpochSeconds)) return@mapNotNull null
                 SleepStage(startTime = s, endTime = e, stage = stage.stage)
             }
                 .sortedBy { it.startTime }
                 .associateBy { it.startTime }
                 .values
                 .sortedBy { it.startTime }
-            val inBedStart = toEpochSeconds(session.inBedStart).takeIf { isPlausibleEpochSeconds(it) } ?: start
-            val inBedEnd = toEpochSeconds(session.inBedEnd).takeIf { isPlausibleEpochSeconds(it) } ?: end
+            val inBedStart = toEpochSeconds(session.inBedStart)
+                .takeIf { isPlausibleEpochSeconds(it) && it <= end } ?: clampedStart
+            val inBedEnd = toEpochSeconds(session.inBedEnd)
+                .takeIf { isPlausibleEpochSeconds(it) }
+                ?.let { minOf(it, end) }
+                ?: end
             SleepSession(
-                startTime = start,
+                startTime = clampedStart,
                 endTime = end,
                 inBedStart = inBedStart,
-                inBedEnd = inBedEnd,
+                inBedEnd = maxOf(inBedStart + 1, inBedEnd),
                 stages = stages,
                 avgHrvMs = session.avgHrvMs?.takeIf { it in 5..300 },
                 minHrvMs = session.minHrvMs?.takeIf { it in 5..300 },
                 maxHrvMs = session.maxHrvMs?.takeIf { it in 5..300 },
                 hrvAnalysisTimeSec = session.hrvAnalysisTimeSec
                     ?.let { toEpochSeconds(it) }
-                    ?.takeIf { isPlausibleEpochSeconds(it) },
+                    ?.takeIf { usablePoint(it, nowEpochSeconds) },
                 tzIn15Min = session.tzIn15Min,
             )
         }
@@ -123,10 +146,13 @@ object HealthDataNormalizer {
             .sortedBy { it.startTime }
     }
 
-    fun normalizeHrv(samples: List<HrvSample>): List<HrvSample> =
+    fun normalizeHrv(
+        samples: List<HrvSample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<HrvSample> =
         samples.mapNotNull { s ->
             val t = toEpochSeconds(s.timestamp)
-            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (!usablePoint(t, nowEpochSeconds)) return@mapNotNull null
             if (s.hrvMs !in 5.0..300.0) return@mapNotNull null
             HrvSample(timestamp = t, hrvMs = s.hrvMs, tzIn15Min = s.tzIn15Min)
         }
@@ -147,15 +173,19 @@ object HealthDataNormalizer {
         else -> "unknown"
     }
 
-    fun normalizeDistance(samples: List<DistanceSample>): List<DistanceSample> =
+    fun normalizeDistance(
+        samples: List<DistanceSample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<DistanceSample> =
         samples.mapNotNull { s ->
             val start = toEpochSeconds(s.startTime)
-            val end = toEpochSeconds(s.endTime)
-            if (!isPlausibleEpochSeconds(start) || end <= start) return@mapNotNull null
+            val endRaw = toEpochSeconds(s.endTime)
+            val clamped = HealthTimePolicy.clampInterval(start, endRaw, nowEpochSeconds)
+                ?: return@mapNotNull null
             if (s.meters <= 0 || s.meters > 500_000) return@mapNotNull null
             DistanceSample(
-                startTime = start,
-                endTime = end,
+                startTime = clamped.first,
+                endTime = clamped.second,
                 meters = s.meters,
                 tzIn15Min = s.tzIn15Min,
             )
@@ -165,15 +195,19 @@ object HealthDataNormalizer {
             .map { (_, group) -> group.maxBy { it.meters } }
             .sortedBy { it.startTime }
 
-    fun normalizeActiveCalories(samples: List<ActiveCaloriesSample>): List<ActiveCaloriesSample> =
+    fun normalizeActiveCalories(
+        samples: List<ActiveCaloriesSample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<ActiveCaloriesSample> =
         samples.mapNotNull { s ->
             val start = toEpochSeconds(s.startTime)
-            val end = toEpochSeconds(s.endTime)
-            if (!isPlausibleEpochSeconds(start) || end <= start) return@mapNotNull null
+            val endRaw = toEpochSeconds(s.endTime)
+            val clamped = HealthTimePolicy.clampInterval(start, endRaw, nowEpochSeconds)
+                ?: return@mapNotNull null
             if (s.kilocalories <= 0 || s.kilocalories > 50_000) return@mapNotNull null
             ActiveCaloriesSample(
-                startTime = start,
-                endTime = end,
+                startTime = clamped.first,
+                endTime = clamped.second,
                 kilocalories = s.kilocalories,
                 tzIn15Min = s.tzIn15Min,
             )
@@ -183,10 +217,13 @@ object HealthDataNormalizer {
             .map { (_, group) -> group.maxBy { it.kilocalories } }
             .sortedBy { it.startTime }
 
-    fun normalizeWeight(measurements: List<WeightMeasurement>): List<WeightMeasurement> =
+    fun normalizeWeight(
+        measurements: List<WeightMeasurement>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<WeightMeasurement> =
         measurements.mapNotNull { m ->
             val t = toEpochSeconds(m.timestamp)
-            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (!usablePoint(t, nowEpochSeconds)) return@mapNotNull null
             if (m.weightKg !in 1.0..500.0) return@mapNotNull null
             val fat = m.bodyFatPercent?.takeIf { it in 1.0..70.0 }
             WeightMeasurement(
@@ -204,14 +241,19 @@ object HealthDataNormalizer {
             .values
             .sortedBy { it.timestamp }
 
-    fun normalizeWorkouts(sessions: List<WorkoutSession>): List<WorkoutSession> =
+    fun normalizeWorkouts(
+        sessions: List<WorkoutSession>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<WorkoutSession> =
         sessions.mapNotNull { w ->
             val start = toEpochSeconds(w.startTime)
-            val end = toEpochSeconds(w.endTime)
-            if (!isPlausibleEpochSeconds(start) || end <= start) return@mapNotNull null
+            val endRaw = toEpochSeconds(w.endTime)
+            val clamped = HealthTimePolicy.clampInterval(start, endRaw, nowEpochSeconds)
+                ?: return@mapNotNull null
+            val end = clamped.second
             if (end - start > 24 * 3600) return@mapNotNull null
             val cleaned = WorkoutSession(
-                startTime = start,
+                startTime = clamped.first,
                 endTime = end,
                 activityType = w.activityType.ifBlank { "workout" },
                 distanceMeters = w.distanceMeters?.takeIf { it > 0 },
@@ -325,10 +367,13 @@ object HealthDataNormalizer {
             .distinctBy { it.timeSec }
     }
 
-    fun normalizeBloodPressure(samples: List<BloodPressureSample>): List<BloodPressureSample> =
+    fun normalizeBloodPressure(
+        samples: List<BloodPressureSample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<BloodPressureSample> =
         samples.mapNotNull { s ->
             val t = toEpochSeconds(s.timestamp)
-            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (!usablePoint(t, nowEpochSeconds)) return@mapNotNull null
             if (s.systolicMmhg !in 60..250 || s.diastolicMmhg !in 30..150) return@mapNotNull null
             if (s.diastolicMmhg >= s.systolicMmhg) return@mapNotNull null
             BloodPressureSample(
@@ -344,10 +389,13 @@ object HealthDataNormalizer {
             .values
             .sortedBy { it.timestamp }
 
-    fun normalizeTemperature(samples: List<TemperatureSample>): List<TemperatureSample> =
+    fun normalizeTemperature(
+        samples: List<TemperatureSample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<TemperatureSample> =
         samples.mapNotNull { s ->
             val t = toEpochSeconds(s.timestamp)
-            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (!usablePoint(t, nowEpochSeconds)) return@mapNotNull null
             val body = s.bodyCelsius?.takeIf { it in 30.0..45.0 }
             val skin = s.skinCelsius?.takeIf { it in 20.0..45.0 }
             if (body == null && skin == null) return@mapNotNull null
@@ -363,10 +411,13 @@ object HealthDataNormalizer {
             .values
             .sortedBy { it.timestamp }
 
-    fun normalizeVo2Max(samples: List<Vo2MaxSample>): List<Vo2MaxSample> =
+    fun normalizeVo2Max(
+        samples: List<Vo2MaxSample>,
+        nowEpochSeconds: Long = HealthTimePolicy.nowEpochSeconds(),
+    ): List<Vo2MaxSample> =
         samples.mapNotNull { s ->
             val t = toEpochSeconds(s.timestamp)
-            if (!isPlausibleEpochSeconds(t)) return@mapNotNull null
+            if (!usablePoint(t, nowEpochSeconds)) return@mapNotNull null
             if (s.mlPerKgMin !in 5.0..100.0) return@mapNotNull null
             Vo2MaxSample(timestamp = t, mlPerKgMin = s.mlPerKgMin, tzIn15Min = s.tzIn15Min)
         }

@@ -191,10 +191,12 @@ actual class HealthWriter(private val context: Context) : HealthStore {
     actual override suspend fun writeSteps(records: List<StepsRecord>) {
         val clean = HealthDataNormalizer.normalizeSteps(records)
         if (clean.isEmpty()) return
-        val hcRecords = clean.map { record ->
+        val hcRecords = clean.mapNotNull { record ->
             val ts = record.date.toLong()
             val start = Instant.ofEpochSecond(ts)
-            val end = start.plusSeconds(3599) // One hour bucket
+            // Clamp open hour end so HC never sees endTime in the future (issue #10 class).
+            val end = minOf(start.plusSeconds(3599), Instant.now())
+            if (!end.isAfter(start)) return@mapNotNull null
             val zo = ZoneOffsetResolver.fromMiOrSystem(record.tzIn15Min, start)
 
             HcStepsRecord(
@@ -210,7 +212,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 ),
             )
         }
-        client.insertRecords(hcRecords)
+        if (hcRecords.isNotEmpty()) client.insertRecords(hcRecords)
     }
 
     actual override suspend fun writeDistance(samples: List<DistanceSample>) {
