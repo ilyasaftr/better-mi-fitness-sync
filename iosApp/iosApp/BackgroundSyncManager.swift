@@ -63,12 +63,13 @@ enum BackgroundSyncManager {
         print("[BGSync] cancelled \(taskIdentifier)")
     }
 
+    /// Debug/simulator-only diagnostic. The OS permission does not indicate this app's Auto-sync state.
     static func backgroundRefreshStatusLabel() -> String {
-        if isDebugRefreshEnabled {
-            #if targetEnvironment(simulator)
-            return L10n.backgroundSimulator
-            #endif
-        }
+        guard isDebugRefreshEnabled else { return "" }
+
+        #if targetEnvironment(simulator)
+        return L10n.backgroundSimulator
+        #else
         switch UIApplication.shared.backgroundRefreshStatus {
         case .available:
             return L10n.backgroundOn
@@ -79,6 +80,7 @@ enum BackgroundSyncManager {
         @unknown default:
             return L10n.backgroundUnknown
         }
+        #endif
     }
 
     /// Runs the same 1-day path as BGAppRefresh (Debug / Simulator only).
