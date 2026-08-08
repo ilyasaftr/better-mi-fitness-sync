@@ -29,7 +29,7 @@ elif [[ "$input" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
   IS_RELEASE=true
 else
   VERSION_NAME="${VERSION_NAME:-1.0.0}"
-  VERSION_CODE="${VERSION_CODE:-1}"
+  VERSION_CODE="${VERSION_CODE:-1000000}"
   IS_RELEASE=false
 fi
 
