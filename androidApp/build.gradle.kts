@@ -4,14 +4,14 @@ plugins {
 }
 
 // Tag-driven releases: -PversionName=1.2.3 -PversionCode=1002003
-// or env VERSION_NAME / VERSION_CODE. Local defaults mirror v1.0.0 release metadata.
+// or env VERSION_NAME / VERSION_CODE. Local defaults mirror v1.0.1 release metadata.
 fun appVersionProp(name: String, envKey: String, default: String): String =
     (findProperty(name) as String?)?.takeIf { it.isNotBlank() }
         ?: System.getenv(envKey)?.takeIf { it.isNotBlank() }
         ?: default
 
-val appVersionName: String = appVersionProp("versionName", "VERSION_NAME", "1.0.0")
-val appVersionCode: Int = appVersionProp("versionCode", "VERSION_CODE", "1000000").toInt()
+val appVersionName: String = appVersionProp("versionName", "VERSION_NAME", "1.0.1")
+val appVersionCode: Int = appVersionProp("versionCode", "VERSION_CODE", "1000001").toInt()
 
 android {
     namespace = "com.bettermifitness.sync"
