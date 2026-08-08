@@ -8,6 +8,7 @@ actual object L10nPlatform {
     actual fun text(resource: StringResource): String =
         resource.getString(androidAppContext())
 
+    @Suppress("SpreadOperator")
     actual fun format(resource: StringResource, args: Array<out Any>): String =
         resource.format(*args).toString(androidAppContext())
 }
