@@ -2,6 +2,7 @@ package com.bettermifitness.sync.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.AutoSyncPlatform
 import com.bettermifitness.sync.data.MiSessionManager
 import com.bettermifitness.sync.data.preferences.SyncPreferences
@@ -29,13 +30,13 @@ data class SettingsUiState(
     val prefsReady: Boolean = false,
     val rangeDays: Int = 7,
     val autoSync: Boolean = false,
-    val lastBackgroundSyncLabel: String = "Never",
-    val lastBackgroundStatusTitle: String = "No attempt yet",
-    val lastBackgroundDetail: String = "Background sync has not run yet",
+    val lastBackgroundSyncLabel: String = L10n.text(L10n.homeNever),
+    val lastBackgroundStatusTitle: String = L10n.text(L10n.outcomeNotSynced),
+    val lastBackgroundDetail: String = L10n.text(L10n.outcomeIdleDetail),
     val lastBackgroundIsError: Boolean = false,
-    val lastSyncLabel: String = "Never",
-    val lastSyncStatusTitle: String = "No sync yet",
-    val lastSyncDetail: String = "Run a sync to see results here",
+    val lastSyncLabel: String = L10n.text(L10n.homeNever),
+    val lastSyncStatusTitle: String = L10n.text(L10n.outcomeNotSynced),
+    val lastSyncDetail: String = L10n.text(L10n.outcomeIdleDetail),
     val lastSyncIsError: Boolean = false,
     val lastSyncIsWarning: Boolean = false,
     val bgRefreshLabel: String = "",
@@ -154,7 +155,7 @@ class SettingsViewModel(
                     available = false,
                     permissionsGranted = false,
                     serviceName = healthAvailability.healthServiceName(),
-                    hint = "Could not check health service status.",
+                    hint = L10n.text(L10n.healthStatusCheckFailed),
                 )
             }
         }
@@ -202,7 +203,7 @@ class SettingsViewModel(
         if (!uiState.value.autoSync) return
 
         _local.update {
-            it.copy(bgTestRunning = true, bgTestStatus = "Running 1-day refresh…")
+            it.copy(bgTestRunning = true, bgTestStatus = L10n.text(L10n.settingsRunningRefresh))
         }
         AutoSyncPlatform.runOpportunisticRefreshTest { status ->
             viewModelScope.launch {
@@ -229,12 +230,12 @@ class SettingsViewModel(
     }
 
     private fun mapBgTestStatus(status: String): String = when (status) {
-        "success" -> "Test OK — last background refresh should update"
-        "partial_success" -> "Partial OK — some metrics failed (see Sync screen)"
-        "skipped" -> "Skipped (turn Auto-sync ON and stay signed in)"
-        "not_logged_in" -> "Not signed in"
-        "cancelled" -> "Cancelled"
-        else -> "Failed ($status)"
+        "success" -> L10n.text(L10n.settingsTestOk)
+        "partial_success" -> L10n.text(L10n.settingsPartialOk)
+        "skipped" -> L10n.text(L10n.settingsSkipped)
+        "not_logged_in" -> L10n.text(L10n.settingsNotSignedIn)
+        "cancelled" -> L10n.text(L10n.settingsCancelled)
+        else -> L10n.textFmt(L10n.settingsFailedStatus, status)
     }
 
     private data class LocalSettingsState(

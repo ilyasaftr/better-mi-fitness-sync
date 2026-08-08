@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before production use. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">Quay lại</string>
+    <string name="open_health">Mở %s</string>
+    <string name="health_fallback">Sức khỏe</string>
+    <string name="health_allow_access">Cho phép truy cập</string>
+    <string name="health_ready">Sẵn sàng</string>
+    <string name="health_checking">Đang kiểm tra…</string>
+    <string name="health_not_available">Dịch vụ sức khỏe không khả dụng trên thiết bị này.</string>
+    <string name="health_permissions_incomplete">Quyền ghi chưa đầy đủ — cấp quyền truy cập rồi thử lại.</string>
+    <string name="health_status_check_failed">Không thể kiểm tra trạng thái dịch vụ sức khỏe.</string>
+    <string name="health_write_failed">Dịch vụ sức khỏe không khả dụng.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Đăng nhập bằng Mi Account</string>
+    <string name="login_email_or_phone">Email hoặc số điện thoại</string>
+    <string name="login_password">Mật khẩu</string>
+    <string name="login_sign_in">Đăng nhập</string>
+    <string name="login_privacy">Mật khẩu của bạn chỉ được gửi đến Xiaomi để đăng nhập. Token tài khoản được lưu trên thiết bị này và không bao giờ chia sẻ với bên thứ ba.</string>
+    <string name="login_verify_identity">Xác minh danh tính</string>
+    <string name="login_check_email">Kiểm tra email của bạn</string>
+    <string name="login_code_sent">Chúng tôi đã gửi mã xác minh đến Mi Account của bạn.</string>
+    <string name="login_code_sent_to">Chúng tôi đã gửi mã xác minh đến\n%s</string>
+    <string name="login_verify">Xác minh</string>
+    <string name="login_didnt_get">Không nhận được?</string>
+    <string name="login_resend">Gửi lại</string>
+    <string name="login_browser_trouble">Gặp sự cố? Sử dụng đăng nhập qua trình duyệt</string>
+    <string name="login_browser_title">Đăng nhập qua trình duyệt</string>
+    <string name="login_complete">Hoàn tất đăng nhập</string>
+    <string name="login_step_one">Bước 1 · Đăng nhập</string>
+    <string name="login_step_one_detail">Đăng nhập bằng Xiaomi trong trình duyệt, rồi quay lại đây.</string>
+    <string name="login_open_xiaomi">Mở trang đăng nhập Xiaomi</string>
+    <string name="login_link_copied">Đã sao chép liên kết</string>
+    <string name="login_copy_link">Sao chép liên kết đăng nhập</string>
+    <string name="login_step_two">Bước 2 · Hoàn tất tại đây</string>
+    <string name="login_step_two_detail">Trong trình duyệt, sao chép liên kết trang sau khi bạn thấy "ok". Rồi nhấn bên dưới để dán.</string>
+    <string name="login_link_pasted">Đã dán liên kết</string>
+    <string name="login_paste_different">Dán liên kết khác</string>
+    <string name="login_remove_link">Xóa liên kết đã dán</string>
+    <string name="login_tap_paste">Nhấn để dán liên kết</string>
+    <string name="login_copy_from_browser">Sao chép từ trình duyệt trước</string>
+    <string name="login_ready">Đã sẵn sàng — nhấn Hoàn tất đăng nhập bên dưới.</string>
+    <string name="login_tip">Mẹo: liên kết phải từ thanh địa chỉ sau khi Xiaomi hiện "ok".</string>
+    <string name="login_nothing_to_paste">Chưa có gì để dán. Trong trình duyệt, sao chép liên kết trang rồi nhấn lại đây.</string>
+    <string name="login_invalid_link">Liên kết đó không đúng. Sau khi Xiaomi hiện "ok", sao chép liên kết từ thanh địa chỉ rồi thử lại.</string>
+    <string name="login_not_web_link">Đó không phải là liên kết web. Sao chép liên kết đầy đủ từ thanh địa chỉ trình duyệt, rồi nhấn dán lại.</string>
+    <string name="login_verification_code">Mã xác minh</string>
+    <string name="login_empty">Trống</string>
+    <string name="login_digits">%1$d trên %2$d chữ số</string>
+    <string name="login_send_code_failed">Không thể gửi email xác minh. Sử dụng đăng nhập qua trình duyệt.</string>
+    <string name="login_failed">Đăng nhập thất bại</string>
+    <string name="login_verification_failed">Xác minh thất bại</string>
+    <string name="login_browser_required">Mã email đã được chấp nhận, nhưng Xiaomi vẫn cần đăng nhập trình duyệt một lần để tin cậy thiết bị này. Dán URL chuyển hướng bên dưới.</string>
+    <string name="login_code_resent">Đã gửi lại mã!</string>
+    <string name="login_resend_failed">Gửi lại thất bại: %s</string>
+    <string name="login_paste_redirect">Dán URL chuyển hướng đầy đủ từ thanh địa chỉ trước.</string>
+    <string name="login_browser_finish_failed">Không thể hoàn tất đăng nhập trình duyệt từ URL đó. Dán URL sts-hlth đầy đủ.</string>
+    <string name="login_missing_pass_token">Đăng nhập không trả về passToken, nên ứng dụng không thể duy trì đăng nhập qua các ngày. Thử lại hoặc sử dụng phương thức đăng nhập khác.</string>
+    <string name="login_missing_device_id">Đăng nhập thiếu device id — thử lại.</string>
+
+    <!-- Home -->
+    <string name="home_account">Tài khoản của bạn</string>
+    <string name="home_signed_in">Đã đăng nhập</string>
+    <string name="home_connected">Mi Account · Đã kết nối</string>
+    <string name="home_loading_profile">Đang tải hồ sơ…</string>
+    <string name="home_setup">Thiết lập</string>
+    <string name="home_activity">Hoạt động</string>
+    <string name="home_sync_options">Tùy chọn đồng bộ</string>
+    <string name="home_none_selected">Chưa chọn</string>
+    <string name="home_metric_one">1 chỉ số</string>
+    <string name="home_metric_many">%d chỉ số</string>
+    <string name="home_day_one">1 ngày</string>
+    <string name="home_day_many">%d ngày</string>
+    <string name="home_auto_on">Tự động đồng bộ đang bật</string>
+    <string name="home_manual">Thủ công</string>
+    <string name="home_nothing_selected_title">Chưa chọn gì để đồng bộ</string>
+    <string name="home_nothing_selected_detail">Chọn chỉ số và phạm vi trong Cài đặt. Dữ liệu đã xem nằm trong %s.</string>
+    <string name="home_allow_access_detail">Cấp quyền ghi để ứng dụng có thể ghi dữ liệu vào %s.</string>
+    <string name="home_last_sync">Đồng bộ lần cuối</string>
+    <string name="home_background_sync">Đồng bộ nền</string>
+    <string name="home_never">Chưa bao giờ</string>
+    <string name="home_syncing">Đang đồng bộ…</string>
+    <string name="home_sync_now">Đồng bộ ngay</string>
+    <string name="home_open_settings">Mở Cài đặt</string>
+    <string name="home_failed_suffix">%s · Thất bại</string>
+    <string name="home_partial_suffix">%s · Một phần</string>
+    <string name="home_settings_accessibility">Cài đặt</string>
+    <string name="home_health_accessibility">Mở %s để cho phép truy cập</string>
+    <string name="home_health_ready_accessibility">Đích sức khỏe đã sẵn sàng</string>
+    <string name="home_settings_hint">Mở Cài đặt để thay đổi tùy chọn đồng bộ</string>
+
+    <!-- Sync -->
+    <string name="sync_title">Đồng bộ</string>
+    <string name="sync_last_one_day">1 ngày gần đây</string>
+    <string name="sync_last_n_days">%d ngày gần đây</string>
+    <string name="sync_now">Đồng bộ ngay</string>
+    <string name="sync_open_health">Mở %s</string>
+    <string name="sync_no_metrics">Không có chỉ số nào được bật — mở Cài đặt.</string>
+    <string name="sync_preparing">Đang chuẩn bị…</string>
+    <string name="sync_status_syncing">Đang đồng bộ</string>
+    <string name="sync_status_done">Xong</string>
+    <string name="sync_status_failed">Thất bại</string>
+    <string name="sync_status_waiting">Đang chờ</string>
+    <string name="sync_records">%d bản ghi</string>
+    <string name="sync_failed">Đồng bộ thất bại</string>
+    <string name="sync_not_logged_in">Chưa đăng nhập — đăng nhập rồi thử lại</string>
+    <string name="sync_nothing_to_sync">Không có gì để đồng bộ (bật chỉ số trong Cài đặt)</string>
+    <string name="sync_all_metrics_synced">Đã đồng bộ tất cả chỉ số đã bật</string>
+    <string name="sync_health_unavailable">%s không khả dụng.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">Nhịp tim</string>
+    <string name="metric_resting_heart_rate">Nhịp tim lúc nghỉ</string>
+    <string name="metric_sleep">Giấc ngủ</string>
+    <string name="metric_hrv">Biến thiên nhịp tim</string>
+    <string name="metric_steps">Bước chân</string>
+    <string name="metric_distance">Quãng đường</string>
+    <string name="metric_active_calories">Calo hoạt động</string>
+    <string name="metric_spo2">Oxy máu (SpO2)</string>
+    <string name="metric_weight">Cân nặng &amp; Mỡ cơ thể</string>
+    <string name="metric_workouts">Bài tập</string>
+    <string name="metric_blood_pressure">Huyết áp</string>
+    <string name="metric_temperature">Nhiệt độ cơ thể / da</string>
+    <string name="metric_vo2_max">Mức tiêu thụ oxy tối đa (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Vừa xong</string>
+    <string name="time_minute_ago">%d phút trước</string>
+    <string name="time_hour_one_ago">1 giờ trước</string>
+    <string name="time_hour_many_ago">%d giờ trước</string>
+    <string name="time_yesterday">Hôm qua</string>
+    <string name="time_day_one_ago">1 ngày trước</string>
+    <string name="time_day_many_ago">%d ngày trước</string>
+    <string name="time_unknown">Không rõ</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">Dữ liệu đã cập nhật</string>
+    <string name="outcome_almost_done">Sắp xong</string>
+    <string name="outcome_could_not_finish">Không thể hoàn tất</string>
+    <string name="outcome_partial_label">Một phần</string>
+    <string name="outcome_please_sign_in">Vui lòng đăng nhập</string>
+    <string name="outcome_health_needed">Cần ứng dụng sức khỏe</string>
+    <string name="outcome_nothing_to_do">Không có gì cần làm</string>
+    <string name="outcome_stopped">Đã dừng</string>
+    <string name="outcome_in_progress">Đang đồng bộ</string>
+    <string name="outcome_not_synced">Chưa đồng bộ</string>
+    <string name="outcome_success_detail">Đã đồng bộ Mi Fitness sang ứng dụng sức khỏe</string>
+    <string name="outcome_partial_detail">Một số mục bị lỗi — thử Đồng bộ lại</string>
+    <string name="outcome_failed_detail">Kiểm tra kết nối rồi thử lại</string>
+    <string name="outcome_login_detail">Đăng nhập bằng Mi Account</string>
+    <string name="outcome_health_detail">Mở hoặc cài đặt ứng dụng sức khỏe trước</string>
+    <string name="outcome_skipped_detail">Bật các mục trong Cài đặt, rồi Cập nhật</string>
+    <string name="outcome_cancelled_detail">Đồng bộ đã bị dừng</string>
+    <string name="outcome_running_detail">Đang có đồng bộ đang chạy</string>
+    <string name="outcome_idle_detail">Nhấn Đồng bộ để xem hoạt động mới nhất</string>
+    <string name="outcome_nothing_needed">Không cần đồng bộ gì</string>
+    <string name="outcome_sign_in_again">Vui lòng đăng nhập lại</string>
+    <string name="outcome_health_unavailable">Ứng dụng sức khỏe không khả dụng</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_sync_options_loading">Tùy chọn đồng bộ</string>
+    <string name="settings_section_sync_range">Phạm vi đồng bộ</string>
+    <string name="settings_section_auto_sync">Tự động đồng bộ</string>
+    <string name="settings_section_metrics">Chỉ số</string>
+    <string name="settings_section_status">Trạng thái</string>
+    <string name="settings_section_shortcuts">Phím tắt</string>
+    <string name="settings_section_account">Tài khoản</string>
+    <string name="settings_section_about">Giới thiệu</string>
+    <string name="settings_days_picker">Ngày</string>
+    <string name="settings_range_1_day">1 ngày</string>
+    <string name="settings_range_n_days">%d ngày</string>
+    <string name="settings_background_auto_sync">Tự động đồng bộ nền</string>
+    <string name="settings_test_background_refresh">Kiểm tra làm mới nền</string>
+    <string name="settings_running_refresh">Đang chạy làm mới 1 ngày…</string>
+    <string name="settings_test_ok">Kiểm tra OK — lần làm mới nền cuối sẽ cập nhật</string>
+    <string name="settings_partial_ok">OK một phần — một số chỉ số thất bại (xem màn hình Đồng bộ)</string>
+    <string name="settings_skipped">Bỏ qua (bật Tự động đồng bộ và duy trì đăng nhập)</string>
+    <string name="settings_not_signed_in">Chưa đăng nhập</string>
+    <string name="settings_cancelled">Đã hủy</string>
+    <string name="settings_failed_status">Thất bại (%s)</string>
+    <string name="settings_last_sync">Đồng bộ lần cuối</string>
+    <string name="settings_last_background_sync">Đồng bộ nền lần cuối</string>
+    <string name="settings_shortcuts_help">Dùng App Intent "Sync Better Mi Fitness" hoặc Shortcuts để chạy đồng bộ nền thủ công.</string>
+    <string name="settings_log_out">Đăng xuất</string>
+    <string name="settings_version">Phiên bản</string>
+    <string name="settings_credit">Tác giả</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">Đồng bộ nền sử dụng WorkManager (khoảng mỗi giờ khi có mạng; không chính xác về thời gian).</string>
+    <string name="background_simulator_status">Simulator: hệ thống không tự kích hoạt BGAppRefresh. Dùng "Kiểm tra làm mới 1 ngày" hoặc bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">Làm mới ứng dụng nền đang bật</string>
+    <string name="background_off">Làm mới ứng dụng nền đang tắt — bật trong Cài đặt → Cài đặt chung → Làm mới ứng dụng nền</string>
+    <string name="background_restricted">Làm mới ứng dụng nền bị hạn chế trên thiết bị này</string>
+    <string name="background_unknown">Không rõ trạng thái làm mới ứng dụng nền</string>
+    <string name="background_unknown_status">Không rõ</string>
+</resources>

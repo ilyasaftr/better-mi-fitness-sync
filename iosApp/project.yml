@@ -68,3 +68,19 @@ targets:
             fi
           fi
         basedOnDependencyAnalysis: false
+    postBuildScripts:
+      # Static ComposeApp.framework cannot embed moko .bundle; copy into the app.
+      - name: "Copy moko resources into app"
+        script: |
+          if [ -z "${JAVA_HOME:-}" ] || [ ! -d "$JAVA_HOME" ]; then
+            export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+          fi
+          export PATH="$JAVA_HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+          cd "$SRCROOT/.."
+          ./gradlew :composeApp:copyFrameworkResourcesToApp \
+            -Pmoko.resources.PLATFORM_NAME="$PLATFORM_NAME" \
+            -Pmoko.resources.CONFIGURATION="${KOTLIN_FRAMEWORK_BUILD_TYPE:-$CONFIGURATION}" \
+            -Pmoko.resources.ARCHS="$ARCHS" \
+            -Pmoko.resources.BUILT_PRODUCTS_DIR="$BUILT_PRODUCTS_DIR" \
+            -Pmoko.resources.CONTENTS_FOLDER_PATH="$CONTENTS_FOLDER_PATH"
+        basedOnDependencyAnalysis: false

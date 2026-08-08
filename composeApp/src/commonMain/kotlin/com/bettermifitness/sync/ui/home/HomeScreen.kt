@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.theme.BrandColors
 import com.bettermifitness.sync.theme.BrandShapes
 import com.bettermifitness.sync.theme.BrandSpacing
@@ -72,16 +73,16 @@ fun HomeScreen(onSyncClick: () -> Unit, onSettingsClick: () -> Unit, onLogout: (
         viewModel.refreshHealthReadiness()
     }
 
-    val healthName = state.healthServiceName.ifBlank { "Health" }
+    val healthName = state.healthServiceName.ifBlank { L10n.string(L10n.healthFallback) }
     val fullName = state.profile?.result?.name?.trim()?.takeIf { it.isNotEmpty() }
-    val titleName = fullName ?: "Your account"
+    val titleName = fullName ?: L10n.string(L10n.homeAccount)
     val canUpdate = state.enabledMetricsCount > 0
 
     val primaryLabel = when {
-        state.healthNeedsAction -> "Allow access"
-        !canUpdate -> "Open Settings"
-        state.isSyncing -> "Syncing…"
-        else -> "Sync now"
+        state.healthNeedsAction -> L10n.string(L10n.healthAllowAccess)
+        !canUpdate -> L10n.string(L10n.homeOpenSettings)
+        state.isSyncing -> L10n.string(L10n.homeSyncing)
+        else -> L10n.string(L10n.homeSyncNow)
     }
 
     Scaffold(
@@ -97,7 +98,7 @@ fun HomeScreen(onSyncClick: () -> Unit, onSettingsClick: () -> Unit, onLogout: (
                     IconButton(onClick = onSettingsClick) {
                         AppIcon(
                             AppIcons.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = L10n.string(L10n.homeSettingsAccessibility),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
@@ -137,9 +138,9 @@ fun HomeScreen(onSyncClick: () -> Unit, onSettingsClick: () -> Unit, onLogout: (
             AccountHero(
                 name = titleName,
                 subtitle = when {
-                    state.profileError != null -> state.profileError ?: "Signed in"
-                    state.profile != null -> "Mi Account · Connected"
-                    else -> "Getting your profile…"
+                    state.profileError != null -> state.profileError ?: L10n.string(L10n.homeSignedIn)
+                    state.profile != null -> L10n.string(L10n.homeConnected)
+                    else -> L10n.string(L10n.homeLoadingProfile)
                 },
                 isError = state.profileError != null,
             )
@@ -213,17 +214,19 @@ private data class Banner(val title: String, val detail: String, val error: Bool
 private fun blockingBanner(state: HomeUiState, healthName: String): Banner? {
     if (state.healthNeedsAction) {
         return Banner(
-            title = state.healthStatusTitle.ifBlank { "Allow access to $healthName" },
+            title = state.healthStatusTitle.ifBlank {
+                L10n.textFmt(L10n.openHealth, healthName)
+            },
             detail = state.healthStatusDetail.ifBlank {
-                "Grant write access so this app can write data to $healthName."
+                L10n.textFmt(L10n.homeAllowAccessDetail, healthName)
             },
             error = true,
         )
     }
     if (state.enabledMetricsCount == 0) {
         return Banner(
-            title = "Nothing selected to sync",
-            detail = "Choose metrics and range in Settings. Viewed data lives in $healthName.",
+            title = L10n.text(L10n.homeNothingSelectedTitle),
+            detail = L10n.textFmt(L10n.homeNothingSelectedDetail, healthName),
             error = false,
         )
     }
@@ -272,7 +275,7 @@ private fun SetupSection(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        SectionLabel("Setup")
+        SectionLabel(L10n.string(L10n.homeSetup))
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(14.dp),
@@ -288,9 +291,9 @@ private fun SetupSection(
                     },
                     title = healthName,
                     trailing = when {
-                        state.healthNeedsAction -> "Allow access"
-                        state.healthReady -> "Ready"
-                        else -> state.healthStatusTitle.ifBlank { "Checking…" }
+                        state.healthNeedsAction -> L10n.string(L10n.healthAllowAccess)
+                        state.healthReady -> L10n.string(L10n.healthReady)
+                        else -> state.healthStatusTitle.ifBlank { L10n.string(L10n.healthChecking) }
                     },
                     trailingColor = if (state.healthNeedsAction) {
                         MaterialTheme.colorScheme.error
@@ -308,7 +311,7 @@ private fun SetupSection(
                     } else {
                         BrandColors.Navy
                     },
-                    title = "Sync options",
+                    title = L10n.string(L10n.homeSyncOptions),
                     detail = planSummary(state),
                     detailColor = if (state.enabledMetricsCount == 0) {
                         MaterialTheme.colorScheme.tertiary
@@ -324,14 +327,14 @@ private fun SetupSection(
 }
 
 private fun planSummary(state: HomeUiState): String {
-    if (state.enabledMetricsCount == 0) return "None selected"
+    if (state.enabledMetricsCount == 0) return L10n.text(L10n.homeNoneSelected)
     val metrics = if (state.enabledMetricsCount == 1) {
-        "1 metric"
+        L10n.text(L10n.homeMetricOne)
     } else {
-        "${state.enabledMetricsCount} metrics"
+        L10n.textFmt(L10n.homeMetricMany, state.enabledMetricsCount)
     }
-    val days = if (state.rangeDays == 1) "1 day" else "${state.rangeDays} days"
-    val auto = if (state.autoSync) "Auto-sync on" else "Manual"
+    val days = if (state.rangeDays == 1) L10n.text(L10n.homeDayOne) else L10n.textFmt(L10n.homeDayMany, state.rangeDays)
+    val auto = if (state.autoSync) L10n.text(L10n.homeAutoOn) else L10n.text(L10n.homeManual)
     return "$metrics · $days · $auto"
 }
 
@@ -413,7 +416,7 @@ private fun ActivitySection(state: HomeUiState) {
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        SectionLabel("Activity")
+        SectionLabel(L10n.string(L10n.homeActivity))
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(14.dp),
@@ -421,13 +424,13 @@ private fun ActivitySection(state: HomeUiState) {
         ) {
             Column {
                 FootnoteRow(
-                    title = "Last sync",
+                    title = L10n.string(L10n.homeLastSync),
                     value = lastSyncValue(state),
                     valueColor = lastSyncColor(state),
                 )
                 HorizontalDivider(Modifier.padding(start = 14.dp))
                 FootnoteRow(
-                    title = "Background sync",
+                    title = L10n.string(L10n.homeBackgroundSync),
                     value = backgroundValue(state),
                     valueColor = if (state.lastBackgroundIsError) {
                         MaterialTheme.colorScheme.error
@@ -441,11 +444,11 @@ private fun ActivitySection(state: HomeUiState) {
 }
 
 private fun lastSyncValue(state: HomeUiState): String {
-    if (state.isSyncing) return "Syncing…"
+    if (state.isSyncing) return L10n.text(L10n.homeSyncing)
     val whenLabel = state.lastSyncLabel
-    if (whenLabel == "Never") return "Never"
-    if (state.lastSyncIsError) return "$whenLabel · Failed"
-    if (state.lastSyncIsWarning) return "$whenLabel · Partial"
+    if (whenLabel == L10n.text(L10n.homeNever)) return L10n.text(L10n.homeNever)
+    if (state.lastSyncIsError) return L10n.textFmt(L10n.homeFailedSuffix, whenLabel)
+    if (state.lastSyncIsWarning) return L10n.textFmt(L10n.homePartialSuffix, whenLabel)
     return whenLabel
 }
 
@@ -459,7 +462,7 @@ private fun lastSyncColor(state: HomeUiState): Color = when {
 
 private fun backgroundValue(state: HomeUiState): String {
     val label = state.lastBackgroundLabel
-    return if (state.lastBackgroundIsError) "$label · Failed" else label
+    return if (state.lastBackgroundIsError) L10n.textFmt(L10n.homeFailedSuffix, label) else label
 }
 
 @Composable

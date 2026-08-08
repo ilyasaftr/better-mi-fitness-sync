@@ -190,7 +190,7 @@ struct SyncingPrimaryLabel: View {
     var body: some View {
         HStack(spacing: 10) {
             ProgressView().tint(Brand.onPrimary)
-            Text("Syncing…")
+            Text(L10n.homeSyncing)
         }
     }
 }

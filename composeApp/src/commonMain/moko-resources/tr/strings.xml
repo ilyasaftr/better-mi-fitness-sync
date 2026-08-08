@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before production use. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">Geri</string>
+    <string name="open_health">%s uygulamasını aç</string>
+    <string name="health_fallback">Sağlık</string>
+    <string name="health_allow_access">Erişime izin ver</string>
+    <string name="health_ready">Hazır</string>
+    <string name="health_checking">Kontrol ediliyor…</string>
+    <string name="health_not_available">Sağlık hizmeti bu cihazda kullanılamıyor.</string>
+    <string name="health_permissions_incomplete">Yazma izinleri eksik — erişim verin ve tekrar deneyin.</string>
+    <string name="health_status_check_failed">Sağlık hizmeti durumu kontrol edilemedi.</string>
+    <string name="health_write_failed">Sağlık hizmeti kullanılamıyor.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Mi Account ile giriş yapın</string>
+    <string name="login_email_or_phone">E-posta veya telefon</string>
+    <string name="login_password">Şifre</string>
+    <string name="login_sign_in">Giriş yap</string>
+    <string name="login_privacy">Şifreniz yalnızca giriş yapmak için Xiaomi\'ya gönderilir. Hesap token\'ları bu cihazda kalır ve üçüncü taraflarla paylaşılmaz.</string>
+    <string name="login_verify_identity">Kimliğinizi doğrulayın</string>
+    <string name="login_check_email">E-postanızı kontrol edin</string>
+    <string name="login_code_sent">Mi Account hesabınıza bir doğrulama kodu gönderdik.</string>
+    <string name="login_code_sent_to">Doğrulama kodu gönderildi:\n%s</string>
+    <string name="login_verify">Doğrula</string>
+    <string name="login_didnt_get">Almadınız mı?</string>
+    <string name="login_resend">Tekrar gönder</string>
+    <string name="login_browser_trouble">Sorun mu yaşıyorsunuz? Tarayıcı ile giriş yapın</string>
+    <string name="login_browser_title">Tarayıcı ile giriş</string>
+    <string name="login_complete">Girişi tamamla</string>
+    <string name="login_step_one">Adım 1 · Giriş yapın</string>
+    <string name="login_step_one_detail">Tarayıcıda Xiaomi ile giriş yapın, ardından buraya dönün.</string>
+    <string name="login_open_xiaomi">Xiaomi giriş sayfasını aç</string>
+    <string name="login_link_copied">Bağlantı kopyalandı</string>
+    <string name="login_copy_link">Giriş bağlantısını kopyala</string>
+    <string name="login_step_two">Adım 2 · Burada tamamlayın</string>
+    <string name="login_step_two_detail">Tarayıcıda "ok" gördükten sonra sayfa bağlantısını kopyalayın. Ardından yapıştırmak için aşağıya dokunun.</string>
+    <string name="login_link_pasted">Bağlantı yapıştırıldı</string>
+    <string name="login_paste_different">Farklı bir bağlantı yapıştır</string>
+    <string name="login_remove_link">Yapıştırılan bağlantıyı kaldır</string>
+    <string name="login_tap_paste">Bağlantıyı yapıştırmak için dokunun</string>
+    <string name="login_copy_from_browser">Önce tarayıcıdan kopyalayın</string>
+    <string name="login_ready">Hazırsınız — aşağıdaki Girişi tamamla düğmesine dokunun.</string>
+    <string name="login_tip">İpucu: bağlantı, Xiaomi "ok" gösterdikten sonra adres çubuğundan alınmalıdır.</string>
+    <string name="login_nothing_to_paste">Henüz yapıştırılacak bir şey yok. Tarayıcıda sayfa bağlantısını kopyalayın, ardından tekrar buraya dokunun.</string>
+    <string name="login_invalid_link">Bu bağlantı doğru değil. Xiaomi "ok" gösterdikten sonra adres çubuğundan bağlantıyı kopyalayıp tekrar deneyin.</string>
+    <string name="login_not_web_link">Bu bir web bağlantısı değil. Tarayıcının adres çubuğundan tam sayfa bağlantısını kopyalayın, ardından tekrar yapıştırın.</string>
+    <string name="login_verification_code">Doğrulama kodu</string>
+    <string name="login_empty">Boş</string>
+    <string name="login_digits">%1$d / %2$d basamak</string>
+    <string name="login_send_code_failed">Doğrulama e-postası gönderilemedi. Tarayıcı ile giriş yapın.</string>
+    <string name="login_failed">Giriş başarısız</string>
+    <string name="login_verification_failed">Doğrulama başarısız</string>
+    <string name="login_browser_required">E-posta kodu kabul edildi ancak Xiaomi bu cihaza güvenmek için tek seferlik tarayıcı girişi istiyor. Yönlendirme URL\'sini aşağıya yapıştırın.</string>
+    <string name="login_code_resent">Kod tekrar gönderildi!</string>
+    <string name="login_resend_failed">Tekrar gönderme başarısız: %s</string>
+    <string name="login_paste_redirect">Önce adres çubuğundan tam yönlendirme URL\'sini yapıştırın.</string>
+    <string name="login_browser_finish_failed">Bu URL\'den tarayıcı girişi tamamlanamadı. Tam sts-hlth URL\'sini yapıştırın.</string>
+    <string name="login_missing_pass_token">Giriş passToken döndürmedi, bu nedenle uygulama günler boyunca oturum açık kalamaz. Tekrar deneyin veya diğer giriş yöntemini kullanın.</string>
+    <string name="login_missing_device_id">Girişte device id eksik — tekrar deneyin.</string>
+
+    <!-- Home -->
+    <string name="home_account">Hesabınız</string>
+    <string name="home_signed_in">Giriş yapıldı</string>
+    <string name="home_connected">Mi Account · Bağlı</string>
+    <string name="home_loading_profile">Profiliniz yükleniyor…</string>
+    <string name="home_setup">Kurulum</string>
+    <string name="home_activity">Etkinlik</string>
+    <string name="home_sync_options">Senkronizasyon seçenekleri</string>
+    <string name="home_none_selected">Hiçbiri seçilmedi</string>
+    <string name="home_metric_one">1 metrik</string>
+    <string name="home_metric_many">%d metrik</string>
+    <string name="home_day_one">1 gün</string>
+    <string name="home_day_many">%d gün</string>
+    <string name="home_auto_on">Otomatik senkronizasyon açık</string>
+    <string name="home_manual">Manuel</string>
+    <string name="home_nothing_selected_title">Senkronize edilecek bir şey seçilmedi</string>
+    <string name="home_nothing_selected_detail">Ayarlar\'dan metrikleri ve aralığı seçin. Görüntülenen veriler %s içindedir.</string>
+    <string name="home_allow_access_detail">Bu uygulamanın %s uygulamasına veri yazabilmesi için yazma erişimi verin.</string>
+    <string name="home_last_sync">Son senkronizasyon</string>
+    <string name="home_background_sync">Arka plan senkronizasyonu</string>
+    <string name="home_never">Hiçbir zaman</string>
+    <string name="home_syncing">Senkronize ediliyor…</string>
+    <string name="home_sync_now">Şimdi senkronize et</string>
+    <string name="home_open_settings">Ayarları Aç</string>
+    <string name="home_failed_suffix">%s · Başarısız</string>
+    <string name="home_partial_suffix">%s · Kısmi</string>
+    <string name="home_settings_accessibility">Ayarlar</string>
+    <string name="home_health_accessibility">Erişim izni vermek için %s uygulamasını açar</string>
+    <string name="home_health_ready_accessibility">Sağlık hedefi hazır</string>
+    <string name="home_settings_hint">Senkronizasyon seçeneklerini değiştirmek için Ayarları açar</string>
+
+    <!-- Sync -->
+    <string name="sync_title">Senkronizasyon</string>
+    <string name="sync_last_one_day">Son 1 gün</string>
+    <string name="sync_last_n_days">Son %d gün</string>
+    <string name="sync_now">Şimdi senkronize et</string>
+    <string name="sync_open_health">%s uygulamasını aç</string>
+    <string name="sync_no_metrics">Etkin metrik yok — Ayarları açın.</string>
+    <string name="sync_preparing">Hazırlanıyor…</string>
+    <string name="sync_status_syncing">Senkronize ediliyor</string>
+    <string name="sync_status_done">Tamamlandı</string>
+    <string name="sync_status_failed">Başarısız</string>
+    <string name="sync_status_waiting">Bekliyor</string>
+    <string name="sync_records">%d kayıt</string>
+    <string name="sync_failed">Senkronizasyon başarısız</string>
+    <string name="sync_not_logged_in">Giriş yapılmamış — giriş yapıp tekrar deneyin</string>
+    <string name="sync_nothing_to_sync">Senkronize edilecek bir şey yok (Ayarlar\'dan metrikleri etkinleştirin)</string>
+    <string name="sync_all_metrics_synced">Tüm etkin metrikler senkronize edildi</string>
+    <string name="sync_health_unavailable">%s kullanılamıyor.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">Kalp Atış Hızı</string>
+    <string name="metric_resting_heart_rate">Dinlenme Kalp Atış Hızı</string>
+    <string name="metric_sleep">Uyku</string>
+    <string name="metric_hrv">Kalp atış hızı değişkenliği</string>
+    <string name="metric_steps">Adımlar</string>
+    <string name="metric_distance">Mesafe</string>
+    <string name="metric_active_calories">Aktif Kalori</string>
+    <string name="metric_spo2">Kan Oksijeni (SpO2)</string>
+    <string name="metric_weight">Kilo &amp; Vücut Yağı</string>
+    <string name="metric_workouts">Egzersizler</string>
+    <string name="metric_blood_pressure">Tansiyon</string>
+    <string name="metric_temperature">Vücut / Cilt Sıcaklığı</string>
+    <string name="metric_vo2_max">Maksimum oksijen tüketimi (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Az önce</string>
+    <string name="time_minute_ago">%d dk önce</string>
+    <string name="time_hour_one_ago">1 saat önce</string>
+    <string name="time_hour_many_ago">%d saat önce</string>
+    <string name="time_yesterday">Dün</string>
+    <string name="time_day_one_ago">1 gün önce</string>
+    <string name="time_day_many_ago">%d gün önce</string>
+    <string name="time_unknown">Bilinmiyor</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">Güncelsiniz</string>
+    <string name="outcome_almost_done">Neredeyse bitti</string>
+    <string name="outcome_could_not_finish">Tamamlanamadı</string>
+    <string name="outcome_partial_label">Kısmi</string>
+    <string name="outcome_please_sign_in">Lütfen giriş yapın</string>
+    <string name="outcome_health_needed">Sağlık uygulaması gerekli</string>
+    <string name="outcome_nothing_to_do">Yapılacak bir şey yok</string>
+    <string name="outcome_stopped">Durduruldu</string>
+    <string name="outcome_in_progress">Senkronizasyon devam ediyor</string>
+    <string name="outcome_not_synced">Henüz senkronize edilmedi</string>
+    <string name="outcome_success_detail">Mi Fitness verileri sağlık uygulamasına senkronize edildi</string>
+    <string name="outcome_partial_detail">Bazı öğeler başarısız oldu — tekrar Senkronize edin</string>
+    <string name="outcome_failed_detail">Bağlantınızı kontrol edip tekrar deneyin</string>
+    <string name="outcome_login_detail">Mi Account ile giriş yapın</string>
+    <string name="outcome_health_detail">Önce sağlık uygulamasını açın veya yükleyin</string>
+    <string name="outcome_skipped_detail">Ayarlar\'dan öğeleri açın, ardından Güncelle</string>
+    <string name="outcome_cancelled_detail">Senkronizasyon durduruldu</string>
+    <string name="outcome_running_detail">Zaten bir senkronizasyon çalışıyor</string>
+    <string name="outcome_idle_detail">En son etkinliğinizi görmek için Senkronize et\'e dokunun</string>
+    <string name="outcome_nothing_needed">Senkronize edilecek bir şey yoktu</string>
+    <string name="outcome_sign_in_again">Lütfen tekrar giriş yapın</string>
+    <string name="outcome_health_unavailable">Sağlık uygulaması kullanılamıyor</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_sync_options_loading">Senkronizasyon seçenekleri</string>
+    <string name="settings_section_sync_range">Senkronizasyon aralığı</string>
+    <string name="settings_section_auto_sync">Otomatik senkronizasyon</string>
+    <string name="settings_section_metrics">Metrikler</string>
+    <string name="settings_section_status">Durum</string>
+    <string name="settings_section_shortcuts">Kısayollar</string>
+    <string name="settings_section_account">Hesap</string>
+    <string name="settings_section_about">Hakkında</string>
+    <string name="settings_days_picker">Gün</string>
+    <string name="settings_range_1_day">1 gün</string>
+    <string name="settings_range_n_days">%d gün</string>
+    <string name="settings_background_auto_sync">Arka plan otomatik senkronizasyonu</string>
+    <string name="settings_test_background_refresh">Arka plan yenilemesini test et</string>
+    <string name="settings_running_refresh">1 günlük yenileme çalıştırılıyor…</string>
+    <string name="settings_test_ok">Test başarılı — son arka plan yenilemesi güncellenecek</string>
+    <string name="settings_partial_ok">Kısmi başarı — bazı metrikler başarısız (Senkronizasyon ekranına bakın)</string>
+    <string name="settings_skipped">Atlandı (Otomatik senkronizasyonu AÇIN ve giriş yapılı kalın)</string>
+    <string name="settings_not_signed_in">Giriş yapılmamış</string>
+    <string name="settings_cancelled">İptal edildi</string>
+    <string name="settings_failed_status">Başarısız (%s)</string>
+    <string name="settings_last_sync">Son senkronizasyon</string>
+    <string name="settings_last_background_sync">Son arka plan senkronizasyonu</string>
+    <string name="settings_shortcuts_help">Manuel arka plan çalıştırmaları için "Sync Better Mi Fitness" App Intent\'ini veya Shortcuts\'u kullanın.</string>
+    <string name="settings_log_out">Çıkış yap</string>
+    <string name="settings_version">Sürüm</string>
+    <string name="settings_credit">Kredi</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">Arka plan senkronizasyonu WorkManager kullanır (ağ varken yaklaşık saatlik; kesin zamanlı değil).</string>
+    <string name="background_simulator_status">Simülatör: sistem BGAppRefresh\'i otomatik tetiklemez. "1 günlük yenilemeyi test et"i veya bettermifitness://debug/bg-refresh adresini kullanın</string>
+    <string name="background_on">Arka Plan Uygulama Yenilemesi açık</string>
+    <string name="background_off">Arka Plan Uygulama Yenilemesi kapalı — Ayarlar → Genel → Arka Plan Uygulama Yenilemesi\'nden etkinleştirin</string>
+    <string name="background_restricted">Bu cihazda Arka Plan Uygulama Yenilemesi kısıtlı</string>
+    <string name="background_unknown">Arka Plan Uygulama Yenilemesi durumu bilinmiyor</string>
+    <string name="background_unknown_status">Bilinmiyor</string>
+</resources>

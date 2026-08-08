@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before release. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">返回</string>
+    <string name="open_health">打开%s</string>
+    <string name="health_fallback">健康</string>
+    <string name="health_allow_access">允许访问</string>
+    <string name="health_ready">已就绪</string>
+    <string name="health_checking">检查中…</string>
+    <string name="health_not_available">此设备上无法使用健康服务。</string>
+    <string name="health_permissions_incomplete">写入权限不完整 — 请授予访问权限后重试。</string>
+    <string name="health_status_check_failed">无法检查健康服务状态。</string>
+    <string name="health_write_failed">健康服务不可用。</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">使用 Mi Account 登录</string>
+    <string name="login_email_or_phone">邮箱或手机号</string>
+    <string name="login_password">密码</string>
+    <string name="login_sign_in">登录</string>
+    <string name="login_privacy">您的密码仅发送至 Xiaomi 用于登录。账户令牌保存在此设备上，绝不会与第三方共享。</string>
+    <string name="login_verify_identity">验证身份</string>
+    <string name="login_check_email">请查看邮箱</string>
+    <string name="login_code_sent">我们已向您的 Mi Account 发送了验证码。</string>
+    <string name="login_code_sent_to">我们已发送验证码至\n%s</string>
+    <string name="login_verify">验证</string>
+    <string name="login_didnt_get">没收到？</string>
+    <string name="login_resend">重新发送</string>
+    <string name="login_browser_trouble">遇到问题？请改用浏览器登录</string>
+    <string name="login_browser_title">浏览器登录</string>
+    <string name="login_complete">完成登录</string>
+    <string name="login_step_one">第1步 · 登录</string>
+    <string name="login_step_one_detail">在浏览器中登录 Xiaomi，然后返回此处。</string>
+    <string name="login_open_xiaomi">打开 Xiaomi 登录</string>
+    <string name="login_link_copied">链接已复制</string>
+    <string name="login_copy_link">复制登录链接</string>
+    <string name="login_step_two">第2步 · 在此完成</string>
+    <string name="login_step_two_detail">在浏览器中看到"ok"后，复制页面链接，然后点击下方粘贴。</string>
+    <string name="login_link_pasted">链接已粘贴</string>
+    <string name="login_paste_different">粘贴其他链接</string>
+    <string name="login_remove_link">移除已粘贴的链接</string>
+    <string name="login_tap_paste">点击粘贴链接</string>
+    <string name="login_copy_from_browser">请先从浏览器中复制</string>
+    <string name="login_ready">准备就绪 — 请点击下方"完成登录"。</string>
+    <string name="login_tip">提示：链接应来自 Xiaomi 显示"ok"后的地址栏。</string>
+    <string name="login_nothing_to_paste">还没有可粘贴的内容。请在浏览器中复制页面链接，然后再次点击此处。</string>
+    <string name="login_invalid_link">该链接不正确。Xiaomi 显示"ok"后，请从地址栏复制链接并重试。</string>
+    <string name="login_not_web_link">这不是网页链接。请从浏览器地址栏复制完整的页面链接，然后再次粘贴。</string>
+    <string name="login_verification_code">验证码</string>
+    <string name="login_empty">为空</string>
+    <string name="login_digits">%2$d 位中的第 %1$d 位</string>
+    <string name="login_send_code_failed">无法发送验证邮件。请使用浏览器登录。</string>
+    <string name="login_failed">登录失败</string>
+    <string name="login_verification_failed">验证失败</string>
+    <string name="login_browser_required">邮件验证码已通过，但 Xiaomi 仍需一次浏览器登录来信任此设备。请在下方粘贴重定向 URL。</string>
+    <string name="login_code_resent">验证码已重新发送！</string>
+    <string name="login_resend_failed">重新发送失败：%s</string>
+    <string name="login_paste_redirect">请先粘贴地址栏中的完整重定向 URL。</string>
+    <string name="login_browser_finish_failed">无法通过该 URL 完成浏览器登录。请粘贴完整的 sts-hlth URL。</string>
+    <string name="login_missing_pass_token">登录未返回 passToken，应用无法跨天保持登录状态。请重试或使用其他登录方式。</string>
+    <string name="login_missing_device_id">登录缺少设备 ID — 请重试。</string>
+
+    <!-- Home -->
+    <string name="home_account">您的账户</string>
+    <string name="home_signed_in">已登录</string>
+    <string name="home_connected">Mi Account · 已连接</string>
+    <string name="home_loading_profile">正在获取您的资料…</string>
+    <string name="home_setup">设置向导</string>
+    <string name="home_activity">活动</string>
+    <string name="home_sync_options">同步选项</string>
+    <string name="home_none_selected">未选择</string>
+    <string name="home_metric_one">1 个指标</string>
+    <string name="home_metric_many">%d 个指标</string>
+    <string name="home_day_one">1 天</string>
+    <string name="home_day_many">%d 天</string>
+    <string name="home_auto_on">自动同步已开启</string>
+    <string name="home_manual">手动</string>
+    <string name="home_nothing_selected_title">未选择要同步的项目</string>
+    <string name="home_nothing_selected_detail">请在设置中选择指标和时间范围。数据保存在%s中。</string>
+    <string name="home_allow_access_detail">请授予写入权限以便此应用将数据写入%s。</string>
+    <string name="home_last_sync">上次同步</string>
+    <string name="home_background_sync">后台同步</string>
+    <string name="home_never">从未</string>
+    <string name="home_syncing">同步中…</string>
+    <string name="home_sync_now">立即同步</string>
+    <string name="home_open_settings">打开设置</string>
+    <string name="home_failed_suffix">%s · 失败</string>
+    <string name="home_partial_suffix">%s · 部分</string>
+    <string name="home_settings_accessibility">设置</string>
+    <string name="home_health_accessibility">打开%s以允许访问</string>
+    <string name="home_health_ready_accessibility">健康目标已就绪</string>
+    <string name="home_settings_hint">打开设置以更改同步选项</string>
+
+    <!-- Sync -->
+    <string name="sync_title">同步</string>
+    <string name="sync_last_one_day">最近 1 天</string>
+    <string name="sync_last_n_days">最近 %d 天</string>
+    <string name="sync_now">立即同步</string>
+    <string name="sync_open_health">打开%s</string>
+    <string name="sync_no_metrics">未启用任何指标 — 请打开设置。</string>
+    <string name="sync_preparing">准备中…</string>
+    <string name="sync_status_syncing">同步中</string>
+    <string name="sync_status_done">完成</string>
+    <string name="sync_status_failed">失败</string>
+    <string name="sync_status_waiting">等待中</string>
+    <string name="sync_records">%d 条记录</string>
+    <string name="sync_failed">同步失败</string>
+    <string name="sync_not_logged_in">未登录 — 请登录后重试</string>
+    <string name="sync_nothing_to_sync">没有可同步的内容（请在设置中启用指标）</string>
+    <string name="sync_all_metrics_synced">所有已启用的指标均已同步</string>
+    <string name="sync_health_unavailable">%s不可用。</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">心率</string>
+    <string name="metric_resting_heart_rate">静息心率</string>
+    <string name="metric_sleep">睡眠</string>
+    <string name="metric_hrv">心率变异性</string>
+    <string name="metric_steps">步数</string>
+    <string name="metric_distance">距离</string>
+    <string name="metric_active_calories">活动卡路里</string>
+    <string name="metric_spo2">血氧（SpO2）</string>
+    <string name="metric_weight">体重和体脂</string>
+    <string name="metric_workouts">运动</string>
+    <string name="metric_blood_pressure">血压</string>
+    <string name="metric_temperature">体温 / 皮肤温度</string>
+    <string name="metric_vo2_max">最大摄氧量（VO2 Max）</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">刚刚</string>
+    <string name="time_minute_ago">%d 分钟前</string>
+    <string name="time_hour_one_ago">1 小时前</string>
+    <string name="time_hour_many_ago">%d 小时前</string>
+    <string name="time_yesterday">昨天</string>
+    <string name="time_day_one_ago">1 天前</string>
+    <string name="time_day_many_ago">%d 天前</string>
+    <string name="time_unknown">未知</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">已是最新</string>
+    <string name="outcome_almost_done">即将完成</string>
+    <string name="outcome_could_not_finish">无法完成</string>
+    <string name="outcome_partial_label">部分</string>
+    <string name="outcome_please_sign_in">请登录</string>
+    <string name="outcome_health_needed">需要健康应用</string>
+    <string name="outcome_nothing_to_do">无需操作</string>
+    <string name="outcome_stopped">已停止</string>
+    <string name="outcome_in_progress">同步进行中</string>
+    <string name="outcome_not_synced">尚未同步</string>
+    <string name="outcome_success_detail">Mi Fitness 已同步到 Health</string>
+    <string name="outcome_partial_detail">部分项目失败 — 请再次同步</string>
+    <string name="outcome_failed_detail">请检查网络连接后重试</string>
+    <string name="outcome_login_detail">使用 Mi Account 登录</string>
+    <string name="outcome_health_detail">请先打开或安装健康应用</string>
+    <string name="outcome_skipped_detail">请在设置中启用项目，然后更新</string>
+    <string name="outcome_cancelled_detail">同步已停止</string>
+    <string name="outcome_running_detail">同步已在运行中</string>
+    <string name="outcome_idle_detail">点击同步获取最新活动数据</string>
+    <string name="outcome_nothing_needed">没有需要同步的内容</string>
+    <string name="outcome_sign_in_again">请重新登录</string>
+    <string name="outcome_health_unavailable">健康应用不可用</string>
+
+    <!-- Settings -->
+    <string name="settings_title">设置</string>
+    <string name="settings_sync_options_loading">同步选项</string>
+    <string name="settings_section_sync_range">同步范围</string>
+    <string name="settings_section_auto_sync">自动同步</string>
+    <string name="settings_section_metrics">指标</string>
+    <string name="settings_section_status">状态</string>
+    <string name="settings_section_shortcuts">快捷指令</string>
+    <string name="settings_section_account">账户</string>
+    <string name="settings_section_about">关于</string>
+    <string name="settings_days_picker">天数</string>
+    <string name="settings_range_1_day">1 天</string>
+    <string name="settings_range_n_days">%d 天</string>
+    <string name="settings_background_auto_sync">后台自动同步</string>
+    <string name="settings_test_background_refresh">测试后台刷新</string>
+    <string name="settings_running_refresh">正在运行 1 天刷新…</string>
+    <string name="settings_test_ok">测试通过 — 上次后台刷新应会更新</string>
+    <string name="settings_partial_ok">部分通过 — 部分指标失败（请查看同步页面）</string>
+    <string name="settings_skipped">已跳过（请开启自动同步并保持登录）</string>
+    <string name="settings_not_signed_in">未登录</string>
+    <string name="settings_cancelled">已取消</string>
+    <string name="settings_failed_status">失败（%s）</string>
+    <string name="settings_last_sync">上次同步</string>
+    <string name="settings_last_background_sync">上次后台同步</string>
+    <string name="settings_shortcuts_help">使用"Sync Better Mi Fitness"App Intent 或快捷指令进行手动后台运行。</string>
+    <string name="settings_log_out">退出登录</string>
+    <string name="settings_version">版本</string>
+    <string name="settings_credit">致谢</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">后台同步使用 WorkManager（网络可用时约每小时一次，非精确时间）。</string>
+    <string name="background_simulator_status">模拟器：系统不会自动触发 BGAppRefresh。请使用"测试 1 天刷新"或 bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">后台 App 刷新已开启</string>
+    <string name="background_off">后台 App 刷新已关闭 — 请在设置 → 通用 → 后台 App 刷新中启用</string>
+    <string name="background_restricted">此设备上后台 App 刷新受到限制</string>
+    <string name="background_unknown">后台 App 刷新状态未知</string>
+    <string name="background_unknown_status">未知</string>
+</resources>

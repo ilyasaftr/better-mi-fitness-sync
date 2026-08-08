@@ -3,6 +3,7 @@ package com.bettermifitness.sync
 import com.bettermifitness.sync.data.MiSessionManager
 import com.bettermifitness.sync.data.preferences.TokenStore
 import com.bettermifitness.sync.data.repository.SyncState
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.platform.FlowWatcher
 import com.bettermifitness.sync.platform.watchStateFlow
 import com.bettermifitness.sync.sync.SyncCoordinator
@@ -103,7 +104,7 @@ object IosAppBridge : KoinComponent {
     /** All metrics for Settings toggles (key + label). */
     fun allMetricKeys(): List<String> = SyncMetric.entries.map { it.key }
 
-    fun allMetricLabels(): List<String> = SyncMetric.entries.map { it.label }
+    fun allMetricLabels(): List<String> = SyncMetric.entries.map { L10n.metric(it.key) }
 
     fun metricStatusKind(vm: SyncViewModel, key: String): String =
         when (val s = vm.stateFor(vm.uiState.value.progress, key)) {
@@ -115,18 +116,17 @@ object IosAppBridge : KoinComponent {
 
     fun metricStatusText(vm: SyncViewModel, key: String): String =
         when (val s = vm.stateFor(vm.uiState.value.progress, key)) {
-            is SyncState.Idle -> "Waiting"
-            is SyncState.InProgress -> "Syncing…"
-            is SyncState.Success -> if (s.count > 0) "${s.count} records" else "Done"
+            is SyncState.Idle -> L10n.text(L10n.syncStatusWaiting)
+            is SyncState.InProgress -> L10n.text(L10n.syncStatusSyncing)
+            is SyncState.Success -> if (s.count > 0) L10n.textFmt(L10n.syncRecords, s.count) else L10n.text(L10n.syncStatusDone)
             is SyncState.Error -> s.message
         }
 
     fun profileName(state: HomeUiState): String =
-        state.profile?.result?.name?.takeIf { it.isNotBlank() } ?: "Mi account"
+        state.profile?.result?.name?.takeIf { it.isNotBlank() } ?: L10n.text(L10n.homeAccount)
 
     fun visibleMetricKeys(state: SyncUiState): List<String> =
         state.visibleMetrics.map { it.key }
 
-    fun visibleMetricLabels(state: SyncUiState): List<String> =
-        state.visibleMetrics.map { it.label }
+    fun visibleMetricLabels(state: SyncUiState): List<String> = state.visibleMetrics.map { L10n.metric(it.key) }
 }

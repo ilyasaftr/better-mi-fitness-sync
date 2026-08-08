@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bettermifitness.sync.data.MiRegionDiscovery
 import com.bettermifitness.sync.data.MiSessionManager
 import com.bettermifitness.sync.data.preferences.CredentialsStore
+import com.bettermifitness.sync.i18n.L10n
 import com.mifitness.miclient.auth.LoginResult
 import com.mifitness.miclient.auth.MiAuth
 import com.mifitness.miclient.auth.MiCredentials
@@ -88,8 +89,7 @@ class LoginViewModel(
                                     isLoading = false,
                                     step = LoginStep.BrowserFallback,
                                     otpMaskedTarget = "",
-                                    errorMessage = e.message
-                                        ?: "Could not send verification email. Use browser login.",
+                                    errorMessage = e.message ?: L10n.text(L10n.loginSendCodeFailed),
                                 )
                             }
                         }
@@ -97,7 +97,7 @@ class LoginViewModel(
                 }
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(isLoading = false, errorMessage = e.message ?: "Login failed")
+                    it.copy(isLoading = false, errorMessage = e.message ?: L10n.text(L10n.loginFailed))
                 }
             }
         }
@@ -111,7 +111,7 @@ class LoginViewModel(
                 val credentials = challenge.verifyOtp(code)
                 persistAndSucceed(credentials)
             } catch (e: Exception) {
-                val msg = e.message ?: "Verification failed"
+                val msg = e.message ?: L10n.text(L10n.loginVerificationFailed)
                 if (shouldFallbackToBrowser(msg)) {
                     browserBackGoesToOtp = true
                     _uiState.update {
@@ -119,8 +119,7 @@ class LoginViewModel(
                             isLoading = false,
                             step = LoginStep.BrowserFallback,
                             errorMessage =
-                                "Email code was accepted, but Xiaomi still needs a one-time browser login " +
-                                    "to trust this device. Paste the redirect URL below.",
+                                L10n.text(L10n.loginBrowserRequired),
                         )
                     }
                 } else {
@@ -135,10 +134,10 @@ class LoginViewModel(
             _uiState.update { it.copy(errorMessage = null) }
             try {
                 otpChallenge?.sendOtp()
-                _uiState.update { it.copy(errorMessage = "Code resent!") }
+                _uiState.update { it.copy(errorMessage = L10n.text(L10n.loginCodeResent)) }
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(errorMessage = "Resend failed: ${e.message}")
+                    it.copy(errorMessage = L10n.textFmt(L10n.loginResendFailed, e.message ?: ""))
                 }
             }
         }

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — Requires native-speaker review before production use. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">واپس</string>
+    <string name="open_health">%s کھولیں</string>
+    <string name="health_fallback">Health</string>
+    <string name="health_allow_access">رسائی دیں</string>
+    <string name="health_ready">تیار</string>
+    <string name="health_checking">جانچ ہو رہی ہے…</string>
+    <string name="health_not_available">اس ڈیوائس پر Health سروس دستیاب نہیں ہے۔</string>
+    <string name="health_permissions_incomplete">لکھنے کی اجازتیں نامکمل ہیں — رسائی دیں اور دوبارہ کوشش کریں۔</string>
+    <string name="health_status_check_failed">Health سروس کی حالت جانچ نہیں جا سکی۔</string>
+    <string name="health_write_failed">Health سروس دستیاب نہیں ہے۔</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">اپنے Mi Account سے سائن ان کریں</string>
+    <string name="login_email_or_phone">ای میل یا فون</string>
+    <string name="login_password">پاس ورڈ</string>
+    <string name="login_sign_in">سائن ان</string>
+    <string name="login_privacy">آپ کا پاس ورڈ صرف سائن ان کے لیے Xiaomi کو بھیجا جاتا ہے۔ اکاؤنٹ ٹوکن اس ڈیوائس پر رہتے ہیں اور کبھی کسی تیسرے فریق کے ساتھ شیئر نہیں کیے جاتے۔</string>
+    <string name="login_verify_identity">اپنی شناخت کی تصدیق کریں</string>
+    <string name="login_check_email">اپنا ای میل چیک کریں</string>
+    <string name="login_code_sent">ہم نے آپ کے Mi Account پر ایک تصدیقی کوڈ بھیجا ہے۔</string>
+    <string name="login_code_sent_to">ہم نے ایک تصدیقی کوڈ بھیجا ہے\n%s</string>
+    <string name="login_verify">تصدیق کریں</string>
+    <string name="login_didnt_get">نہیں ملا؟</string>
+    <string name="login_resend">دوبارہ بھیجیں</string>
+    <string name="login_browser_trouble">مسئلہ ہو رہا ہے؟ اس کی بجائے براؤزر لاگ ان استعمال کریں</string>
+    <string name="login_browser_title">براؤزر لاگ ان</string>
+    <string name="login_complete">لاگ ان مکمل کریں</string>
+    <string name="login_step_one">مرحلہ 1 · سائن ان</string>
+    <string name="login_step_one_detail">براؤزر میں Xiaomi سے سائن ان کریں، پھر یہاں واپس آئیں۔</string>
+    <string name="login_open_xiaomi">Xiaomi لاگ ان کھولیں</string>
+    <string name="login_link_copied">لنک کاپی ہو گیا</string>
+    <string name="login_copy_link">لاگ ان لنک کاپی کریں</string>
+    <string name="login_step_two">مرحلہ 2 · یہاں مکمل کریں</string>
+    <string name="login_step_two_detail">براؤزر میں، "ok" نظر آنے کے بعد صفحے کا لنک کاپی کریں۔ پھر پیسٹ کرنے کے لیے نیچے ٹیپ کریں۔</string>
+    <string name="login_link_pasted">لنک پیسٹ ہو گیا</string>
+    <string name="login_paste_different">مختلف لنک پیسٹ کریں</string>
+    <string name="login_remove_link">پیسٹ کیا ہوا لنک ہٹائیں</string>
+    <string name="login_tap_paste">لنک پیسٹ کرنے کے لیے ٹیپ کریں</string>
+    <string name="login_copy_from_browser">پہلے براؤزر سے کاپی کریں</string>
+    <string name="login_ready">تیار — نیچے لاگ ان مکمل کریں پر ٹیپ کریں۔</string>
+    <string name="login_tip">تجویز: لنک Xiaomi کی طرف سے "ok" دکھانے کے بعد ایڈریس بار سے ہونا چاہیے۔</string>
+    <string name="login_nothing_to_paste">ابھی پیسٹ کرنے کو کچھ نہیں۔ براؤزر میں صفحے کا لنک کاپی کریں، پھر یہاں ٹیپ کریں۔</string>
+    <string name="login_invalid_link">یہ صحیح لنک نہیں ہے۔ Xiaomi کی طرف سے "ok" دکھانے کے بعد ایڈریس بار سے لنک کاپی کریں اور دوبارہ کوشش کریں۔</string>
+    <string name="login_not_web_link">یہ ویب لنک نہیں ہے۔ براؤزر کی ایڈریس بار سے مکمل صفحے کا لنک کاپی کریں، پھر پیسٹ پر ٹیپ کریں۔</string>
+    <string name="login_verification_code">تصدیقی کوڈ</string>
+    <string name="login_empty">خالی</string>
+    <string name="login_digits">%2$d میں سے %1$d ہندسے</string>
+    <string name="login_send_code_failed">تصدیقی ای میل نہیں بھیجا جا سکا۔ براؤزر لاگ ان استعمال کریں۔</string>
+    <string name="login_failed">لاگ ان ناکام</string>
+    <string name="login_verification_failed">تصدیق ناکام</string>
+    <string name="login_browser_required">ای میل کوڈ قبول ہو گیا، لیکن Xiaomi کو اس ڈیوائس پر بھروسہ کرنے کے لیے ایک بار براؤزر لاگ ان ضروری ہے۔ نیچے ری ڈائریکٹ URL پیسٹ کریں۔</string>
+    <string name="login_code_resent">کوڈ دوبارہ بھیجا گیا!</string>
+    <string name="login_resend_failed">دوبارہ بھیجنا ناکام: %s</string>
+    <string name="login_paste_redirect">پہلے ایڈریس بار سے مکمل ری ڈائریکٹ URL پیسٹ کریں۔</string>
+    <string name="login_browser_finish_failed">اس URL سے براؤزر لاگ ان مکمل نہیں ہو سکا۔ مکمل sts-hlth URL پیسٹ کریں۔</string>
+    <string name="login_missing_pass_token">لاگ ان نے passToken واپس نہیں کیا، اس لیے ایپ کئی دنوں تک سائن ان نہیں رہ سکتی۔ دوبارہ کوشش کریں یا دوسرا لاگ ان طریقہ استعمال کریں۔</string>
+    <string name="login_missing_device_id">لاگ ان میں device id نہیں ملی — دوبارہ کوشش کریں۔</string>
+
+    <!-- Home -->
+    <string name="home_account">آپ کا اکاؤنٹ</string>
+    <string name="home_signed_in">سائن ان ہے</string>
+    <string name="home_connected">Mi Account · منسلک</string>
+    <string name="home_loading_profile">آپ کا پروفائل لوڈ ہو رہا ہے…</string>
+    <string name="home_setup">سیٹ اپ</string>
+    <string name="home_activity">سرگرمی</string>
+    <string name="home_sync_options">سنک آپشنز</string>
+    <string name="home_none_selected">کوئی منتخب نہیں</string>
+    <string name="home_metric_one">1 میٹرک</string>
+    <string name="home_metric_many">%d میٹرکس</string>
+    <string name="home_day_one">1 دن</string>
+    <string name="home_day_many">%d دن</string>
+    <string name="home_auto_on">آٹو سنک آن</string>
+    <string name="home_manual">دستی</string>
+    <string name="home_nothing_selected_title">سنک کے لیے کچھ منتخب نہیں</string>
+    <string name="home_nothing_selected_detail">سیٹنگز میں میٹرکس اور رینج منتخب کریں۔ دیکھا گیا ڈیٹا %s میں رہتا ہے۔</string>
+    <string name="home_allow_access_detail">اس ایپ کو %s میں ڈیٹا لکھنے کے لیے لکھنے کی رسائی دیں۔</string>
+    <string name="home_last_sync">آخری سنک</string>
+    <string name="home_background_sync">بیک گراؤنڈ سنک</string>
+    <string name="home_never">کبھی نہیں</string>
+    <string name="home_syncing">سنک ہو رہا ہے…</string>
+    <string name="home_sync_now">ابھی سنک کریں</string>
+    <string name="home_open_settings">سیٹنگز کھولیں</string>
+    <string name="home_failed_suffix">%s · ناکام</string>
+    <string name="home_partial_suffix">%s · جزوی</string>
+    <string name="home_settings_accessibility">سیٹنگز</string>
+    <string name="home_health_accessibility">رسائی دینے کے لیے %s کھولتا ہے</string>
+    <string name="home_health_ready_accessibility">Health منزل تیار</string>
+    <string name="home_settings_hint">سنک آپشنز تبدیل کرنے کے لیے سیٹنگز کھولتا ہے</string>
+
+    <!-- Sync -->
+    <string name="sync_title">سنک</string>
+    <string name="sync_last_one_day">پچھلا 1 دن</string>
+    <string name="sync_last_n_days">پچھلے %d دن</string>
+    <string name="sync_now">ابھی سنک کریں</string>
+    <string name="sync_open_health">%s کھولیں</string>
+    <string name="sync_no_metrics">کوئی میٹرک فعال نہیں — سیٹنگز کھولیں۔</string>
+    <string name="sync_preparing">تیاری ہو رہی ہے…</string>
+    <string name="sync_status_syncing">سنک ہو رہا ہے</string>
+    <string name="sync_status_done">مکمل</string>
+    <string name="sync_status_failed">ناکام</string>
+    <string name="sync_status_waiting">انتظار</string>
+    <string name="sync_records">%d ریکارڈز</string>
+    <string name="sync_failed">سنک ناکام</string>
+    <string name="sync_not_logged_in">لاگ ان نہیں ہے — سائن ان کریں اور دوبارہ کوشش کریں</string>
+    <string name="sync_nothing_to_sync">سنک کرنے کو کچھ نہیں (سیٹنگز میں میٹرکس فعال کریں)</string>
+    <string name="sync_all_metrics_synced">تمام فعال میٹرکس سنک ہو گئے</string>
+    <string name="sync_health_unavailable">%s دستیاب نہیں ہے۔</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">دل کی دھڑکن</string>
+    <string name="metric_resting_heart_rate">آرام کی دل کی دھڑکن</string>
+    <string name="metric_sleep">نیند</string>
+    <string name="metric_hrv">دل کی دھڑکن کی تغیر پذیری</string>
+    <string name="metric_steps">قدم</string>
+    <string name="metric_distance">فاصلہ</string>
+    <string name="metric_active_calories">فعال کیلوریز</string>
+    <string name="metric_spo2">خون میں آکسیجن (SpO2)</string>
+    <string name="metric_weight">وزن &amp; جسمانی چربی</string>
+    <string name="metric_workouts">ورزشیں</string>
+    <string name="metric_blood_pressure">بلڈ پریشر</string>
+    <string name="metric_temperature">جسم / جلد کا درجہ حرارت</string>
+    <string name="metric_vo2_max">زیادہ سے زیادہ آکسیجن استعمال (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">ابھی</string>
+    <string name="time_minute_ago">%d منٹ پہلے</string>
+    <string name="time_hour_one_ago">1 گھنٹہ پہلے</string>
+    <string name="time_hour_many_ago">%d گھنٹے پہلے</string>
+    <string name="time_yesterday">کل</string>
+    <string name="time_day_one_ago">1 دن پہلے</string>
+    <string name="time_day_many_ago">%d دن پہلے</string>
+    <string name="time_unknown">نامعلوم</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">آپ اپ ٹو ڈیٹ ہیں</string>
+    <string name="outcome_almost_done">تقریباً مکمل</string>
+    <string name="outcome_could_not_finish">مکمل نہیں ہو سکا</string>
+    <string name="outcome_partial_label">جزوی</string>
+    <string name="outcome_please_sign_in">براہ کرم سائن ان کریں</string>
+    <string name="outcome_health_needed">Health ایپ ضروری ہے</string>
+    <string name="outcome_nothing_to_do">کچھ کرنے کو نہیں</string>
+    <string name="outcome_stopped">رُک گیا</string>
+    <string name="outcome_in_progress">سنک جاری ہے</string>
+    <string name="outcome_not_synced">ابھی تک سنک نہیں ہوا</string>
+    <string name="outcome_success_detail">Mi Fitness سے Health میں سنک ہو گیا</string>
+    <string name="outcome_partial_detail">کچھ آئٹمز ناکام ہوئیں — دوبارہ سنک کریں</string>
+    <string name="outcome_failed_detail">اپنا کنکشن چیک کریں اور دوبارہ کوشش کریں</string>
+    <string name="outcome_login_detail">اپنے Mi Account سے سائن ان کریں</string>
+    <string name="outcome_health_detail">پہلے Health ایپ کھولیں یا انسٹال کریں</string>
+    <string name="outcome_skipped_detail">سیٹنگز میں آئٹمز آن کریں، پھر اپ ڈیٹ کریں</string>
+    <string name="outcome_cancelled_detail">سنک روک دیا گیا</string>
+    <string name="outcome_running_detail">ایک سنک پہلے سے جاری ہے</string>
+    <string name="outcome_idle_detail">اپنی تازہ ترین سرگرمی کے لیے سنک پر ٹیپ کریں</string>
+    <string name="outcome_nothing_needed">سنک کی ضرورت نہیں تھی</string>
+    <string name="outcome_sign_in_again">براہ کرم دوبارہ سائن ان کریں</string>
+    <string name="outcome_health_unavailable">Health ایپ دستیاب نہیں ہے</string>
+
+    <!-- Settings -->
+    <string name="settings_title">سیٹنگز</string>
+    <string name="settings_sync_options_loading">سنک آپشنز</string>
+    <string name="settings_section_sync_range">سنک رینج</string>
+    <string name="settings_section_auto_sync">آٹو سنک</string>
+    <string name="settings_section_metrics">میٹرکس</string>
+    <string name="settings_section_status">حالت</string>
+    <string name="settings_section_shortcuts">شارٹ کٹس</string>
+    <string name="settings_section_account">اکاؤنٹ</string>
+    <string name="settings_section_about">تعارف</string>
+    <string name="settings_days_picker">دن</string>
+    <string name="settings_range_1_day">1 دن</string>
+    <string name="settings_range_n_days">%d دن</string>
+    <string name="settings_background_auto_sync">بیک گراؤنڈ آٹو سنک</string>
+    <string name="settings_test_background_refresh">بیک گراؤنڈ ریفریش ٹیسٹ کریں</string>
+    <string name="settings_running_refresh">1 دن کا ریفریش جاری ہے…</string>
+    <string name="settings_test_ok">ٹیسٹ کامیاب — آخری بیک گراؤنڈ ریفریش اپ ڈیٹ ہونا چاہیے</string>
+    <string name="settings_partial_ok">جزوی کامیاب — کچھ میٹرکس ناکام ہوئے (سنک اسکرین دیکھیں)</string>
+    <string name="settings_skipped">چھوڑ دیا گیا (آٹو سنک آن کریں اور سائن ان رہیں)</string>
+    <string name="settings_not_signed_in">سائن ان نہیں ہے</string>
+    <string name="settings_cancelled">منسوخ</string>
+    <string name="settings_failed_status">ناکام (%s)</string>
+    <string name="settings_last_sync">آخری سنک</string>
+    <string name="settings_last_background_sync">آخری بیک گراؤنڈ سنک</string>
+    <string name="settings_shortcuts_help">"Sync Better Mi Fitness" App Intent یا Shortcuts کو دستی بیک گراؤنڈ رن کے لیے استعمال کریں۔</string>
+    <string name="settings_log_out">لاگ آؤٹ</string>
+    <string name="settings_version">ورژن</string>
+    <string name="settings_credit">کریڈٹ</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">بیک گراؤنڈ سنک WorkManager استعمال کرتا ہے (~ہر گھنٹے جب نیٹ ورک دستیاب ہو؛ عین وقت نہیں)۔</string>
+    <string name="background_simulator_status">Simulator: سسٹم کبھی خود بخود BGAppRefresh نہیں چلاتا۔ "Test 1-day refresh" یا bettermifitness://debug/bg-refresh استعمال کریں</string>
+    <string name="background_on">Background App Refresh آن ہے</string>
+    <string name="background_off">Background App Refresh آف ہے — Settings → General → Background App Refresh میں فعال کریں</string>
+    <string name="background_restricted">اس ڈیوائس پر Background App Refresh محدود ہے</string>
+    <string name="background_unknown">Background App Refresh حالت نامعلوم</string>
+    <string name="background_unknown_status">نامعلوم</string>
+</resources>

@@ -1,5 +1,6 @@
 package com.bettermifitness.sync.health
 
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
@@ -480,7 +481,7 @@ actual class HealthWriter : HealthStore {
                 // Apple’s success flag means the sheet finished — not that types were granted.
                 if (error != null) {
                     continuation.resumeWithException(
-                        Exception(error.localizedDescription.ifBlank { "Permission request failed" }),
+                        Exception(error.localizedDescription.ifBlank { L10n.text(L10n.healthPermissionsIncomplete) }),
                     )
                 } else {
                     continuation.resume(Unit)
@@ -494,9 +495,9 @@ actual class HealthWriter : HealthStore {
     actual override suspend fun availabilityHint(): String? {
         return when {
             !HKHealthStore.isHealthDataAvailable() ->
-                "Apple Health isn’t available on this device."
+                L10n.text(L10n.healthNotAvailable)
             !hasWritePermissions() ->
-                "Tap Allow access to review Apple Health write permissions."
+                L10n.textFmt(L10n.homeAllowAccessDetail, healthServiceName())
             else -> null
         }
     }

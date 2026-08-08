@@ -1,5 +1,6 @@
 package com.bettermifitness.sync.health
 
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
@@ -46,19 +47,18 @@ data class HealthReadiness(
 
     val statusTitle: String
         get() = when {
-            !available -> "Health app missing"
-            !permissionsGranted -> "Allow access to Health"
-            else -> "Health is ready"
+            !available -> L10n.text(L10n.healthNotAvailable)
+            !permissionsGranted -> L10n.text(L10n.healthPermissionsIncomplete)
+            else -> L10n.text(L10n.healthReady)
         }
 
     val statusDetail: String
         get() = when {
             !available ->
-                hint
-                    ?: "Install or open $serviceName on this phone so we can sync."
+                hint ?: L10n.text(L10n.outcomeHealthDetail)
             !permissionsGranted ->
-                "Tap Allow access so $serviceName can show the permission screen."
-            else -> "You’re ready to sync."
+                L10n.textFmt(L10n.homeAllowAccessDetail, serviceName)
+            else -> L10n.text(L10n.healthReady)
         }
 }
 

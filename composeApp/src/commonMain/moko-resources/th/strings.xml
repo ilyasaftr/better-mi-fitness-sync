@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before production use. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">กลับ</string>
+    <string name="open_health">เปิด %s</string>
+    <string name="health_fallback">สุขภาพ</string>
+    <string name="health_allow_access">อนุญาตการเข้าถึง</string>
+    <string name="health_ready">พร้อม</string>
+    <string name="health_checking">กำลังตรวจสอบ…</string>
+    <string name="health_not_available">บริการสุขภาพไม่พร้อมใช้งานบนอุปกรณ์นี้</string>
+    <string name="health_permissions_incomplete">สิทธิ์การเขียนไม่สมบูรณ์ — อนุญาตการเข้าถึงแล้วลองอีกครั้ง</string>
+    <string name="health_status_check_failed">ไม่สามารถตรวจสอบสถานะบริการสุขภาพได้</string>
+    <string name="health_write_failed">บริการสุขภาพไม่พร้อมใช้งาน</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">ลงชื่อเข้าใช้ด้วย Mi Account</string>
+    <string name="login_email_or_phone">อีเมลหรือหมายเลขโทรศัพท์</string>
+    <string name="login_password">รหัสผ่าน</string>
+    <string name="login_sign_in">ลงชื่อเข้าใช้</string>
+    <string name="login_privacy">รหัสผ่านของคุณจะถูกส่งไปยัง Xiaomi เพื่อลงชื่อเข้าใช้เท่านั้น โทเค็นบัญชีจะอยู่บนอุปกรณ์นี้และไม่ถูกแชร์กับบุคคลที่สาม</string>
+    <string name="login_verify_identity">ยืนยันตัวตนของคุณ</string>
+    <string name="login_check_email">ตรวจสอบอีเมลของคุณ</string>
+    <string name="login_code_sent">เราส่งรหัสยืนยันไปยัง Mi Account ของคุณแล้ว</string>
+    <string name="login_code_sent_to">เราส่งรหัสยืนยันไปยัง\n%s</string>
+    <string name="login_verify">ยืนยัน</string>
+    <string name="login_didnt_get">ไม่ได้รับรหัส?</string>
+    <string name="login_resend">ส่งใหม่</string>
+    <string name="login_browser_trouble">มีปัญหา? ใช้การลงชื่อเข้าใช้ผ่านเบราว์เซอร์แทน</string>
+    <string name="login_browser_title">ลงชื่อเข้าใช้ผ่านเบราว์เซอร์</string>
+    <string name="login_complete">ลงชื่อเข้าใช้เสร็จสิ้น</string>
+    <string name="login_step_one">ขั้นตอนที่ 1 · ลงชื่อเข้าใช้</string>
+    <string name="login_step_one_detail">ลงชื่อเข้าใช้ด้วย Xiaomi ในเบราว์เซอร์ แล้วกลับมาที่นี่</string>
+    <string name="login_open_xiaomi">เปิดหน้าลงชื่อเข้าใช้ Xiaomi</string>
+    <string name="login_link_copied">คัดลอกลิงก์แล้ว</string>
+    <string name="login_copy_link">คัดลอกลิงก์ลงชื่อเข้าใช้</string>
+    <string name="login_step_two">ขั้นตอนที่ 2 · ดำเนินการต่อที่นี่</string>
+    <string name="login_step_two_detail">ในเบราว์เซอร์ ให้คัดลอกลิงก์ของหน้าหลังจากที่คุณเห็น "ok" แล้วแตะด้านล่างเพื่อวาง</string>
+    <string name="login_link_pasted">วางลิงก์แล้ว</string>
+    <string name="login_paste_different">วางลิงก์อื่น</string>
+    <string name="login_remove_link">ลบลิงก์ที่วาง</string>
+    <string name="login_tap_paste">แตะเพื่อวางลิงก์</string>
+    <string name="login_copy_from_browser">คัดลอกจากเบราว์เซอร์ก่อน</string>
+    <string name="login_ready">พร้อมแล้ว — แตะ ลงชื่อเข้าใช้เสร็จสิ้น ด้านล่าง</string>
+    <string name="login_tip">เคล็ดลับ: ลิงก์ควรมาจากแถบที่อยู่หลังจาก Xiaomi แสดง "ok"</string>
+    <string name="login_nothing_to_paste">ยังไม่มีอะไรจะวาง ในเบราว์เซอร์ ให้คัดลอกลิงก์ของหน้า แล้วแตะที่นี่อีกครั้ง</string>
+    <string name="login_invalid_link">ลิงก์นั้นไม่ถูกต้อง หลังจาก Xiaomi แสดง "ok" ให้คัดลอกลิงก์จากแถบที่อยู่แล้วลองอีกครั้ง</string>
+    <string name="login_not_web_link">นั่นไม่ใช่ลิงก์เว็บ ให้คัดลอกลิงก์เต็มจากแถบที่อยู่ของเบราว์เซอร์ แล้วแตะวางอีกครั้ง</string>
+    <string name="login_verification_code">รหัสยืนยัน</string>
+    <string name="login_empty">ว่างเปล่า</string>
+    <string name="login_digits">%1$d จาก %2$d หลัก</string>
+    <string name="login_send_code_failed">ไม่สามารถส่งอีเมลยืนยันได้ ใช้การลงชื่อเข้าใช้ผ่านเบราว์เซอร์</string>
+    <string name="login_failed">ลงชื่อเข้าใช้ไม่สำเร็จ</string>
+    <string name="login_verification_failed">ยืนยันตัวตนไม่สำเร็จ</string>
+    <string name="login_browser_required">ระบบยอมรับรหัสอีเมลแล้ว แต่ Xiaomi ยังต้องลงชื่อเข้าใช้ผ่านเบราว์เซอร์ครั้งเดียวเพื่อเชื่อถืออุปกรณ์นี้ วางลิงก์เปลี่ยนเส้นทางด้านล่าง</string>
+    <string name="login_code_resent">ส่งรหัสใหม่แล้ว!</string>
+    <string name="login_resend_failed">ส่งใหม่ไม่สำเร็จ: %s</string>
+    <string name="login_paste_redirect">วาง URL เปลี่ยนเส้นทางแบบเต็มจากแถบที่อยู่ก่อน</string>
+    <string name="login_browser_finish_failed">ไม่สามารถลงชื่อเข้าใช้ผ่านเบราว์เซอร์จาก URL นั้นได้ วาง URL sts-hlth แบบเต็ม</string>
+    <string name="login_missing_pass_token">การลงชื่อเข้าใช้ไม่ได้คืนค่า passToken ดังนั้นแอปไม่สามารถคงสถานะลงชื่อเข้าใช้ข้ามวันได้ ลองอีกครั้งหรือใช้วิธีลงชื่อเข้าใช้อื่น</string>
+    <string name="login_missing_device_id">การลงชื่อเข้าใช้ขาด device id — ลองอีกครั้ง</string>
+
+    <!-- Home -->
+    <string name="home_account">บัญชีของคุณ</string>
+    <string name="home_signed_in">ลงชื่อเข้าใช้แล้ว</string>
+    <string name="home_connected">Mi Account · เชื่อมต่อแล้ว</string>
+    <string name="home_loading_profile">กำลังโหลดโปรไฟล์ของคุณ…</string>
+    <string name="home_setup">ตั้งค่า</string>
+    <string name="home_activity">กิจกรรม</string>
+    <string name="home_sync_options">ตัวเลือกการซิงค์</string>
+    <string name="home_none_selected">ไม่ได้เลือก</string>
+    <string name="home_metric_one">1 รายการ</string>
+    <string name="home_metric_many">%d รายการ</string>
+    <string name="home_day_one">1 วัน</string>
+    <string name="home_day_many">%d วัน</string>
+    <string name="home_auto_on">ซิงค์อัตโนมัติเปิดอยู่</string>
+    <string name="home_manual">ด้วยตนเอง</string>
+    <string name="home_nothing_selected_title">ไม่ได้เลือกรายการที่จะซิงค์</string>
+    <string name="home_nothing_selected_detail">เลือกรายการและช่วงเวลาในการตั้งค่า ข้อมูลที่ดูอยู่ใน %s</string>
+    <string name="home_allow_access_detail">อนุญาตการเขียนเพื่อให้แอปนี้เขียนข้อมูลไปยัง %s</string>
+    <string name="home_last_sync">ซิงค์ล่าสุด</string>
+    <string name="home_background_sync">ซิงค์พื้นหลัง</string>
+    <string name="home_never">ไม่เคย</string>
+    <string name="home_syncing">กำลังซิงค์…</string>
+    <string name="home_sync_now">ซิงค์ตอนนี้</string>
+    <string name="home_open_settings">เปิดการตั้งค่า</string>
+    <string name="home_failed_suffix">%s · ล้มเหลว</string>
+    <string name="home_partial_suffix">%s · บางส่วน</string>
+    <string name="home_settings_accessibility">การตั้งค่า</string>
+    <string name="home_health_accessibility">เปิด %s เพื่ออนุญาตการเข้าถึง</string>
+    <string name="home_health_ready_accessibility">ปลายทางสุขภาพพร้อมแล้ว</string>
+    <string name="home_settings_hint">เปิดการตั้งค่าเพื่อเปลี่ยนตัวเลือกการซิงค์</string>
+
+    <!-- Sync -->
+    <string name="sync_title">ซิงค์</string>
+    <string name="sync_last_one_day">1 วันล่าสุด</string>
+    <string name="sync_last_n_days">%d วันล่าสุด</string>
+    <string name="sync_now">ซิงค์ตอนนี้</string>
+    <string name="sync_open_health">เปิด %s</string>
+    <string name="sync_no_metrics">ไม่มีรายการที่เปิดใช้ — เปิดการตั้งค่า</string>
+    <string name="sync_preparing">กำลังเตรียม…</string>
+    <string name="sync_status_syncing">กำลังซิงค์</string>
+    <string name="sync_status_done">เสร็จสิ้น</string>
+    <string name="sync_status_failed">ล้มเหลว</string>
+    <string name="sync_status_waiting">รอดำเนินการ</string>
+    <string name="sync_records">%d รายการ</string>
+    <string name="sync_failed">ซิงค์ล้มเหลว</string>
+    <string name="sync_not_logged_in">ยังไม่ได้ลงชื่อเข้าใช้ — ลงชื่อเข้าใช้แล้วลองอีกครั้ง</string>
+    <string name="sync_nothing_to_sync">ไม่มีอะไรจะซิงค์ (เปิดใช้รายการในการตั้งค่า)</string>
+    <string name="sync_all_metrics_synced">ซิงค์รายการที่เปิดใช้ทั้งหมดแล้ว</string>
+    <string name="sync_health_unavailable">%s ไม่พร้อมใช้งาน</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">อัตราการเต้นของหัวใจ</string>
+    <string name="metric_resting_heart_rate">อัตราการเต้นของหัวใจขณะพัก</string>
+    <string name="metric_sleep">การนอนหลับ</string>
+    <string name="metric_hrv">ความแปรปรวนของอัตราการเต้นของหัวใจ</string>
+    <string name="metric_steps">ก้าวเดิน</string>
+    <string name="metric_distance">ระยะทาง</string>
+    <string name="metric_active_calories">แคลอรีที่เผาผลาญ</string>
+    <string name="metric_spo2">ออกซิเจนในเลือด (SpO2)</string>
+    <string name="metric_weight">น้ำหนักและไขมัน</string>
+    <string name="metric_workouts">การออกกำลังกาย</string>
+    <string name="metric_blood_pressure">ความดันโลหิต</string>
+    <string name="metric_temperature">อุณหภูมิร่างกาย / ผิวหนัง</string>
+    <string name="metric_vo2_max">ปริมาณการใช้ออกซิเจนสูงสุด (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">เมื่อสักครู่</string>
+    <string name="time_minute_ago">%d นาทีที่แล้ว</string>
+    <string name="time_hour_one_ago">1 ชั่วโมงที่แล้ว</string>
+    <string name="time_hour_many_ago">%d ชั่วโมงที่แล้ว</string>
+    <string name="time_yesterday">เมื่อวาน</string>
+    <string name="time_day_one_ago">1 วันที่แล้ว</string>
+    <string name="time_day_many_ago">%d วันที่แล้ว</string>
+    <string name="time_unknown">ไม่ทราบ</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">ข้อมูลเป็นปัจจุบันแล้ว</string>
+    <string name="outcome_almost_done">เกือบเสร็จแล้ว</string>
+    <string name="outcome_could_not_finish">ดำเนินการไม่สำเร็จ</string>
+    <string name="outcome_partial_label">บางส่วน</string>
+    <string name="outcome_please_sign_in">กรุณาลงชื่อเข้าใช้</string>
+    <string name="outcome_health_needed">ต้องมีแอปสุขภาพ</string>
+    <string name="outcome_nothing_to_do">ไม่มีอะไรต้องทำ</string>
+    <string name="outcome_stopped">หยุดแล้ว</string>
+    <string name="outcome_in_progress">กำลังซิงค์</string>
+    <string name="outcome_not_synced">ยังไม่ได้ซิงค์</string>
+    <string name="outcome_success_detail">ซิงค์ Mi Fitness ไปยังแอปสุขภาพแล้ว</string>
+    <string name="outcome_partial_detail">บางรายการล้มเหลว — ลองซิงค์อีกครั้ง</string>
+    <string name="outcome_failed_detail">ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
+    <string name="outcome_login_detail">ลงชื่อเข้าใช้ด้วย Mi Account</string>
+    <string name="outcome_health_detail">เปิดหรือติดตั้งแอปสุขภาพก่อน</string>
+    <string name="outcome_skipped_detail">เปิดใช้รายการในการตั้งค่า แล้วอัปเดต</string>
+    <string name="outcome_cancelled_detail">การซิงค์ถูกหยุด</string>
+    <string name="outcome_running_detail">การซิงค์กำลังทำงานอยู่แล้ว</string>
+    <string name="outcome_idle_detail">แตะ ซิงค์ เพื่อดูกิจกรรมล่าสุด</string>
+    <string name="outcome_nothing_needed">ไม่มีอะไรต้องซิงค์</string>
+    <string name="outcome_sign_in_again">กรุณาลงชื่อเข้าใช้อีกครั้ง</string>
+    <string name="outcome_health_unavailable">แอปสุขภาพไม่พร้อมใช้งาน</string>
+
+    <!-- Settings -->
+    <string name="settings_title">การตั้งค่า</string>
+    <string name="settings_sync_options_loading">ตัวเลือกการซิงค์</string>
+    <string name="settings_section_sync_range">ช่วงเวลาซิงค์</string>
+    <string name="settings_section_auto_sync">ซิงค์อัตโนมัติ</string>
+    <string name="settings_section_metrics">รายการ</string>
+    <string name="settings_section_status">สถานะ</string>
+    <string name="settings_section_shortcuts">ทางลัด</string>
+    <string name="settings_section_account">บัญชี</string>
+    <string name="settings_section_about">เกี่ยวกับ</string>
+    <string name="settings_days_picker">วัน</string>
+    <string name="settings_range_1_day">1 วัน</string>
+    <string name="settings_range_n_days">%d วัน</string>
+    <string name="settings_background_auto_sync">ซิงค์อัตโนมัติพื้นหลัง</string>
+    <string name="settings_test_background_refresh">ทดสอบการรีเฟรชพื้นหลัง</string>
+    <string name="settings_running_refresh">กำลังรีเฟรช 1 วัน…</string>
+    <string name="settings_test_ok">ทดสอบสำเร็จ — การรีเฟรชพื้นหลังล่าสุดควรอัปเดต</string>
+    <string name="settings_partial_ok">สำเร็จบางส่วน — บางรายการล้มเหลว (ดูหน้าซิงค์)</string>
+    <string name="settings_skipped">ข้ามไป (เปิดซิงค์อัตโนมัติและคงการลงชื่อเข้าใช้ไว้)</string>
+    <string name="settings_not_signed_in">ยังไม่ได้ลงชื่อเข้าใช้</string>
+    <string name="settings_cancelled">ถูกยกเลิก</string>
+    <string name="settings_failed_status">ล้มเหลว (%s)</string>
+    <string name="settings_last_sync">ซิงค์ล่าสุด</string>
+    <string name="settings_last_background_sync">ซิงค์พื้นหลังล่าสุด</string>
+    <string name="settings_shortcuts_help">ใช้ App Intent "Sync Better Mi Fitness" หรือ Shortcuts เพื่อรันการซิงค์พื้นหลังด้วยตนเอง</string>
+    <string name="settings_log_out">ออกจากระบบ</string>
+    <string name="settings_version">เวอร์ชัน</string>
+    <string name="settings_credit">เครดิต</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">การซิงค์พื้นหลังใช้ WorkManager (ประมาณทุกชั่วโมงเมื่อมีเครือข่าย; ไม่ใช่เวลาที่แน่นอน)</string>
+    <string name="background_simulator_status">Simulator: ระบบไม่เรียก BGAppRefresh อัตโนมัติ ใช้ "ทดสอบรีเฟรช 1 วัน" หรือ bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">การรีเฟรชแอปพื้นหลังเปิดอยู่</string>
+    <string name="background_off">การรีเฟรชแอปพื้นหลังปิดอยู่ — เปิดได้ที่ การตั้งค่า → ทั่วไป → การรีเฟรชแอปพื้นหลัง</string>
+    <string name="background_restricted">การรีเฟรชแอปพื้นหลังถูกจำกัดบนอุปกรณ์นี้</string>
+    <string name="background_unknown">ไม่ทราบสถานะการรีเฟรชแอปพื้นหลัง</string>
+    <string name="background_unknown_status">ไม่ทราบ</string>
+</resources>

@@ -22,7 +22,7 @@ final class SyncStore: ObservableObject {
         var permissionError: String?
         var outcomeMessage: String?
         var outcomeIsWarning: Bool = false
-        var healthServiceName: String = "Apple Health"
+        var healthServiceName: String = L10n.healthFallback
         var rangeDays: Int32 = 7
         var readinessChecked: Bool = false
         var metrics: [MetricRow] = []

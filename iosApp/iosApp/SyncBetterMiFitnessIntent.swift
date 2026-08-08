@@ -33,19 +33,19 @@ struct SyncBetterMiFitnessIntent: AppIntent {
     private func dialog(for status: String) -> IntentDialog {
         switch status {
         case BackgroundSync.shared.STATUS_SUCCESS:
-            return IntentDialog("Better Mi Fitness Sync finished.")
+            return IntentDialog("\(L10n.outcomeSuccessDetail)")
         case BackgroundSync.shared.STATUS_PARTIAL_SUCCESS:
-            return IntentDialog("Sync finished with some metrics failed. Open the app for details.")
+            return IntentDialog("\(L10n.outcomePartialDetail)")
         case BackgroundSync.shared.STATUS_SKIPPED:
-            return IntentDialog("Nothing to sync (no metrics enabled).")
+            return IntentDialog("\(L10n.outcomeNothingToDo)")
         case BackgroundSync.shared.STATUS_NOT_LOGGED_IN:
-            return IntentDialog("You’re not signed in. Open Better Mi Fitness Sync, sign in, then try again.")
+            return IntentDialog("\(L10n.outcomePleaseSignIn)")
         case BackgroundSync.shared.STATUS_HEALTH_UNAVAILABLE:
-            return IntentDialog("Apple Health isn’t available on this device.")
+            return IntentDialog("\(L10n.outcomeHealthUnavailable)")
         case BackgroundSync.shared.STATUS_CANCELLED:
-            return IntentDialog("Sync was interrupted. Wait a moment and try once.")
+            return IntentDialog("\(L10n.outcomeStopped)")
         default:
-            return IntentDialog("Sync failed. Wait for any running sync to finish, then try once.")
+            return IntentDialog("\(L10n.outcomeCouldNotFinish)")
         }
     }
 }

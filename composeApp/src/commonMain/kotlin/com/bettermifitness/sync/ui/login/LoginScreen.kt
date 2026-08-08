@@ -61,6 +61,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.platform.getPlainText
 import com.bettermifitness.sync.platform.loginKeyboardOptions
 import com.bettermifitness.sync.platform.setPlainText
@@ -162,7 +163,7 @@ private fun CredentialsStep(
         }
         Spacer(Modifier.height(16.dp))
         Text(
-            "Better Mi Fitness Sync",
+            L10n.string(L10n.loginTitle),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -170,7 +171,7 @@ private fun CredentialsStep(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Sign in with your Mi Account",
+            L10n.string(L10n.loginSubtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -180,7 +181,7 @@ private fun CredentialsStep(
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChange,
-            label = { Text("Email or phone") },
+            label = { Text(L10n.string(L10n.loginEmailOrPhone)) },
             keyboardOptions = loginKeyboardOptions(KeyboardType.Email, ImeAction.Next),
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
@@ -189,7 +190,7 @@ private fun CredentialsStep(
         OutlinedTextField(
             value = password,
             onValueChange = onPasswordChange,
-            label = { Text("Password") },
+            label = { Text(L10n.string(L10n.loginPassword)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = loginKeyboardOptions(KeyboardType.Password, ImeAction.Done),
             singleLine = true,
@@ -209,7 +210,7 @@ private fun CredentialsStep(
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             } else {
-                Text("Sign in", style = MaterialTheme.typography.titleMedium)
+                Text(L10n.string(L10n.loginSignIn), style = MaterialTheme.typography.titleMedium)
             }
         }
 
@@ -217,8 +218,7 @@ private fun CredentialsStep(
 
         Spacer(Modifier.height(20.dp))
         Text(
-            "Your password is only sent to Xiaomi to sign in. " +
-                "Account tokens stay on this device and are never shared with third parties.",
+            L10n.string(L10n.loginPrivacy),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -255,10 +255,10 @@ private fun OtpStep(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Verify your identity", fontWeight = FontWeight.SemiBold) },
+                title = { Text(L10n.string(L10n.loginVerifyIdentity), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBack, enabled = !isLoading) {
-                        AppIcon(AppIcons.ArrowBack, contentDescription = "Back")
+                        AppIcon(AppIcons.ArrowBack, contentDescription = L10n.string(L10n.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -292,7 +292,7 @@ private fun OtpStep(
             }
             Spacer(Modifier.height(16.dp))
             Text(
-                "Check your email",
+                L10n.string(L10n.loginCheckEmail),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -300,9 +300,12 @@ private fun OtpStep(
             Spacer(Modifier.height(8.dp))
             Text(
                 if (maskedTarget.isBlank()) {
-                    "We sent a verification code to your Mi Account."
+                    L10n.string(L10n.loginCodeSent)
                 } else {
-                    "We sent a verification code to\n$maskedTarget"
+                    L10n.textFmt(
+                        L10n.loginCodeSentTo,
+                        maskedTarget,
+                    )
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -397,21 +400,21 @@ private fun OtpStep(
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
                 } else {
-                    Text("Verify", style = MaterialTheme.typography.titleMedium)
+                    Text(L10n.string(L10n.loginVerify), style = MaterialTheme.typography.titleMedium)
                 }
             }
 
             Spacer(Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "Didn't get it?",
+                    L10n.string(L10n.loginDidntGet),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                TextButton(onClick = onResend, enabled = !isLoading) { Text("Resend") }
+                TextButton(onClick = onResend, enabled = !isLoading) { Text(L10n.string(L10n.loginResend)) }
             }
             TextButton(onClick = onTrouble, enabled = !isLoading) {
-                Text("Having trouble? Use browser login instead", textAlign = TextAlign.Center)
+                Text(L10n.string(L10n.loginBrowserTrouble), textAlign = TextAlign.Center)
             }
 
             ErrorText(errorMessage)
@@ -450,7 +453,7 @@ private fun BrowserFallbackStep(
             val text = clipboard.getPlainText()?.let { firstNonEmptyLine(it) }
             if (text.isNullOrBlank()) {
                 callbackUrl = ""
-                pasteHint = "Nothing to paste yet. In the browser, copy the page link, then tap here again."
+                pasteHint = L10n.text(L10n.loginNothingToPaste)
                 return@launch
             }
             if (!isValidStsRedirectUrl(text)) {
@@ -474,10 +477,10 @@ private fun BrowserFallbackStep(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Browser login", fontWeight = FontWeight.SemiBold) },
+                title = { Text(L10n.string(L10n.loginBrowserTitle), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBack, enabled = !isLoading) {
-                        AppIcon(AppIcons.ArrowBack, contentDescription = "Back")
+                        AppIcon(AppIcons.ArrowBack, contentDescription = L10n.string(L10n.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -492,7 +495,7 @@ private fun BrowserFallbackStep(
                     .navigationBarsPadding(),
             ) {
                 PrimaryButton(
-                    text = "Complete login",
+                    text = L10n.string(L10n.loginComplete),
                     onClick = { submit() },
                     enabled = hasValidUrl && !isLoading,
                     loading = isLoading,
@@ -509,9 +512,9 @@ private fun BrowserFallbackStep(
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            PhaseCard(title = "Step 1 · Sign in") {
+            PhaseCard(title = L10n.string(L10n.loginStepOne)) {
                 Text(
-                    "Sign in with Xiaomi in the browser, then return here.",
+                    L10n.string(L10n.loginStepOneDetail),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -524,7 +527,7 @@ private fun BrowserFallbackStep(
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                     shape = BrandShapes.Button,
                 ) {
-                    Text("Open Xiaomi login")
+                    Text(L10n.string(L10n.loginOpenXiaomi))
                 }
                 Spacer(Modifier.height(8.dp))
                 OutlinedButton(
@@ -540,13 +543,13 @@ private fun BrowserFallbackStep(
                 ) {
                     AppIcon(AppIcons.ContentCopy, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(if (urlCopied) "Link copied" else "Copy login link")
+                    Text(if (urlCopied) L10n.string(L10n.loginLinkCopied) else L10n.string(L10n.loginCopyLink))
                 }
             }
 
-            PhaseCard(title = "Step 2 · Finish here") {
+            PhaseCard(title = L10n.string(L10n.loginStepTwo)) {
                 Text(
-                    "In the browser, copy the page link after you see “ok”. Then tap below to paste it.",
+                    L10n.string(L10n.loginStepTwoDetail),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -627,7 +630,7 @@ private fun RedirectPasteControl(
                     )
                     Column(Modifier.weight(1f)) {
                         Text(
-                            "Link pasted",
+                            L10n.string(L10n.loginLinkPasted),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                         )
@@ -639,12 +642,12 @@ private fun RedirectPasteControl(
                         )
                     }
                     IconButton(onClick = onPaste, enabled = !isLoading) {
-                        AppIcon(AppIcons.ContentPaste, contentDescription = "Paste a different link")
+                        AppIcon(AppIcons.ContentPaste, contentDescription = L10n.string(L10n.loginPasteDifferent))
                     }
                     IconButton(onClick = onClear, enabled = !isLoading) {
                         AppIcon(
                             AppIcons.ErrorOutline,
-                            contentDescription = "Remove pasted link",
+                            contentDescription = L10n.string(L10n.loginRemoveLink),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -679,12 +682,12 @@ private fun RedirectPasteControl(
                     )
                     Column(Modifier.weight(1f)) {
                         Text(
-                            "Tap to paste the link",
+                            L10n.string(L10n.loginTapPaste),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
-                            "Copy it from the browser first",
+                            L10n.string(L10n.loginCopyFromBrowser),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -702,8 +705,8 @@ private fun RedirectPasteControl(
         Text(
             when {
                 !pasteHint.isNullOrBlank() -> pasteHint
-                hasValidUrl -> "You’re set — tap Complete login below."
-                else -> "Tip: the link should come from the address bar after Xiaomi shows “ok”."
+                hasValidUrl -> L10n.text(L10n.loginReady)
+                else -> L10n.text(L10n.loginTip)
             },
             style = MaterialTheme.typography.bodySmall,
             color = if (!pasteHint.isNullOrBlank()) {
@@ -746,9 +749,9 @@ private fun isValidStsRedirectUrl(raw: String): Boolean {
 private fun invalidRedirectMessage(pasted: String): String {
     val lower = pasted.lowercase()
     return if (lower.startsWith("http://") || lower.startsWith("https://")) {
-        "That link isn’t the right one. After Xiaomi shows “ok”, copy the link from the address bar and try again."
+        L10n.text(L10n.loginInvalidLink)
     } else {
-        "That isn’t a web link. Copy the full page link from the browser’s address bar, then tap paste again."
+        L10n.text(L10n.loginNotWebLink)
     }
 }
 

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before release. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">뒤로</string>
+    <string name="open_health">%s 열기</string>
+    <string name="health_fallback">건강</string>
+    <string name="health_allow_access">접근 허용</string>
+    <string name="health_ready">준비 완료</string>
+    <string name="health_checking">확인 중…</string>
+    <string name="health_not_available">이 기기에서는 건강 서비스를 사용할 수 없습니다.</string>
+    <string name="health_permissions_incomplete">쓰기 권한이 완전하지 않습니다 — 접근을 허용한 후 다시 시도하세요.</string>
+    <string name="health_status_check_failed">건강 서비스 상태를 확인할 수 없습니다.</string>
+    <string name="health_write_failed">건강 서비스를 사용할 수 없습니다.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Mi Account로 로그인</string>
+    <string name="login_email_or_phone">이메일 또는 전화번호</string>
+    <string name="login_password">비밀번호</string>
+    <string name="login_sign_in">로그인</string>
+    <string name="login_privacy">비밀번호는 로그인을 위해 Xiaomi에만 전송됩니다. 계정 토큰은 이 기기에 저장되며 제3자와 공유되지 않습니다.</string>
+    <string name="login_verify_identity">본인 인증</string>
+    <string name="login_check_email">이메일을 확인하세요</string>
+    <string name="login_code_sent">Mi Account로 인증 코드를 보냈습니다.</string>
+    <string name="login_code_sent_to">인증 코드를 보냈습니다\n%s</string>
+    <string name="login_verify">인증</string>
+    <string name="login_didnt_get">받지 못하셨나요?</string>
+    <string name="login_resend">재전송</string>
+    <string name="login_browser_trouble">문제가 있나요? 브라우저 로그인을 사용해 보세요</string>
+    <string name="login_browser_title">브라우저 로그인</string>
+    <string name="login_complete">로그인 완료</string>
+    <string name="login_step_one">1단계 · 로그인</string>
+    <string name="login_step_one_detail">브라우저에서 Xiaomi에 로그인한 후 여기로 돌아오세요.</string>
+    <string name="login_open_xiaomi">Xiaomi 로그인 열기</string>
+    <string name="login_link_copied">링크 복사됨</string>
+    <string name="login_copy_link">로그인 링크 복사</string>
+    <string name="login_step_two">2단계 · 여기서 완료</string>
+    <string name="login_step_two_detail">브라우저에서 "ok"가 표시되면 페이지 링크를 복사하고 아래를 탭하여 붙여넣으세요.</string>
+    <string name="login_link_pasted">링크 붙여넣기 완료</string>
+    <string name="login_paste_different">다른 링크 붙여넣기</string>
+    <string name="login_remove_link">붙여넣은 링크 제거</string>
+    <string name="login_tap_paste">탭하여 링크 붙여넣기</string>
+    <string name="login_copy_from_browser">먼저 브라우저에서 복사하세요</string>
+    <string name="login_ready">준비 완료 — 아래의 로그인 완료를 탭하세요.</string>
+    <string name="login_tip">팁: 링크는 Xiaomi가 "ok"를 표시한 후 주소 표시줄의 것이어야 합니다.</string>
+    <string name="login_nothing_to_paste">아직 붙여넣을 것이 없습니다. 브라우저에서 페이지 링크를 복사한 후 여기를 다시 탭하세요.</string>
+    <string name="login_invalid_link">해당 링크가 올바르지 않습니다. Xiaomi가 "ok"를 표시한 후 주소 표시줄에서 링크를 복사하여 다시 시도하세요.</string>
+    <string name="login_not_web_link">이것은 웹 링크가 아닙니다. 브라우저의 주소 표시줄에서 전체 페이지 링크를 복사한 후 다시 붙여넣으세요.</string>
+    <string name="login_verification_code">인증 코드</string>
+    <string name="login_empty">비어 있음</string>
+    <string name="login_digits">%2$d자리 중 %1$d자리</string>
+    <string name="login_send_code_failed">인증 이메일을 보낼 수 없습니다. 브라우저 로그인을 사용하세요.</string>
+    <string name="login_failed">로그인 실패</string>
+    <string name="login_verification_failed">인증 실패</string>
+    <string name="login_browser_required">이메일 코드가 승인되었지만, Xiaomi가 이 기기를 신뢰하려면 일회성 브라우저 로그인이 필요합니다. 아래에 리디렉션 URL을 붙여넣으세요.</string>
+    <string name="login_code_resent">코드가 재전송되었습니다!</string>
+    <string name="login_resend_failed">재전송 실패: %s</string>
+    <string name="login_paste_redirect">먼저 주소 표시줄에서 전체 리디렉션 URL을 붙여넣으세요.</string>
+    <string name="login_browser_finish_failed">해당 URL로 브라우저 로그인을 완료할 수 없습니다. 전체 sts-hlth URL을 붙여넣으세요.</string>
+    <string name="login_missing_pass_token">로그인이 passToken을 반환하지 않아 앱이 며칠간 로그인 상태를 유지할 수 없습니다. 다시 시도하거나 다른 로그인 방법을 사용하세요.</string>
+    <string name="login_missing_device_id">로그인에 기기 ID가 없습니다 — 다시 시도하세요.</string>
+
+    <!-- Home -->
+    <string name="home_account">내 계정</string>
+    <string name="home_signed_in">로그인됨</string>
+    <string name="home_connected">Mi Account · 연결됨</string>
+    <string name="home_loading_profile">프로필을 가져오는 중…</string>
+    <string name="home_setup">설정</string>
+    <string name="home_activity">활동</string>
+    <string name="home_sync_options">동기화 옵션</string>
+    <string name="home_none_selected">선택 없음</string>
+    <string name="home_metric_one">항목 1개</string>
+    <string name="home_metric_many">항목 %d개</string>
+    <string name="home_day_one">1일</string>
+    <string name="home_day_many">%d일</string>
+    <string name="home_auto_on">자동 동기화 켜짐</string>
+    <string name="home_manual">수동</string>
+    <string name="home_nothing_selected_title">동기화할 항목이 선택되지 않았습니다</string>
+    <string name="home_nothing_selected_detail">설정에서 항목과 기간을 선택하세요. 데이터는 %s에 저장됩니다.</string>
+    <string name="home_allow_access_detail">이 앱이 %s에 데이터를 쓸 수 있도록 쓰기 접근을 허용하세요.</string>
+    <string name="home_last_sync">마지막 동기화</string>
+    <string name="home_background_sync">백그라운드 동기화</string>
+    <string name="home_never">없음</string>
+    <string name="home_syncing">동기화 중…</string>
+    <string name="home_sync_now">지금 동기화</string>
+    <string name="home_open_settings">설정 열기</string>
+    <string name="home_failed_suffix">%s · 실패</string>
+    <string name="home_partial_suffix">%s · 일부</string>
+    <string name="home_settings_accessibility">설정</string>
+    <string name="home_health_accessibility">%s를 열어 접근을 허용합니다</string>
+    <string name="home_health_ready_accessibility">건강 대상 준비 완료</string>
+    <string name="home_settings_hint">동기화 옵션을 변경하려면 설정을 엽니다</string>
+
+    <!-- Sync -->
+    <string name="sync_title">동기화</string>
+    <string name="sync_last_one_day">최근 1일</string>
+    <string name="sync_last_n_days">최근 %d일</string>
+    <string name="sync_now">지금 동기화</string>
+    <string name="sync_open_health">%s 열기</string>
+    <string name="sync_no_metrics">활성화된 항목이 없습니다 — 설정을 여세요.</string>
+    <string name="sync_preparing">준비 중…</string>
+    <string name="sync_status_syncing">동기화 중</string>
+    <string name="sync_status_done">완료</string>
+    <string name="sync_status_failed">실패</string>
+    <string name="sync_status_waiting">대기 중</string>
+    <string name="sync_records">%d건</string>
+    <string name="sync_failed">동기화 실패</string>
+    <string name="sync_not_logged_in">로그인되지 않음 — 로그인 후 다시 시도하세요</string>
+    <string name="sync_nothing_to_sync">동기화할 것이 없습니다 (설정에서 항목을 활성화하세요)</string>
+    <string name="sync_all_metrics_synced">활성화된 모든 항목이 동기화되었습니다</string>
+    <string name="sync_health_unavailable">%s를 사용할 수 없습니다.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">심박수</string>
+    <string name="metric_resting_heart_rate">안정 시 심박수</string>
+    <string name="metric_sleep">수면</string>
+    <string name="metric_hrv">심박 변이도</string>
+    <string name="metric_steps">걸음 수</string>
+    <string name="metric_distance">거리</string>
+    <string name="metric_active_calories">활동 칼로리</string>
+    <string name="metric_spo2">혈중 산소 (SpO2)</string>
+    <string name="metric_weight">체중 &amp; 체지방</string>
+    <string name="metric_workouts">운동</string>
+    <string name="metric_blood_pressure">혈압</string>
+    <string name="metric_temperature">체온 / 피부 온도</string>
+    <string name="metric_vo2_max">최대 산소 섭취량 (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">방금</string>
+    <string name="time_minute_ago">%d분 전</string>
+    <string name="time_hour_one_ago">1시간 전</string>
+    <string name="time_hour_many_ago">%d시간 전</string>
+    <string name="time_yesterday">어제</string>
+    <string name="time_day_one_ago">1일 전</string>
+    <string name="time_day_many_ago">%d일 전</string>
+    <string name="time_unknown">알 수 없음</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">최신 상태입니다</string>
+    <string name="outcome_almost_done">거의 완료</string>
+    <string name="outcome_could_not_finish">완료할 수 없음</string>
+    <string name="outcome_partial_label">일부</string>
+    <string name="outcome_please_sign_in">로그인하세요</string>
+    <string name="outcome_health_needed">건강 앱 필요</string>
+    <string name="outcome_nothing_to_do">할 작업 없음</string>
+    <string name="outcome_stopped">중지됨</string>
+    <string name="outcome_in_progress">동기화 진행 중</string>
+    <string name="outcome_not_synced">아직 동기화되지 않음</string>
+    <string name="outcome_success_detail">Mi Fitness에서 Health로 동기화되었습니다</string>
+    <string name="outcome_partial_detail">일부 항목이 실패했습니다 — 다시 동기화하세요</string>
+    <string name="outcome_failed_detail">연결을 확인하고 다시 시도하세요</string>
+    <string name="outcome_login_detail">Mi Account로 로그인하세요</string>
+    <string name="outcome_health_detail">먼저 건강 앱을 열거나 설치하세요</string>
+    <string name="outcome_skipped_detail">설정에서 항목을 켠 후 업데이트하세요</string>
+    <string name="outcome_cancelled_detail">동기화가 중지되었습니다</string>
+    <string name="outcome_running_detail">동기화가 이미 실행 중입니다</string>
+    <string name="outcome_idle_detail">최신 활동을 가져오려면 동기화를 탭하세요</string>
+    <string name="outcome_nothing_needed">동기화가 필요한 항목이 없습니다</string>
+    <string name="outcome_sign_in_again">다시 로그인하세요</string>
+    <string name="outcome_health_unavailable">건강 앱을 사용할 수 없습니다</string>
+
+    <!-- Settings -->
+    <string name="settings_title">설정</string>
+    <string name="settings_sync_options_loading">동기화 옵션</string>
+    <string name="settings_section_sync_range">동기화 범위</string>
+    <string name="settings_section_auto_sync">자동 동기화</string>
+    <string name="settings_section_metrics">항목</string>
+    <string name="settings_section_status">상태</string>
+    <string name="settings_section_shortcuts">단축어</string>
+    <string name="settings_section_account">계정</string>
+    <string name="settings_section_about">정보</string>
+    <string name="settings_days_picker">일수</string>
+    <string name="settings_range_1_day">1일</string>
+    <string name="settings_range_n_days">%d일</string>
+    <string name="settings_background_auto_sync">백그라운드 자동 동기화</string>
+    <string name="settings_test_background_refresh">백그라운드 새로고침 테스트</string>
+    <string name="settings_running_refresh">1일 새로고침 실행 중…</string>
+    <string name="settings_test_ok">테스트 OK — 마지막 백그라운드 새로고침이 업데이트될 것입니다</string>
+    <string name="settings_partial_ok">일부 OK — 일부 항목이 실패했습니다 (동기화 화면 확인)</string>
+    <string name="settings_skipped">건너뜀 (자동 동기화를 켜고 로그인 상태를 유지하세요)</string>
+    <string name="settings_not_signed_in">로그인되지 않음</string>
+    <string name="settings_cancelled">취소됨</string>
+    <string name="settings_failed_status">실패 (%s)</string>
+    <string name="settings_last_sync">마지막 동기화</string>
+    <string name="settings_last_background_sync">마지막 백그라운드 동기화</string>
+    <string name="settings_shortcuts_help">"Sync Better Mi Fitness" App Intent 또는 단축어를 사용하여 수동 백그라운드 실행이 가능합니다.</string>
+    <string name="settings_log_out">로그아웃</string>
+    <string name="settings_version">버전</string>
+    <string name="settings_credit">크레딧</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">백그라운드 동기화는 WorkManager를 사용합니다 (네트워크 사용 가능 시 약 1시간마다, 정확한 시간 아님).</string>
+    <string name="background_simulator_status">시뮬레이터: 시스템이 BGAppRefresh를 자동 실행하지 않습니다. "1일 새로고침 테스트" 또는 bettermifitness://debug/bg-refresh를 사용하세요</string>
+    <string name="background_on">백그라운드 앱 새로고침이 켜져 있습니다</string>
+    <string name="background_off">백그라운드 앱 새로고침이 꺼져 있습니다 — 설정 → 일반 → 백그라운드 앱 새로고침에서 활성화하세요</string>
+    <string name="background_restricted">이 기기에서 백그라운드 앱 새로고침이 제한되어 있습니다</string>
+    <string name="background_unknown">백그라운드 앱 새로고침 상태를 알 수 없습니다</string>
+    <string name="background_unknown_status">알 수 없음</string>
+</resources>

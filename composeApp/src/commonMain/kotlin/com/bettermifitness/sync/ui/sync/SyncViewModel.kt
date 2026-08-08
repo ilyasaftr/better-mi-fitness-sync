@@ -8,6 +8,7 @@ import com.bettermifitness.sync.data.repository.SyncProgress
 import com.bettermifitness.sync.data.repository.SyncState
 import com.bettermifitness.sync.health.HealthAvailability
 import com.bettermifitness.sync.health.HealthPermissionRequester
+import com.bettermifitness.sync.i18n.L10n
 import com.bettermifitness.sync.sync.SyncCoordinator
 import com.bettermifitness.sync.sync.SyncOutcome
 import com.bettermifitness.sync.ui.SyncMetric
@@ -148,7 +149,7 @@ class SyncViewModel(
                     availabilityHint = when {
                         !available -> hint
                         !perms -> hint
-                            ?: "Write permissions incomplete — grant access and try again."
+                            ?: L10n.text(L10n.healthPermissionsIncomplete)
                         else -> null
                     },
                     readinessChecked = true,
@@ -158,7 +159,7 @@ class SyncViewModel(
             _local.update {
                 it.copy(
                     healthAvailable = false,
-                    availabilityHint = "Health service is not available on this device.",
+                    availabilityHint = L10n.text(L10n.healthNotAvailable),
                     readinessChecked = true,
                 )
             }
@@ -187,7 +188,7 @@ class SyncViewModel(
                 is SyncOutcome.Failed ->
                     _local.update {
                         it.copy(
-                            permissionError = outcome.message ?: "Sync failed",
+                            permissionError = outcome.message ?: L10n.text(L10n.syncFailed),
                             outcomeMessage = null,
                         )
                     }
@@ -195,19 +196,19 @@ class SyncViewModel(
                     _local.update {
                         it.copy(
                             healthAvailable = false,
-                            permissionError = "${it.healthServiceName} is not available.",
+                            permissionError = L10n.textFmt(L10n.syncHealthUnavailable, it.healthServiceName),
                         )
                     }
                 SyncOutcome.NotLoggedIn ->
-                    _local.update { it.copy(permissionError = "Not logged in — sign in and try again") }
+                    _local.update { it.copy(permissionError = L10n.text(L10n.syncNotLoggedIn)) }
                 SyncOutcome.Skipped ->
                     _local.update {
-                        it.copy(outcomeMessage = "Nothing to sync (enable metrics in Settings)")
+                        it.copy(outcomeMessage = L10n.text(L10n.syncNothingToSync))
                     }
                 SyncOutcome.Success ->
                     _local.update {
                         it.copy(
-                            outcomeMessage = "All enabled metrics synced",
+                            outcomeMessage = L10n.text(L10n.syncAllMetricsSynced),
                             outcomeIsWarning = false,
                         )
                     }
@@ -231,7 +232,7 @@ class SyncViewModel(
                         availabilityHint = when {
                             !available -> hint
                             !perms -> hint
-                                ?: "Write permissions incomplete — grant access and try again."
+                                ?: L10n.text(L10n.healthPermissionsIncomplete)
                             else -> null
                         },
                     )

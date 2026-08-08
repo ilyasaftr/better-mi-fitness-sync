@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT (fil-PH) — Requires native-speaker review before release. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">Bumalik</string>
+    <string name="open_health">Buksan ang %s</string>
+    <string name="health_fallback">Health</string>
+    <string name="health_allow_access">Payagan ang access</string>
+    <string name="health_ready">Handa na</string>
+    <string name="health_checking">Sinusuri…</string>
+    <string name="health_not_available">Hindi available ang serbisyo ng Health sa device na ito.</string>
+    <string name="health_permissions_incomplete">Hindi kumpleto ang mga write permission — payagan ang access at subukan ulit.</string>
+    <string name="health_status_check_failed">Hindi masuri ang status ng serbisyo ng Health.</string>
+    <string name="health_write_failed">Hindi available ang serbisyo ng Health.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Mag-sign in gamit ang iyong Mi Account</string>
+    <string name="login_email_or_phone">Email o telepono</string>
+    <string name="login_password">Password</string>
+    <string name="login_sign_in">Mag-sign in</string>
+    <string name="login_privacy">Ang iyong password ay ipinapadala lamang sa Xiaomi para sa pag-sign in. Ang mga account token ay nananatili sa device na ito at hindi ibinabahagi sa mga third party.</string>
+    <string name="login_verify_identity">I-verify ang iyong pagkakakilanlan</string>
+    <string name="login_check_email">Tingnan ang iyong email</string>
+    <string name="login_code_sent">Nagpadala kami ng verification code sa iyong Mi Account.</string>
+    <string name="login_code_sent_to">Nagpadala kami ng verification code sa\n%s</string>
+    <string name="login_verify">I-verify</string>
+    <string name="login_didnt_get">Hindi natanggap?</string>
+    <string name="login_resend">Ipadala ulit</string>
+    <string name="login_browser_trouble">May problema? Gamitin ang browser login sa halip</string>
+    <string name="login_browser_title">Browser login</string>
+    <string name="login_complete">Kumpletuhin ang login</string>
+    <string name="login_step_one">Hakbang 1 · Mag-sign in</string>
+    <string name="login_step_one_detail">Mag-sign in gamit ang Xiaomi sa browser, pagkatapos bumalik dito.</string>
+    <string name="login_open_xiaomi">Buksan ang Xiaomi login</string>
+    <string name="login_link_copied">Nakopya ang link</string>
+    <string name="login_copy_link">Kopyahin ang login link</string>
+    <string name="login_step_two">Hakbang 2 · Tapusin dito</string>
+    <string name="login_step_two_detail">Sa browser, kopyahin ang link ng page pagkatapos makita ang "ok". Pagkatapos ay i-tap sa baba para i-paste.</string>
+    <string name="login_link_pasted">Na-paste ang link</string>
+    <string name="login_paste_different">Mag-paste ng ibang link</string>
+    <string name="login_remove_link">Alisin ang na-paste na link</string>
+    <string name="login_tap_paste">I-tap para i-paste ang link</string>
+    <string name="login_copy_from_browser">Kopyahin muna ito mula sa browser</string>
+    <string name="login_ready">Handa ka na — i-tap ang Kumpletuhin ang login sa baba.</string>
+    <string name="login_tip">Tip: ang link ay dapat galing sa address bar pagkatapos ipakita ng Xiaomi ang "ok".</string>
+    <string name="login_nothing_to_paste">Wala pang mai-paste. Sa browser, kopyahin ang link ng page, pagkatapos i-tap dito ulit.</string>
+    <string name="login_invalid_link">Hindi tama ang link na iyon. Pagkatapos ipakita ng Xiaomi ang "ok", kopyahin ang link mula sa address bar at subukan ulit.</string>
+    <string name="login_not_web_link">Hindi iyon web link. Kopyahin ang buong link ng page mula sa address bar ng browser, pagkatapos i-tap ulit ang paste.</string>
+    <string name="login_verification_code">Verification code</string>
+    <string name="login_empty">Walang laman</string>
+    <string name="login_digits">%1$d sa %2$d digit</string>
+    <string name="login_send_code_failed">Hindi maipadala ang verification email. Gamitin ang browser login.</string>
+    <string name="login_failed">Nabigo ang login</string>
+    <string name="login_verification_failed">Nabigo ang verification</string>
+    <string name="login_browser_required">Natanggap ang email code, pero kailangan pa ng Xiaomi ng isang beses na browser login para pagkatiwalaan ang device na ito. I-paste ang redirect URL sa baba.</string>
+    <string name="login_code_resent">Naipadala ulit ang code!</string>
+    <string name="login_resend_failed">Nabigo ang muling pagpapadala: %s</string>
+    <string name="login_paste_redirect">I-paste muna ang buong redirect URL mula sa address bar.</string>
+    <string name="login_browser_finish_failed">Hindi makumpleto ang browser login mula sa URL na iyon. I-paste ang buong sts-hlth URL.</string>
+    <string name="login_missing_pass_token">Hindi nagbalik ng passToken ang login, kaya hindi makakapag-sign in ang app nang tuloy-tuloy. Subukan ulit o gamitin ang ibang paraan ng login.</string>
+    <string name="login_missing_device_id">Nawawala ang device id sa login — subukan ulit.</string>
+
+    <!-- Home -->
+    <string name="home_account">Ang iyong account</string>
+    <string name="home_signed_in">Naka-sign in</string>
+    <string name="home_connected">Mi Account · Nakakonekta</string>
+    <string name="home_loading_profile">Kinukuha ang iyong profile…</string>
+    <string name="home_setup">Setup</string>
+    <string name="home_activity">Aktibidad</string>
+    <string name="home_sync_options">Mga opsyon sa sync</string>
+    <string name="home_none_selected">Walang napili</string>
+    <string name="home_metric_one">1 metric</string>
+    <string name="home_metric_many">%d metric</string>
+    <string name="home_day_one">1 araw</string>
+    <string name="home_day_many">%d araw</string>
+    <string name="home_auto_on">Naka-on ang auto-sync</string>
+    <string name="home_manual">Manual</string>
+    <string name="home_nothing_selected_title">Walang napiling i-sync</string>
+    <string name="home_nothing_selected_detail">Pumili ng mga metric at saklaw sa Settings. Ang tiningnan na data ay nasa %s.</string>
+    <string name="home_allow_access_detail">Payagan ang write access para makapagsulat ng data ang app sa %s.</string>
+    <string name="home_last_sync">Huling sync</string>
+    <string name="home_background_sync">Background sync</string>
+    <string name="home_never">Hindi pa</string>
+    <string name="home_syncing">Nagsi-sync…</string>
+    <string name="home_sync_now">I-sync ngayon</string>
+    <string name="home_open_settings">Buksan ang Settings</string>
+    <string name="home_failed_suffix">%s · Nabigo</string>
+    <string name="home_partial_suffix">%s · Hindi kumpleto</string>
+    <string name="home_settings_accessibility">Settings</string>
+    <string name="home_health_accessibility">Magbubukas ng %s para payagan ang access</string>
+    <string name="home_health_ready_accessibility">Handa na ang Health destination</string>
+    <string name="home_settings_hint">Magbubukas ng Settings para baguhin ang mga opsyon sa sync</string>
+
+    <!-- Sync -->
+    <string name="sync_title">Sync</string>
+    <string name="sync_last_one_day">Huling 1 araw</string>
+    <string name="sync_last_n_days">Huling %d araw</string>
+    <string name="sync_now">I-sync ngayon</string>
+    <string name="sync_open_health">Buksan ang %s</string>
+    <string name="sync_no_metrics">Walang naka-enable na metric — buksan ang Settings.</string>
+    <string name="sync_preparing">Naghahanda…</string>
+    <string name="sync_status_syncing">Nagsi-sync</string>
+    <string name="sync_status_done">Tapos na</string>
+    <string name="sync_status_failed">Nabigo</string>
+    <string name="sync_status_waiting">Naghihintay</string>
+    <string name="sync_records">%d record</string>
+    <string name="sync_failed">Nabigo ang sync</string>
+    <string name="sync_not_logged_in">Hindi naka-sign in — mag-sign in at subukan ulit</string>
+    <string name="sync_nothing_to_sync">Walang i-sync (i-enable ang mga metric sa Settings)</string>
+    <string name="sync_all_metrics_synced">Na-sync na ang lahat ng naka-enable na metric</string>
+    <string name="sync_health_unavailable">Hindi available ang %s.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">Heart Rate</string>
+    <string name="metric_resting_heart_rate">Resting Heart Rate</string>
+    <string name="metric_sleep">Tulog</string>
+    <string name="metric_hrv">Pagbabago ng Tibok ng Puso</string>
+    <string name="metric_steps">Mga Hakbang</string>
+    <string name="metric_distance">Distansya</string>
+    <string name="metric_active_calories">Aktibong Calories</string>
+    <string name="metric_spo2">Blood Oxygen (SpO2)</string>
+    <string name="metric_weight">Timbang at Body Fat</string>
+    <string name="metric_workouts">Mga Workout</string>
+    <string name="metric_blood_pressure">Blood Pressure</string>
+    <string name="metric_temperature">Temperatura ng Katawan / Balat</string>
+    <string name="metric_vo2_max">Pinakamataas na Pagkonsumo ng Oxygen (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Ngayon lang</string>
+    <string name="time_minute_ago">%d min ang nakakaraan</string>
+    <string name="time_hour_one_ago">1 oras ang nakakaraan</string>
+    <string name="time_hour_many_ago">%d oras ang nakakaraan</string>
+    <string name="time_yesterday">Kahapon</string>
+    <string name="time_day_one_ago">1 araw ang nakakaraan</string>
+    <string name="time_day_many_ago">%d araw ang nakakaraan</string>
+    <string name="time_unknown">Hindi alam</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">Updated ka na</string>
+    <string name="outcome_almost_done">Halos tapos na</string>
+    <string name="outcome_could_not_finish">Hindi natapos</string>
+    <string name="outcome_partial_label">Hindi kumpleto</string>
+    <string name="outcome_please_sign_in">Mangyaring mag-sign in</string>
+    <string name="outcome_health_needed">Kailangan ng Health app</string>
+    <string name="outcome_nothing_to_do">Wala nang gagawin</string>
+    <string name="outcome_stopped">Itinigil</string>
+    <string name="outcome_in_progress">Nagsi-sync</string>
+    <string name="outcome_not_synced">Hindi pa nasi-sync</string>
+    <string name="outcome_success_detail">Na-sync ang Mi Fitness sa Health</string>
+    <string name="outcome_partial_detail">May ilang item na nabigo — subukan ulit ang Sync</string>
+    <string name="outcome_failed_detail">Suriin ang iyong koneksyon at subukan ulit</string>
+    <string name="outcome_login_detail">Mag-sign in gamit ang iyong Mi Account</string>
+    <string name="outcome_health_detail">Buksan o i-install muna ang Health app</string>
+    <string name="outcome_skipped_detail">I-on ang mga item sa Settings, pagkatapos i-Update</string>
+    <string name="outcome_cancelled_detail">Itinigil ang sync</string>
+    <string name="outcome_running_detail">May sync nang tumatakbo</string>
+    <string name="outcome_idle_detail">I-tap ang Sync para sa iyong pinakabagong aktibidad</string>
+    <string name="outcome_nothing_needed">Walang kailangang i-sync</string>
+    <string name="outcome_sign_in_again">Mangyaring mag-sign in ulit</string>
+    <string name="outcome_health_unavailable">Hindi available ang Health app</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_sync_options_loading">Mga opsyon sa sync</string>
+    <string name="settings_section_sync_range">Saklaw ng sync</string>
+    <string name="settings_section_auto_sync">Auto-sync</string>
+    <string name="settings_section_metrics">Mga Metric</string>
+    <string name="settings_section_status">Status</string>
+    <string name="settings_section_shortcuts">Mga Shortcut</string>
+    <string name="settings_section_account">Account</string>
+    <string name="settings_section_about">Tungkol sa</string>
+    <string name="settings_days_picker">Mga Araw</string>
+    <string name="settings_range_1_day">1 araw</string>
+    <string name="settings_range_n_days">%d araw</string>
+    <string name="settings_background_auto_sync">Background auto-sync</string>
+    <string name="settings_test_background_refresh">I-test ang background refresh</string>
+    <string name="settings_running_refresh">Pinapatakbo ang 1-day refresh…</string>
+    <string name="settings_test_ok">Test OK — dapat mag-update ang huling background refresh</string>
+    <string name="settings_partial_ok">Partial OK — may ilang metric na nabigo (tingnan ang Sync screen)</string>
+    <string name="settings_skipped">Na-skip (i-on ang Auto-sync at manatiling naka-sign in)</string>
+    <string name="settings_not_signed_in">Hindi naka-sign in</string>
+    <string name="settings_cancelled">Nakansela</string>
+    <string name="settings_failed_status">Nabigo (%s)</string>
+    <string name="settings_last_sync">Huling sync</string>
+    <string name="settings_last_background_sync">Huling background sync</string>
+    <string name="settings_shortcuts_help">Gamitin ang "Sync Better Mi Fitness" App Intent o Shortcuts para sa manual na background run.</string>
+    <string name="settings_log_out">Mag-log out</string>
+    <string name="settings_version">Bersyon</string>
+    <string name="settings_credit">Credit</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">Ang background sync ay gumagamit ng WorkManager (~bawat oras kapag may network; hindi eksakto ang oras).</string>
+    <string name="background_simulator_status">Simulator: hindi awtomatikong nagfa-fire ang system ng BGAppRefresh. Gamitin ang "Test 1-day refresh" o bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">Naka-on ang Background App Refresh</string>
+    <string name="background_off">Naka-off ang Background App Refresh — i-enable ito sa Settings → General → Background App Refresh</string>
+    <string name="background_restricted">Naka-restrict ang Background App Refresh sa device na ito</string>
+    <string name="background_unknown">Hindi alam ang status ng Background App Refresh</string>
+    <string name="background_unknown_status">Hindi alam</string>
+</resources>

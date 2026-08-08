@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05EE64CE2982EBBAB6440D77 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0564EBE9B8A49CCCA1DB20 /* L10n.swift */; };
 		23A665B3FBB5A3285EE36334 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCF99775EBADC35F1BA0D21 /* SettingsView.swift */; };
 		3781A851DCE93BD1D76CF88D /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3549224337665C0C4C9ABC2 /* SettingsStore.swift */; };
 		3C1C1FB3D0DEACBED8BC6FFC /* BrandTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CD2805BAD71FB462940E9D /* BrandTheme.swift */; };
@@ -36,6 +37,7 @@
 		70AC0E1B4D973C14279E95B9 /* BetterMiFitnessSync.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BetterMiFitnessSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		732826014587FDD439825FFE /* KotlinFlowHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KotlinFlowHelpers.swift; sourceTree = "<group>"; };
 		738D364FB6F37385B291A15B /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		9A0564EBE9B8A49CCCA1DB20 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		9FC906B71EC647D8840EC824 /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		A1155F3F1F9907C48DA582AD /* HealthKitBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitBridge.swift; sourceTree = "<group>"; };
 		A5E78E9EF722C3BAF0F454A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				732826014587FDD439825FFE /* KotlinFlowHelpers.swift */,
+				9A0564EBE9B8A49CCCA1DB20 /* L10n.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -140,6 +143,7 @@
 				A7C27BF90D3F04E1A27C6728 /* Build Kotlin Framework */,
 				45C46179CA26CD558A212B51 /* Sources */,
 				5CBAA4BD027E11A16A8B21D1 /* Resources */,
+				FBE14A62C1E2C958314F6CEA /* Copy moko resources into app */,
 			);
 			buildRules = (
 			);
@@ -213,6 +217,25 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ -z \"${JAVA_HOME:-}\" ] || [ ! -d \"$JAVA_HOME\" ]; then\n  export JAVA_HOME=\"/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home\"\nfi\nexport PATH=\"$JAVA_HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"\ncd \"$SRCROOT/..\"\n# Match Xcode configuration: Release IPA must use releaseFramework (not debug).\nif [ \"${PLATFORM_NAME:-}\" = \"iphoneos\" ]; then\n  if [ \"${CONFIGURATION:-}\" = \"Release\" ]; then\n    ./gradlew :composeApp:linkReleaseFrameworkIosArm64\n  else\n    ./gradlew :composeApp:linkDebugFrameworkIosArm64\n  fi\nelse\n  if [ \"${CONFIGURATION:-}\" = \"Release\" ]; then\n    ./gradlew :composeApp:linkReleaseFrameworkIosSimulatorArm64\n  else\n    ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64\n  fi\nfi\n";
 		};
+		FBE14A62C1E2C958314F6CEA /* Copy moko resources into app */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy moko resources into app";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -z \"${JAVA_HOME:-}\" ] || [ ! -d \"$JAVA_HOME\" ]; then\n  export JAVA_HOME=\"/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home\"\nfi\nexport PATH=\"$JAVA_HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:copyFrameworkResourcesToApp \\\n  -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n  -Pmoko.resources.CONFIGURATION=\"${KOTLIN_FRAMEWORK_BUILD_TYPE:-$CONFIGURATION}\" \\\n  -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n  -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n  -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -227,6 +250,7 @@
 				47FF5C6AC24904C3CC7A0D26 /* HomeStore.swift in Sources */,
 				FBD9C313E5046D12931F84D3 /* HomeView.swift in Sources */,
 				6772CD3016933DF024BB8357 /* KotlinFlowHelpers.swift in Sources */,
+				05EE64CE2982EBBAB6440D77 /* L10n.swift in Sources */,
 				48482836AC484F5D1F78F989 /* LoginStore.swift in Sources */,
 				E70A8D3D995A9EA7180844C7 /* LoginView.swift in Sources */,
 				BFE4C500E11B95076A95DE2D /* RootView.swift in Sources */,

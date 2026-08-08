@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT (ms-MY) — Requires native-speaker review before release. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">Kembali</string>
+    <string name="open_health">Buka %s</string>
+    <string name="health_fallback">Health</string>
+    <string name="health_allow_access">Benarkan akses</string>
+    <string name="health_ready">Sedia</string>
+    <string name="health_checking">Menyemak…</string>
+    <string name="health_not_available">Perkhidmatan Health tidak tersedia pada peranti ini.</string>
+    <string name="health_permissions_incomplete">Kebenaran tulis tidak lengkap — benarkan akses dan cuba lagi.</string>
+    <string name="health_status_check_failed">Tidak dapat menyemak status perkhidmatan Health.</string>
+    <string name="health_write_failed">Perkhidmatan Health tidak tersedia.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Log masuk dengan Mi Account anda</string>
+    <string name="login_email_or_phone">E-mel atau telefon</string>
+    <string name="login_password">Kata laluan</string>
+    <string name="login_sign_in">Log masuk</string>
+    <string name="login_privacy">Kata laluan anda hanya dihantar kepada Xiaomi untuk log masuk. Token akaun kekal pada peranti ini dan tidak dikongsi dengan pihak ketiga.</string>
+    <string name="login_verify_identity">Sahkan identiti anda</string>
+    <string name="login_check_email">Semak e-mel anda</string>
+    <string name="login_code_sent">Kami telah menghantar kod pengesahan ke Mi Account anda.</string>
+    <string name="login_code_sent_to">Kami telah menghantar kod pengesahan ke\n%s</string>
+    <string name="login_verify">Sahkan</string>
+    <string name="login_didnt_get">Tidak terima?</string>
+    <string name="login_resend">Hantar semula</string>
+    <string name="login_browser_trouble">Ada masalah? Gunakan log masuk pelayar</string>
+    <string name="login_browser_title">Log masuk pelayar</string>
+    <string name="login_complete">Selesaikan log masuk</string>
+    <string name="login_step_one">Langkah 1 · Log masuk</string>
+    <string name="login_step_one_detail">Log masuk dengan Xiaomi dalam pelayar, kemudian kembali ke sini.</string>
+    <string name="login_open_xiaomi">Buka log masuk Xiaomi</string>
+    <string name="login_link_copied">Pautan disalin</string>
+    <string name="login_copy_link">Salin pautan log masuk</string>
+    <string name="login_step_two">Langkah 2 · Selesaikan di sini</string>
+    <string name="login_step_two_detail">Dalam pelayar, salin pautan halaman selepas anda melihat "ok". Kemudian ketik di bawah untuk tampal.</string>
+    <string name="login_link_pasted">Pautan ditampal</string>
+    <string name="login_paste_different">Tampal pautan lain</string>
+    <string name="login_remove_link">Buang pautan yang ditampal</string>
+    <string name="login_tap_paste">Ketik untuk tampal pautan</string>
+    <string name="login_copy_from_browser">Salin dahulu dari pelayar</string>
+    <string name="login_ready">Anda sudah sedia — ketik Selesaikan log masuk di bawah.</string>
+    <string name="login_tip">Tip: pautan sepatutnya dari bar alamat selepas Xiaomi menunjukkan "ok".</string>
+    <string name="login_nothing_to_paste">Tiada apa untuk ditampal. Dalam pelayar, salin pautan halaman, kemudian ketik di sini semula.</string>
+    <string name="login_invalid_link">Pautan itu tidak betul. Selepas Xiaomi menunjukkan "ok", salin pautan dari bar alamat dan cuba lagi.</string>
+    <string name="login_not_web_link">Itu bukan pautan web. Salin pautan halaman penuh dari bar alamat pelayar, kemudian ketik tampal semula.</string>
+    <string name="login_verification_code">Kod pengesahan</string>
+    <string name="login_empty">Kosong</string>
+    <string name="login_digits">%1$d daripada %2$d digit</string>
+    <string name="login_send_code_failed">Tidak dapat menghantar e-mel pengesahan. Gunakan log masuk pelayar.</string>
+    <string name="login_failed">Log masuk gagal</string>
+    <string name="login_verification_failed">Pengesahan gagal</string>
+    <string name="login_browser_required">Kod e-mel diterima, tetapi Xiaomi masih memerlukan log masuk pelayar sekali untuk mempercayai peranti ini. Tampal URL ubah hala di bawah.</string>
+    <string name="login_code_resent">Kod dihantar semula!</string>
+    <string name="login_resend_failed">Penghantaran semula gagal: %s</string>
+    <string name="login_paste_redirect">Tampal URL ubah hala penuh dari bar alamat dahulu.</string>
+    <string name="login_browser_finish_failed">Tidak dapat menyelesaikan log masuk pelayar dari URL itu. Tampal URL sts-hlth yang penuh.</string>
+    <string name="login_missing_pass_token">Log masuk tidak memulangkan passToken, jadi aplikasi tidak dapat kekal log masuk merentasi hari. Cuba lagi atau gunakan kaedah log masuk yang lain.</string>
+    <string name="login_missing_device_id">ID peranti tiada dalam log masuk — cuba lagi.</string>
+
+    <!-- Home -->
+    <string name="home_account">Akaun anda</string>
+    <string name="home_signed_in">Sudah log masuk</string>
+    <string name="home_connected">Mi Account · Disambungkan</string>
+    <string name="home_loading_profile">Mendapatkan profil anda…</string>
+    <string name="home_setup">Persediaan</string>
+    <string name="home_activity">Aktiviti</string>
+    <string name="home_sync_options">Pilihan sync</string>
+    <string name="home_none_selected">Tiada dipilih</string>
+    <string name="home_metric_one">1 metrik</string>
+    <string name="home_metric_many">%d metrik</string>
+    <string name="home_day_one">1 hari</string>
+    <string name="home_day_many">%d hari</string>
+    <string name="home_auto_on">Auto-sync dihidupkan</string>
+    <string name="home_manual">Manual</string>
+    <string name="home_nothing_selected_title">Tiada yang dipilih untuk sync</string>
+    <string name="home_nothing_selected_detail">Pilih metrik dan julat dalam Settings. Data yang dilihat berada dalam %s.</string>
+    <string name="home_allow_access_detail">Benarkan akses tulis supaya aplikasi boleh menulis data ke %s.</string>
+    <string name="home_last_sync">Sync terakhir</string>
+    <string name="home_background_sync">Sync latar belakang</string>
+    <string name="home_never">Belum pernah</string>
+    <string name="home_syncing">Sedang sync…</string>
+    <string name="home_sync_now">Sync sekarang</string>
+    <string name="home_open_settings">Buka Settings</string>
+    <string name="home_failed_suffix">%s · Gagal</string>
+    <string name="home_partial_suffix">%s · Separa</string>
+    <string name="home_settings_accessibility">Settings</string>
+    <string name="home_health_accessibility">Membuka %s untuk benarkan akses</string>
+    <string name="home_health_ready_accessibility">Destinasi Health sedia</string>
+    <string name="home_settings_hint">Membuka Settings untuk menukar pilihan sync</string>
+
+    <!-- Sync -->
+    <string name="sync_title">Sync</string>
+    <string name="sync_last_one_day">1 hari terakhir</string>
+    <string name="sync_last_n_days">%d hari terakhir</string>
+    <string name="sync_now">Sync sekarang</string>
+    <string name="sync_open_health">Buka %s</string>
+    <string name="sync_no_metrics">Tiada metrik diaktifkan — buka Settings.</string>
+    <string name="sync_preparing">Menyediakan…</string>
+    <string name="sync_status_syncing">Sedang sync</string>
+    <string name="sync_status_done">Selesai</string>
+    <string name="sync_status_failed">Gagal</string>
+    <string name="sync_status_waiting">Menunggu</string>
+    <string name="sync_records">%d rekod</string>
+    <string name="sync_failed">Sync gagal</string>
+    <string name="sync_not_logged_in">Belum log masuk — log masuk dan cuba lagi</string>
+    <string name="sync_nothing_to_sync">Tiada untuk sync (aktifkan metrik dalam Settings)</string>
+    <string name="sync_all_metrics_synced">Semua metrik yang diaktifkan telah di-sync</string>
+    <string name="sync_health_unavailable">%s tidak tersedia.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">Kadar Denyutan Jantung</string>
+    <string name="metric_resting_heart_rate">Kadar Denyutan Jantung Rehat</string>
+    <string name="metric_sleep">Tidur</string>
+    <string name="metric_hrv">Kebolehubahan Kadar Denyutan Jantung</string>
+    <string name="metric_steps">Langkah</string>
+    <string name="metric_distance">Jarak</string>
+    <string name="metric_active_calories">Kalori Aktif</string>
+    <string name="metric_spo2">Oksigen Darah (SpO2)</string>
+    <string name="metric_weight">Berat &amp; Lemak Badan</string>
+    <string name="metric_workouts">Senaman</string>
+    <string name="metric_blood_pressure">Tekanan Darah</string>
+    <string name="metric_temperature">Suhu Badan / Kulit</string>
+    <string name="metric_vo2_max">Penggunaan Oksigen Maksimum (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Baru sahaja</string>
+    <string name="time_minute_ago">%d min lalu</string>
+    <string name="time_hour_one_ago">1 jam lalu</string>
+    <string name="time_hour_many_ago">%d jam lalu</string>
+    <string name="time_yesterday">Semalam</string>
+    <string name="time_day_one_ago">1 hari lalu</string>
+    <string name="time_day_many_ago">%d hari lalu</string>
+    <string name="time_unknown">Tidak diketahui</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">Anda sudah terkini</string>
+    <string name="outcome_almost_done">Hampir siap</string>
+    <string name="outcome_could_not_finish">Tidak dapat diselesaikan</string>
+    <string name="outcome_partial_label">Separa</string>
+    <string name="outcome_please_sign_in">Sila log masuk</string>
+    <string name="outcome_health_needed">Aplikasi Health diperlukan</string>
+    <string name="outcome_nothing_to_do">Tiada apa untuk dilakukan</string>
+    <string name="outcome_stopped">Dihentikan</string>
+    <string name="outcome_in_progress">Sync sedang berjalan</string>
+    <string name="outcome_not_synced">Belum di-sync</string>
+    <string name="outcome_success_detail">Mi Fitness telah di-sync ke Health</string>
+    <string name="outcome_partial_detail">Beberapa item gagal — cuba Sync semula</string>
+    <string name="outcome_failed_detail">Semak sambungan anda dan cuba lagi</string>
+    <string name="outcome_login_detail">Log masuk dengan Mi Account anda</string>
+    <string name="outcome_health_detail">Buka atau pasang aplikasi Health dahulu</string>
+    <string name="outcome_skipped_detail">Hidupkan item dalam Settings, kemudian Kemas Kini</string>
+    <string name="outcome_cancelled_detail">Sync telah dihentikan</string>
+    <string name="outcome_running_detail">Sync sudah sedang berjalan</string>
+    <string name="outcome_idle_detail">Ketik Sync untuk aktiviti terkini anda</string>
+    <string name="outcome_nothing_needed">Tiada yang perlu di-sync</string>
+    <string name="outcome_sign_in_again">Sila log masuk semula</string>
+    <string name="outcome_health_unavailable">Aplikasi Health tidak tersedia</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_sync_options_loading">Pilihan sync</string>
+    <string name="settings_section_sync_range">Julat sync</string>
+    <string name="settings_section_auto_sync">Auto-sync</string>
+    <string name="settings_section_metrics">Metrik</string>
+    <string name="settings_section_status">Status</string>
+    <string name="settings_section_shortcuts">Pintasan</string>
+    <string name="settings_section_account">Akaun</string>
+    <string name="settings_section_about">Perihal</string>
+    <string name="settings_days_picker">Hari</string>
+    <string name="settings_range_1_day">1 hari</string>
+    <string name="settings_range_n_days">%d hari</string>
+    <string name="settings_background_auto_sync">Auto-sync latar belakang</string>
+    <string name="settings_test_background_refresh">Uji muat semula latar belakang</string>
+    <string name="settings_running_refresh">Menjalankan muat semula 1 hari…</string>
+    <string name="settings_test_ok">Ujian OK — sync latar belakang terakhir sepatutnya dikemas kini</string>
+    <string name="settings_partial_ok">Separa OK — beberapa metrik gagal (lihat skrin Sync)</string>
+    <string name="settings_skipped">Dilangkau (hidupkan Auto-sync dan kekal log masuk)</string>
+    <string name="settings_not_signed_in">Belum log masuk</string>
+    <string name="settings_cancelled">Dibatalkan</string>
+    <string name="settings_failed_status">Gagal (%s)</string>
+    <string name="settings_last_sync">Sync terakhir</string>
+    <string name="settings_last_background_sync">Sync latar belakang terakhir</string>
+    <string name="settings_shortcuts_help">Gunakan "Sync Better Mi Fitness" App Intent atau Shortcuts untuk menjalankan sync latar belakang secara manual.</string>
+    <string name="settings_log_out">Log keluar</string>
+    <string name="settings_version">Versi</string>
+    <string name="settings_credit">Kredit</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">Sync latar belakang menggunakan WorkManager (~setiap jam apabila rangkaian tersedia; bukan masa tepat).</string>
+    <string name="background_simulator_status">Simulator: sistem tidak menjalankan BGAppRefresh secara automatik. Gunakan "Test 1-day refresh" atau bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">Background App Refresh dihidupkan</string>
+    <string name="background_off">Background App Refresh dimatikan — hidupkan di Settings → General → Background App Refresh</string>
+    <string name="background_restricted">Background App Refresh dihadkan pada peranti ini</string>
+    <string name="background_unknown">Status Background App Refresh tidak diketahui</string>
+    <string name="background_unknown_status">Tidak diketahui</string>
+</resources>

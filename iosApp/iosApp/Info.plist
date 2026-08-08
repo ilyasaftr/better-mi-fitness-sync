@@ -4,6 +4,32 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<!-- Locales shipped via moko-resources. Regional/script variants fall back to these catalogs. -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>id</string>
+		<string>ar</string>
+		<string>bn-BD</string>
+		<string>de</string>
+		<string>es</string>
+		<string>fa-IR</string>
+		<string>fil-PH</string>
+		<string>fr</string>
+		<string>hi-IN</string>
+		<string>it</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>ms-MY</string>
+		<string>pt-BR</string>
+		<string>ru</string>
+		<string>th</string>
+		<string>tr</string>
+		<string>ur-PK</string>
+		<string>vi</string>
+		<string>zh-CN</string>
+		<string>zh-TW</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Better Mi Fitness Sync</string>
 	<key>CFBundleExecutable</key>

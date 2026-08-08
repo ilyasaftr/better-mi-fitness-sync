@@ -1,52 +1,40 @@
 package com.bettermifitness.sync.sync
 
-/**
- * Friendly labels for persisted [SyncOutcome] status codes (shown in the UI).
- * Keep details short so status cards stay one clean block (avoid awkward wraps).
- */
-object SyncOutcomeLabels {
+import com.bettermifitness.sync.i18n.L10n
 
+/** Friendly localized labels for persisted SyncOutcome status codes. */
+object SyncOutcomeLabels {
     fun title(status: String?): String = when (status) {
-        SyncOutcome.STATUS_SUCCESS -> "You're up to date"
-        SyncOutcome.STATUS_PARTIAL_SUCCESS -> "Almost done"
-        SyncOutcome.STATUS_FAILED -> "Couldn't finish"
-        SyncOutcome.STATUS_NOT_LOGGED_IN -> "Please sign in"
-        SyncOutcome.STATUS_HEALTH_UNAVAILABLE -> "Health app needed"
-        SyncOutcome.STATUS_SKIPPED -> "Nothing to do"
-        SyncOutcome.STATUS_CANCELLED -> "Stopped"
-        SyncOutcome.STATUS_ALREADY_RUNNING -> "Sync in progress"
-        null, "" -> "Not synced yet"
+        SyncOutcome.STATUS_SUCCESS -> L10n.text(L10n.outcomeUpToDate)
+        SyncOutcome.STATUS_PARTIAL_SUCCESS -> L10n.text(L10n.outcomeAlmostDone)
+        SyncOutcome.STATUS_FAILED -> L10n.text(L10n.outcomeCouldNotFinish)
+        SyncOutcome.STATUS_NOT_LOGGED_IN -> L10n.text(L10n.outcomePleaseSignIn)
+        SyncOutcome.STATUS_HEALTH_UNAVAILABLE -> L10n.text(L10n.outcomeHealthNeeded)
+        SyncOutcome.STATUS_SKIPPED -> L10n.text(L10n.outcomeNothingToDo)
+        SyncOutcome.STATUS_CANCELLED -> L10n.text(L10n.outcomeStopped)
+        SyncOutcome.STATUS_ALREADY_RUNNING -> L10n.text(L10n.outcomeInProgress)
+        null, "" -> L10n.text(L10n.outcomeNotSynced)
         else -> status.replace('_', ' ').replaceFirstChar { it.uppercase() }
     }
 
     fun detail(status: String?, message: String?): String {
         val msg = message?.takeIf { it.isNotBlank() }
         return when (status) {
-            // Short on purpose — long lines wrap badly in the status card
-            SyncOutcome.STATUS_SUCCESS ->
-                msg ?: "Mi Fitness synced to Health"
-            SyncOutcome.STATUS_PARTIAL_SUCCESS ->
-                msg ?: "Some items failed — try Sync again"
-            SyncOutcome.STATUS_FAILED ->
-                msg ?: "Check your connection and try again"
-            SyncOutcome.STATUS_NOT_LOGGED_IN ->
-                msg ?: "Sign in with your Mi Account"
-            SyncOutcome.STATUS_HEALTH_UNAVAILABLE ->
-                msg ?: "Open or install the Health app first"
-            SyncOutcome.STATUS_SKIPPED ->
-                msg ?: "Turn on items in Settings, then Update"
-            SyncOutcome.STATUS_CANCELLED ->
-                msg ?: "Sync was stopped"
-            SyncOutcome.STATUS_ALREADY_RUNNING ->
-                msg ?: "A sync is already running"
-            null, "" -> "Tap Sync for your latest activity"
+            SyncOutcome.STATUS_SUCCESS -> msg ?: L10n.text(L10n.outcomeSuccessDetail)
+            SyncOutcome.STATUS_PARTIAL_SUCCESS -> msg ?: L10n.text(L10n.outcomePartialDetail)
+            SyncOutcome.STATUS_FAILED -> msg ?: L10n.text(L10n.outcomeFailedDetail)
+            SyncOutcome.STATUS_NOT_LOGGED_IN -> msg ?: L10n.text(L10n.outcomeLoginDetail)
+            SyncOutcome.STATUS_HEALTH_UNAVAILABLE -> msg ?: L10n.text(L10n.outcomeHealthDetail)
+            SyncOutcome.STATUS_SKIPPED -> msg ?: L10n.text(L10n.outcomeSkippedDetail)
+            SyncOutcome.STATUS_CANCELLED -> msg ?: L10n.text(L10n.outcomeCancelledDetail)
+            SyncOutcome.STATUS_ALREADY_RUNNING -> msg ?: L10n.text(L10n.outcomeRunningDetail)
+            null, "" -> L10n.text(L10n.outcomeIdleDetail)
             else -> msg ?: title(status)
         }
     }
 
     fun isWarning(status: String?): Boolean =
-        status == SyncOutcome.STATUS_PARTIAL_SUCCESS ||
-            status == SyncOutcome.STATUS_SKIPPED
+        status == SyncOutcome.STATUS_PARTIAL_SUCCESS || status == SyncOutcome.STATUS_SKIPPED
 
     fun isError(status: String?): Boolean =
         status == SyncOutcome.STATUS_FAILED ||
@@ -56,11 +44,11 @@ object SyncOutcomeLabels {
 }
 
 fun SyncOutcome.userMessage(): String? = when (this) {
-    SyncOutcome.Success -> "Mi Fitness synced to Health"
+    SyncOutcome.Success -> L10n.text(L10n.outcomeSuccessDetail)
     is SyncOutcome.PartialSuccess -> summary
-    SyncOutcome.Skipped -> "Nothing needed syncing"
-    SyncOutcome.NotLoggedIn -> "Please sign in again"
-    SyncOutcome.HealthUnavailable -> "Health app isn't available"
-    SyncOutcome.AlreadyRunning -> "A sync is already running"
-    is SyncOutcome.Failed -> message ?: "Couldn't finish sync"
+    SyncOutcome.Skipped -> L10n.text(L10n.outcomeNothingNeeded)
+    SyncOutcome.NotLoggedIn -> L10n.text(L10n.outcomeSignInAgain)
+    SyncOutcome.HealthUnavailable -> L10n.text(L10n.outcomeHealthUnavailable)
+    SyncOutcome.AlreadyRunning -> L10n.text(L10n.outcomeRunningDetail)
+    is SyncOutcome.Failed -> message ?: L10n.text(L10n.outcomeCouldNotFinish)
 }

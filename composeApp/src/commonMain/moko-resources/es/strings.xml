@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- MACHINE-GENERATED DRAFT — requires native-speaker review before release. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">Atrás</string>
+    <string name="open_health">Abrir %s</string>
+    <string name="health_fallback">Salud</string>
+    <string name="health_allow_access">Permitir acceso</string>
+    <string name="health_ready">Listo</string>
+    <string name="health_checking">Comprobando…</string>
+    <string name="health_not_available">El servicio de salud no está disponible en este dispositivo.</string>
+    <string name="health_permissions_incomplete">Permisos de escritura incompletos — otorga acceso e inténtalo de nuevo.</string>
+    <string name="health_status_check_failed">No se pudo comprobar el estado del servicio de salud.</string>
+    <string name="health_write_failed">El servicio de salud no está disponible.</string>
+
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Inicia sesión con tu Mi Account</string>
+    <string name="login_email_or_phone">Correo o teléfono</string>
+    <string name="login_password">Contraseña</string>
+    <string name="login_sign_in">Iniciar sesión</string>
+    <string name="login_privacy">Tu contraseña solo se envía a Xiaomi para iniciar sesión. Los tokens de la cuenta permanecen en este dispositivo y nunca se comparten con terceros.</string>
+    <string name="login_verify_identity">Verifica tu identidad</string>
+    <string name="login_check_email">Revisa tu correo</string>
+    <string name="login_code_sent">Enviamos un código de verificación a tu Mi Account.</string>
+    <string name="login_code_sent_to">Enviamos un código de verificación a\n%s</string>
+    <string name="login_verify">Verificar</string>
+    <string name="login_didnt_get">¿No lo recibiste?</string>
+    <string name="login_resend">Reenviar</string>
+    <string name="login_browser_trouble">¿Tienes problemas? Usa el inicio de sesión por navegador</string>
+    <string name="login_browser_title">Inicio de sesión por navegador</string>
+    <string name="login_complete">Completar inicio de sesión</string>
+    <string name="login_step_one">Paso 1 · Inicia sesión</string>
+    <string name="login_step_one_detail">Inicia sesión con Xiaomi en el navegador y luego vuelve aquí.</string>
+    <string name="login_open_xiaomi">Abrir inicio de sesión de Xiaomi</string>
+    <string name="login_link_copied">Enlace copiado</string>
+    <string name="login_copy_link">Copiar enlace de inicio de sesión</string>
+    <string name="login_step_two">Paso 2 · Finaliza aquí</string>
+    <string name="login_step_two_detail">En el navegador, copia el enlace de la página después de ver "ok". Luego toca abajo para pegarlo.</string>
+    <string name="login_link_pasted">Enlace pegado</string>
+    <string name="login_paste_different">Pegar un enlace diferente</string>
+    <string name="login_remove_link">Eliminar enlace pegado</string>
+    <string name="login_tap_paste">Toca para pegar el enlace</string>
+    <string name="login_copy_from_browser">Cópialo del navegador primero</string>
+    <string name="login_ready">Todo listo — toca Completar inicio de sesión abajo.</string>
+    <string name="login_tip">Consejo: el enlace debe provenir de la barra de direcciones después de que Xiaomi muestre "ok".</string>
+    <string name="login_nothing_to_paste">Nada que pegar aún. En el navegador, copia el enlace de la página y luego toca aquí de nuevo.</string>
+    <string name="login_invalid_link">Ese enlace no es el correcto. Después de que Xiaomi muestre "ok", copia el enlace de la barra de direcciones e inténtalo de nuevo.</string>
+    <string name="login_not_web_link">Eso no es un enlace web. Copia el enlace completo de la barra de direcciones del navegador y luego toca pegar de nuevo.</string>
+    <string name="login_verification_code">Código de verificación</string>
+    <string name="login_empty">Vacío</string>
+    <string name="login_digits">%1$d de %2$d dígitos</string>
+    <string name="login_send_code_failed">No se pudo enviar el correo de verificación. Usa el inicio de sesión por navegador.</string>
+    <string name="login_failed">Error de inicio de sesión</string>
+    <string name="login_verification_failed">Verificación fallida</string>
+    <string name="login_browser_required">El código de correo fue aceptado, pero Xiaomi aún necesita un inicio de sesión por navegador para confiar en este dispositivo. Pega la URL de redireccionamiento abajo.</string>
+    <string name="login_code_resent">¡Código reenviado!</string>
+    <string name="login_resend_failed">Reenvío fallido: %s</string>
+    <string name="login_paste_redirect">Pega primero la URL completa de redireccionamiento de la barra de direcciones.</string>
+    <string name="login_browser_finish_failed">No se pudo finalizar el inicio de sesión por navegador con esa URL. Pega la URL completa de sts-hlth.</string>
+    <string name="login_missing_pass_token">El inicio de sesión no devolvió un passToken, por lo que la app no puede mantener la sesión activa entre días. Inténtalo de nuevo o usa el otro método de inicio de sesión.</string>
+    <string name="login_missing_device_id">Falta el device id en el inicio de sesión — inténtalo de nuevo.</string>
+
+    <!-- Home -->
+    <string name="home_account">Tu cuenta</string>
+    <string name="home_signed_in">Sesión iniciada</string>
+    <string name="home_connected">Mi Account · Conectada</string>
+    <string name="home_loading_profile">Obteniendo tu perfil…</string>
+    <string name="home_setup">Configuración</string>
+    <string name="home_activity">Actividad</string>
+    <string name="home_sync_options">Opciones de sincronización</string>
+    <string name="home_none_selected">Ninguna seleccionada</string>
+    <string name="home_metric_one">1 métrica</string>
+    <string name="home_metric_many">%d métricas</string>
+    <string name="home_day_one">1 día</string>
+    <string name="home_day_many">%d días</string>
+    <string name="home_auto_on">Sincronización automática activada</string>
+    <string name="home_manual">Manual</string>
+    <string name="home_nothing_selected_title">Nada seleccionado para sincronizar</string>
+    <string name="home_nothing_selected_detail">Elige métricas y rango en Ajustes. Los datos consultados están en %s.</string>
+    <string name="home_allow_access_detail">Otorga acceso de escritura para que esta app pueda escribir datos en %s.</string>
+    <string name="home_last_sync">Última sincronización</string>
+    <string name="home_background_sync">Sincronización en segundo plano</string>
+    <string name="home_never">Nunca</string>
+    <string name="home_syncing">Sincronizando…</string>
+    <string name="home_sync_now">Sincronizar ahora</string>
+    <string name="home_open_settings">Abrir Ajustes</string>
+    <string name="home_failed_suffix">%s · Fallido</string>
+    <string name="home_partial_suffix">%s · Parcial</string>
+    <string name="home_settings_accessibility">Ajustes</string>
+    <string name="home_health_accessibility">Abre %s para permitir acceso</string>
+    <string name="home_health_ready_accessibility">Destino de salud listo</string>
+    <string name="home_settings_hint">Abre Ajustes para cambiar opciones de sincronización</string>
+
+    <!-- Sync -->
+    <string name="sync_title">Sincronización</string>
+    <string name="sync_last_one_day">Último 1 día</string>
+    <string name="sync_last_n_days">Últimos %d días</string>
+    <string name="sync_now">Sincronizar ahora</string>
+    <string name="sync_open_health">Abrir %s</string>
+    <string name="sync_no_metrics">No hay métricas habilitadas — abre Ajustes.</string>
+    <string name="sync_preparing">Preparando…</string>
+    <string name="sync_status_syncing">Sincronizando</string>
+    <string name="sync_status_done">Completado</string>
+    <string name="sync_status_failed">Fallido</string>
+    <string name="sync_status_waiting">Esperando</string>
+    <string name="sync_records">%d registros</string>
+    <string name="sync_failed">Sincronización fallida</string>
+    <string name="sync_not_logged_in">No has iniciado sesión — inicia sesión e inténtalo de nuevo</string>
+    <string name="sync_nothing_to_sync">Nada que sincronizar (habilita métricas en Ajustes)</string>
+    <string name="sync_all_metrics_synced">Todas las métricas habilitadas sincronizadas</string>
+    <string name="sync_health_unavailable">%s no está disponible.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">Frecuencia cardíaca</string>
+    <string name="metric_resting_heart_rate">Frecuencia cardíaca en reposo</string>
+    <string name="metric_sleep">Sueño</string>
+    <string name="metric_hrv">Variabilidad de la frecuencia cardíaca</string>
+    <string name="metric_steps">Pasos</string>
+    <string name="metric_distance">Distancia</string>
+    <string name="metric_active_calories">Calorías activas</string>
+    <string name="metric_spo2">Oxígeno en sangre (SpO2)</string>
+    <string name="metric_weight">Peso y grasa corporal</string>
+    <string name="metric_workouts">Entrenamientos</string>
+    <string name="metric_blood_pressure">Presión arterial</string>
+    <string name="metric_temperature">Temperatura corporal / cutánea</string>
+    <string name="metric_vo2_max">Consumo máximo de oxígeno (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Ahora mismo</string>
+    <string name="time_minute_ago">Hace %d min</string>
+    <string name="time_hour_one_ago">Hace 1 hora</string>
+    <string name="time_hour_many_ago">Hace %d horas</string>
+    <string name="time_yesterday">Ayer</string>
+    <string name="time_day_one_ago">Hace 1 día</string>
+    <string name="time_day_many_ago">Hace %d días</string>
+    <string name="time_unknown">Desconocido</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">Estás al día</string>
+    <string name="outcome_almost_done">Casi listo</string>
+    <string name="outcome_could_not_finish">No se pudo completar</string>
+    <string name="outcome_partial_label">Parcial</string>
+    <string name="outcome_please_sign_in">Inicia sesión</string>
+    <string name="outcome_health_needed">Se necesita la app de salud</string>
+    <string name="outcome_nothing_to_do">Nada que hacer</string>
+    <string name="outcome_stopped">Detenido</string>
+    <string name="outcome_in_progress">Sincronización en progreso</string>
+    <string name="outcome_not_synced">Aún no sincronizado</string>
+    <string name="outcome_success_detail">Mi Fitness sincronizado con Health</string>
+    <string name="outcome_partial_detail">Algunos elementos fallaron — intenta Sincronizar de nuevo</string>
+    <string name="outcome_failed_detail">Comprueba tu conexión e inténtalo de nuevo</string>
+    <string name="outcome_login_detail">Inicia sesión con tu Mi Account</string>
+    <string name="outcome_health_detail">Abre o instala la app de salud primero</string>
+    <string name="outcome_skipped_detail">Activa elementos en Ajustes y luego Actualiza</string>
+    <string name="outcome_cancelled_detail">Sincronización detenida</string>
+    <string name="outcome_running_detail">Ya hay una sincronización en curso</string>
+    <string name="outcome_idle_detail">Toca Sincronizar para tu última actividad</string>
+    <string name="outcome_nothing_needed">No fue necesario sincronizar nada</string>
+    <string name="outcome_sign_in_again">Inicia sesión de nuevo</string>
+    <string name="outcome_health_unavailable">La app de salud no está disponible</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_sync_options_loading">Opciones de sincronización</string>
+    <string name="settings_section_sync_range">Rango de sincronización</string>
+    <string name="settings_section_auto_sync">Sincronización automática</string>
+    <string name="settings_section_metrics">Métricas</string>
+    <string name="settings_section_status">Estado</string>
+    <string name="settings_section_shortcuts">Atajos</string>
+    <string name="settings_section_account">Cuenta</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_days_picker">Días</string>
+    <string name="settings_range_1_day">1 día</string>
+    <string name="settings_range_n_days">%d días</string>
+    <string name="settings_background_auto_sync">Sincronización automática en segundo plano</string>
+    <string name="settings_test_background_refresh">Probar actualización en segundo plano</string>
+    <string name="settings_running_refresh">Ejecutando actualización de 1 día…</string>
+    <string name="settings_test_ok">Prueba OK — la última actualización en segundo plano debería actualizarse</string>
+    <string name="settings_partial_ok">Parcialmente OK — algunas métricas fallaron (ver pantalla de Sincronización)</string>
+    <string name="settings_skipped">Omitido (activa la sincronización automática y mantén la sesión iniciada)</string>
+    <string name="settings_not_signed_in">Sesión no iniciada</string>
+    <string name="settings_cancelled">Cancelado</string>
+    <string name="settings_failed_status">Fallido (%s)</string>
+    <string name="settings_last_sync">Última sincronización</string>
+    <string name="settings_last_background_sync">Última sincronización en segundo plano</string>
+    <string name="settings_shortcuts_help">Usa el App Intent "Sync Better Mi Fitness" o Shortcuts para ejecuciones manuales en segundo plano.</string>
+    <string name="settings_log_out">Cerrar sesión</string>
+    <string name="settings_version">Versión</string>
+    <string name="settings_credit">Crédito</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">La sincronización en segundo plano usa WorkManager (~cada hora cuando hay red disponible; no en tiempo exacto).</string>
+    <string name="background_simulator_status">Simulador: el sistema nunca ejecuta BGAppRefresh automáticamente. Usa "Probar actualización de 1 día" o bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">Actualización en segundo plano activada</string>
+    <string name="background_off">Actualización en segundo plano desactivada — actívala en Ajustes → General → Actualización en segundo plano</string>
+    <string name="background_restricted">La actualización en segundo plano está restringida en este dispositivo</string>
+    <string name="background_unknown">Estado de actualización en segundo plano desconocido</string>
+    <string name="background_unknown_status">Desconocido</string>
+</resources>
