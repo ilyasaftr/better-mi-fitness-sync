@@ -124,12 +124,15 @@ class HealthDataNormalizerTest {
     }
 
     @Test
-    fun miSleepStageLabels_matchMiCodes() {
-        assertEquals("light", HealthDataNormalizer.miSleepStageLabel(2))
-        assertEquals("deep", HealthDataNormalizer.miSleepStageLabel(3))
-        assertEquals("rem", HealthDataNormalizer.miSleepStageLabel(4))
-        assertEquals("awake", HealthDataNormalizer.miSleepStageLabel(5))
-        assertTrue(HealthDataNormalizer.miSleepStageLabel(99) == "unknown")
+    fun miSleepStageCodes_matchMiPayloadAggregates() {
+        assertEquals(HealthDataNormalizer.MiSleepStageKind.DEEP, HealthDataNormalizer.miSleepStageKind(2))
+        assertEquals(HealthDataNormalizer.MiSleepStageKind.LIGHT, HealthDataNormalizer.miSleepStageKind(3))
+        assertEquals(HealthDataNormalizer.MiSleepStageKind.REM, HealthDataNormalizer.miSleepStageKind(4))
+        assertEquals(HealthDataNormalizer.MiSleepStageKind.AWAKE, HealthDataNormalizer.miSleepStageKind(5))
+        assertEquals(HealthDataNormalizer.MiSleepStageKind.AWAKE, HealthDataNormalizer.miSleepStageKind(1))
+        assertEquals(HealthDataNormalizer.MiSleepStageKind.UNKNOWN, HealthDataNormalizer.miSleepStageKind(99))
+        assertEquals("deep", HealthDataNormalizer.miSleepStageLabel(2))
+        assertEquals("light", HealthDataNormalizer.miSleepStageLabel(3))
     }
 
     @Test

@@ -135,10 +135,10 @@ import HealthKit
         let hkValue: HKCategoryValueSleepAnalysis
         switch value {
         case 1: hkValue = .awake
-        case 2: hkValue = .asleepCore
-        case 3: hkValue = .asleepDeep
+        case 2: hkValue = .asleepDeep
+        case 3: hkValue = .asleepCore
         case 4: hkValue = .asleepREM
-        default: hkValue = .asleepCore
+        default: hkValue = .asleepUnspecified
         }
 
         let sample = HKCategorySample(type: sleepType, value: hkValue.rawValue,

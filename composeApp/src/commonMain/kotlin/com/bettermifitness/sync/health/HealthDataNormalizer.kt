@@ -162,15 +162,25 @@ object HealthDataNormalizer {
             .sortedBy { it.timestamp }
 
     /**
-     * Mi Fitness sleep states → platform-neutral labels for tests.
-     * 2=light/core, 3=deep, 4=REM, 5=awake
+     * Raw Mi Fitness stages, verified against its aggregate duration fields:
+     * state 2=deep, 3=light/core, 4=REM, and 5 (or legacy 1)=awake.
      */
-    fun miSleepStageLabel(stage: Int): String = when (stage) {
-        5, 1 -> "awake"
-        2 -> "light"
-        3 -> "deep"
-        4 -> "rem"
-        else -> "unknown"
+    enum class MiSleepStageKind { AWAKE, DEEP, LIGHT, REM, UNKNOWN }
+
+    fun miSleepStageKind(stage: Int): MiSleepStageKind = when (stage) {
+        5, 1 -> MiSleepStageKind.AWAKE
+        2 -> MiSleepStageKind.DEEP
+        3 -> MiSleepStageKind.LIGHT
+        4 -> MiSleepStageKind.REM
+        else -> MiSleepStageKind.UNKNOWN
+    }
+
+    fun miSleepStageLabel(stage: Int): String = when (miSleepStageKind(stage)) {
+        MiSleepStageKind.AWAKE -> "awake"
+        MiSleepStageKind.DEEP -> "deep"
+        MiSleepStageKind.LIGHT -> "light"
+        MiSleepStageKind.REM -> "rem"
+        MiSleepStageKind.UNKNOWN -> "unknown"
     }
 
     fun normalizeDistance(
