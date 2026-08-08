@@ -44,7 +44,6 @@ targets:
       path: iosApp.entitlements
       properties:
         com.apple.developer.healthkit: true
-        com.apple.developer.healthkit.access: []
     preBuildScripts:
       - name: "Build Kotlin Framework"
         script: |
