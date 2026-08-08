@@ -7,6 +7,7 @@ import com.bettermifitness.sync.data.api.MeResponse
 import com.bettermifitness.sync.data.preferences.SyncPreferences
 import com.bettermifitness.sync.data.preferences.TokenStore
 import com.bettermifitness.sync.health.HealthAvailability
+import com.bettermifitness.sync.health.HealthPermissionRequester
 import com.bettermifitness.sync.health.HealthReadiness
 import com.bettermifitness.sync.sync.SyncCoordinator
 import com.bettermifitness.sync.sync.SyncOutcomeLabels
@@ -31,11 +32,12 @@ data class HomeUiState(
     val lastBackgroundLabel: String = "Never",
     val lastBackgroundDetail: String = "Background sync has not run yet",
     val lastBackgroundIsError: Boolean = false,
-    val enabledMetricsCount: Int = SyncMetric.entries.size,
+    /** 0 until prefs load — do not assume all metrics on (matches Settings). */
+    val enabledMetricsCount: Int = 0,
     val totalMetricsCount: Int = SyncMetric.entries.size,
     val rangeDays: Int = 7,
     val autoSync: Boolean = false,
-    val canSync: Boolean = true,
+    val canSync: Boolean = false,
     val isSyncing: Boolean = false,
     val healthServiceName: String = "",
     val healthReady: Boolean = true,
@@ -49,6 +51,7 @@ class HomeViewModel(
     private val session: MiSessionManager,
     private val tokenStore: TokenStore,
     private val healthAvailability: HealthAvailability,
+    private val healthPermissions: HealthPermissionRequester,
     private val syncCoordinator: SyncCoordinator,
 ) : ViewModel() {
     private val syncPreferences: SyncPreferences get() = tokenStore.sync
@@ -196,8 +199,22 @@ class HomeViewModel(
         }
     }
 
+    /**
+     * “Allow access”: show the Health permission sheet when possible;
+     * if still not granted (or sheet won’t show again), open system Settings / Health Connect.
+     */
     fun openHealthService() {
-        healthAvailability.openHealthService()
+        viewModelScope.launch {
+            try {
+                healthPermissions.requestPermissions()
+            } catch (_: Exception) {
+                // User denied or request failed — fall through to Settings / HC.
+            }
+            if (!healthAvailability.hasWritePermissions()) {
+                healthAvailability.openHealthService()
+            }
+            refreshHealthReadiness()
+        }
     }
 
     /**

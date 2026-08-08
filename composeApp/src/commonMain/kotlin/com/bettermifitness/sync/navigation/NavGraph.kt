@@ -106,6 +106,7 @@ fun NavGraph() {
                 composable(Routes.SETTINGS) {
                     SettingsScreen(
                         onBack = { navController.popBackStack() },
+                        onLogout = { auth = AuthBootstrap.LoggedOut },
                     )
                 }
                 composable(Routes.SYNC) {

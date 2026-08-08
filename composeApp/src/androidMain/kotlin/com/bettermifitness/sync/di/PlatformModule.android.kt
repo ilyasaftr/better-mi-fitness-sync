@@ -16,6 +16,9 @@ fun provideAndroidContext(context: Context) {
     appContext = context.applicationContext
 }
 
+/** Application context set by [provideAndroidContext]. */
+fun androidAppContext(): Context = appContext
+
 actual fun platformModule(): Module = module {
     single<DataStore<Preferences>> {
         PreferenceDataStoreFactory.createWithPath(

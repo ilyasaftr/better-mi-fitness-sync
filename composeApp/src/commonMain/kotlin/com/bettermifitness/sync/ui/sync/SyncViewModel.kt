@@ -7,6 +7,7 @@ import com.bettermifitness.sync.data.repository.HealthRepository
 import com.bettermifitness.sync.data.repository.SyncProgress
 import com.bettermifitness.sync.data.repository.SyncState
 import com.bettermifitness.sync.health.HealthAvailability
+import com.bettermifitness.sync.health.HealthPermissionRequester
 import com.bettermifitness.sync.sync.SyncCoordinator
 import com.bettermifitness.sync.sync.SyncOutcome
 import com.bettermifitness.sync.ui.SyncMetric
@@ -43,6 +44,7 @@ data class SyncUiState(
 class SyncViewModel(
     private val repository: HealthRepository,
     private val healthAvailability: HealthAvailability,
+    private val healthPermissions: HealthPermissionRequester,
     private val syncPreferences: SyncPreferences,
     private val syncCoordinator: SyncCoordinator,
 ) : ViewModel() {
@@ -96,7 +98,17 @@ class SyncViewModel(
     }
 
     fun openHealthService() {
-        healthAvailability.openHealthService()
+        viewModelScope.launch {
+            try {
+                healthPermissions.requestPermissions()
+            } catch (_: Exception) {
+                // Denied / failed — open Settings or Health Connect below.
+            }
+            if (!healthAvailability.hasWritePermissions()) {
+                healthAvailability.openHealthService()
+            }
+            checkHealthReadiness()
+        }
     }
 
     fun stateFor(progress: SyncProgress, key: String): SyncState = when (key) {
