@@ -452,7 +452,9 @@ jobs:
             if [ -n "$PREV" ]; then
               echo "### Changes since \`$PREV\`"
               echo ""
-              git log --pretty=format:'- %s (%h)' "${PREV}..HEAD"
+              # Skip merge commits ("Merge pull request #N …") — they only
+              # duplicate the feat/fix commits already listed below.
+              git log --pretty=format:'- %s (%h)' --no-merges "${PREV}..HEAD"
               echo ""
             else
               echo "### Changes"
