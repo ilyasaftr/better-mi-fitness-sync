@@ -1,1 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Default (English). SSOT for Android Compose + iOS SwiftUI. System locale picks translations. -->
+<resources>
+    <!-- Common -->
+    <string name="app_name">Better Mi Fitness Sync</string>
+    <string name="back">Back</string>
+    <string name="open_health">Open %s</string>
+    <string name="health_fallback">Health</string>
+    <string name="health_allow_access">Allow access</string>
+    <string name="health_ready">Ready</string>
+    <string name="health_checking">Checking…</string>
+    <string name="health_not_available">Health service is not available on this device.</string>
+    <string name="health_permissions_incomplete">Write permissions incomplete — grant access and try again.</string>
+    <string name="health_status_check_failed">Could not check health service status.</string>
+    <string name="health_write_failed">Health service is not available.</string>
 
+    <!-- Login -->
+    <string name="login_title">Better Mi Fitness Sync</string>
+    <string name="login_subtitle">Sign in with your Mi Account</string>
+    <string name="login_email_or_phone">Email or phone</string>
+    <string name="login_password">Password</string>
+    <string name="login_sign_in">Sign in</string>
+    <string name="login_privacy">Your password is only sent to Xiaomi to sign in. Account tokens stay on this device and are never shared with third parties.</string>
+    <string name="login_verify_identity">Verify your identity</string>
+    <string name="login_check_email">Check your email</string>
+    <string name="login_code_sent">We sent a verification code to your Mi Account.</string>
+    <string name="login_code_sent_to">We sent a verification code to\n%s</string>
+    <string name="login_verify">Verify</string>
+    <string name="login_didnt_get">Didn't get it?</string>
+    <string name="login_resend">Resend</string>
+    <string name="login_browser_trouble">Having trouble? Use browser login instead</string>
+    <string name="login_browser_title">Browser login</string>
+    <string name="login_complete">Complete login</string>
+    <string name="login_step_one">Step 1 · Sign in</string>
+    <string name="login_step_one_detail">Sign in with Xiaomi in the browser, then return here.</string>
+    <string name="login_open_xiaomi">Open Xiaomi login</string>
+    <string name="login_link_copied">Link copied</string>
+    <string name="login_copy_link">Copy login link</string>
+    <string name="login_step_two">Step 2 · Finish here</string>
+    <string name="login_step_two_detail">In the browser, copy the page link after you see “ok”. Then tap below to paste it.</string>
+    <string name="login_link_pasted">Link pasted</string>
+    <string name="login_paste_different">Paste a different link</string>
+    <string name="login_remove_link">Remove pasted link</string>
+    <string name="login_tap_paste">Tap to paste the link</string>
+    <string name="login_copy_from_browser">Copy it from the browser first</string>
+    <string name="login_ready">You’re set — tap Complete login below.</string>
+    <string name="login_tip">Tip: the link should come from the address bar after Xiaomi shows “ok”.</string>
+    <string name="login_nothing_to_paste">Nothing to paste yet. In the browser, copy the page link, then tap here again.</string>
+    <string name="login_invalid_link">That link isn’t the right one. After Xiaomi shows “ok”, copy the link from the address bar and try again.</string>
+    <string name="login_not_web_link">That isn’t a web link. Copy the full page link from the browser’s address bar, then tap paste again.</string>
+    <string name="login_verification_code">Verification code</string>
+    <string name="login_empty">Empty</string>
+    <string name="login_digits">%1$d of %2$d digits</string>
+    <string name="login_send_code_failed">Could not send verification email. Use browser login.</string>
+    <string name="login_failed">Login failed</string>
+    <string name="login_verification_failed">Verification failed</string>
+    <string name="login_browser_required">Email code was accepted, but Xiaomi still needs a one-time browser login to trust this device. Paste the redirect URL below.</string>
+    <string name="login_code_resent">Code resent!</string>
+    <string name="login_resend_failed">Resend failed: %s</string>
+    <string name="login_paste_redirect">Paste the full redirect URL from the address bar first.</string>
+    <string name="login_browser_finish_failed">Could not finish browser login from that URL. Paste the full sts-hlth URL.</string>
+    <string name="login_missing_pass_token">Login did not return a passToken, so the app cannot stay signed in across days. Try again or use the other login method.</string>
+    <string name="login_missing_device_id">Login missing device id — try again.</string>
+
+    <!-- Home -->
+    <string name="home_account">Your account</string>
+    <string name="home_signed_in">Signed in</string>
+    <string name="home_connected">Mi Account · Connected</string>
+    <string name="home_loading_profile">Getting your profile…</string>
+    <string name="home_setup">Setup</string>
+    <string name="home_activity">Activity</string>
+    <string name="home_sync_options">Sync options</string>
+    <string name="home_none_selected">None selected</string>
+    <string name="home_metric_one">1 metric</string>
+    <string name="home_metric_many">%d metrics</string>
+    <string name="home_day_one">1 day</string>
+    <string name="home_day_many">%d days</string>
+    <string name="home_auto_on">Auto-sync on</string>
+    <string name="home_manual">Manual</string>
+    <string name="home_nothing_selected_title">Nothing selected to sync</string>
+    <string name="home_nothing_selected_detail">Choose metrics and range in Settings. Viewed data lives in %s.</string>
+    <string name="home_allow_access_detail">Grant write access so this app can write data to %s.</string>
+    <string name="home_last_sync">Last sync</string>
+    <string name="home_background_sync">Background sync</string>
+    <string name="home_never">Never</string>
+    <string name="home_syncing">Syncing…</string>
+    <string name="home_sync_now">Sync now</string>
+    <string name="home_open_settings">Open Settings</string>
+    <string name="home_failed_suffix">%s · Failed</string>
+    <string name="home_partial_suffix">%s · Partial</string>
+    <string name="home_settings_accessibility">Settings</string>
+    <string name="home_health_accessibility">Opens %s to allow access</string>
+    <string name="home_health_ready_accessibility">Health destination ready</string>
+    <string name="home_settings_hint">Opens Settings to change sync options</string>
+
+    <!-- Sync -->
+    <string name="sync_title">Sync</string>
+    <string name="sync_last_one_day">Last 1 day</string>
+    <string name="sync_last_n_days">Last %d days</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_open_health">Open %s</string>
+    <string name="sync_no_metrics">No metrics enabled — open Settings.</string>
+    <string name="sync_preparing">Preparing…</string>
+    <string name="sync_status_syncing">Syncing</string>
+    <string name="sync_status_done">Done</string>
+    <string name="sync_status_failed">Failed</string>
+    <string name="sync_status_waiting">Waiting</string>
+    <string name="sync_records">%d records</string>
+    <string name="sync_failed">Sync failed</string>
+    <string name="sync_not_logged_in">Not logged in — sign in and try again</string>
+    <string name="sync_nothing_to_sync">Nothing to sync (enable metrics in Settings)</string>
+    <string name="sync_all_metrics_synced">All enabled metrics synced</string>
+    <string name="sync_health_unavailable">%s is not available.</string>
+
+    <!-- Metrics -->
+    <string name="metric_heart_rate">Heart Rate</string>
+    <string name="metric_resting_heart_rate">Resting Heart Rate</string>
+    <string name="metric_sleep">Sleep</string>
+    <string name="metric_hrv">Heart Rate Variability</string>
+    <string name="metric_steps">Steps</string>
+    <string name="metric_distance">Distance</string>
+    <string name="metric_active_calories">Active Calories</string>
+    <string name="metric_spo2">Blood Oxygen (SpO2)</string>
+    <string name="metric_weight">Weight &amp; Body Fat</string>
+    <string name="metric_workouts">Workouts</string>
+    <string name="metric_blood_pressure">Blood Pressure</string>
+    <string name="metric_temperature">Body / Skin Temperature</string>
+    <string name="metric_vo2_max">Maximal Oxygen Consumption (VO2 Max)</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Just now</string>
+    <string name="time_minute_ago">%d min ago</string>
+    <string name="time_hour_one_ago">1 hour ago</string>
+    <string name="time_hour_many_ago">%d hours ago</string>
+    <string name="time_yesterday">Yesterday</string>
+    <string name="time_day_one_ago">1 day ago</string>
+    <string name="time_day_many_ago">%d days ago</string>
+    <string name="time_unknown">Unknown</string>
+
+    <!-- Outcome/status fallbacks -->
+    <string name="outcome_up_to_date">You're up to date</string>
+    <string name="outcome_almost_done">Almost done</string>
+    <string name="outcome_could_not_finish">Couldn't finish</string>
+    <string name="outcome_partial_label">Partial</string>
+    <string name="outcome_please_sign_in">Please sign in</string>
+    <string name="outcome_health_needed">Health app needed</string>
+    <string name="outcome_nothing_to_do">Nothing to do</string>
+    <string name="outcome_stopped">Stopped</string>
+    <string name="outcome_in_progress">Sync in progress</string>
+    <string name="outcome_not_synced">Not synced yet</string>
+    <string name="outcome_success_detail">Mi Fitness synced to Health</string>
+    <string name="outcome_partial_detail">Some items failed — try Sync again</string>
+    <string name="outcome_failed_detail">Check your connection and try again</string>
+    <string name="outcome_login_detail">Sign in with your Mi Account</string>
+    <string name="outcome_health_detail">Open or install the Health app first</string>
+    <string name="outcome_skipped_detail">Turn on items in Settings, then Update</string>
+    <string name="outcome_cancelled_detail">Sync was stopped</string>
+    <string name="outcome_running_detail">A sync is already running</string>
+    <string name="outcome_idle_detail">Tap Sync for your latest activity</string>
+    <string name="outcome_nothing_needed">Nothing needed syncing</string>
+    <string name="outcome_sign_in_again">Please sign in again</string>
+    <string name="outcome_health_unavailable">Health app isn’t available</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_sync_options_loading">Sync options</string>
+    <string name="settings_section_sync_range">Sync range</string>
+    <string name="settings_section_auto_sync">Auto-sync</string>
+    <string name="settings_section_metrics">Metrics</string>
+    <string name="settings_section_status">Status</string>
+    <string name="settings_section_shortcuts">Shortcuts</string>
+    <string name="settings_section_account">Account</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_days_picker">Days</string>
+    <string name="settings_range_1_day">1 day</string>
+    <string name="settings_range_n_days">%d days</string>
+    <string name="settings_background_auto_sync">Background auto-sync</string>
+    <string name="settings_test_background_refresh">Test background refresh</string>
+    <string name="settings_running_refresh">Running 1-day refresh…</string>
+    <string name="settings_test_ok">Test OK — last background refresh should update</string>
+    <string name="settings_partial_ok">Partial OK — some metrics failed (see Sync screen)</string>
+    <string name="settings_skipped">Skipped (turn Auto-sync ON and stay signed in)</string>
+    <string name="settings_not_signed_in">Not signed in</string>
+    <string name="settings_cancelled">Cancelled</string>
+    <string name="settings_failed_status">Failed (%s)</string>
+    <string name="settings_last_sync">Last sync</string>
+    <string name="settings_last_background_sync">Last background sync</string>
+    <string name="settings_shortcuts_help">Use the “Sync Better Mi Fitness” App Intent or Shortcuts for manual background runs.</string>
+    <string name="settings_log_out">Log out</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_credit">Credit</string>
+    <string name="settings_credit_name">Ilyasa Fathur Rahman (ilyasaftr)</string>
+    <string name="background_android_status">Background sync uses WorkManager (~hourly when network is available; not exact-time).</string>
+    <string name="background_simulator_status">Simulator: system never auto-fires BGAppRefresh. Use “Test 1-day refresh” or bettermifitness://debug/bg-refresh</string>
+    <string name="background_on">Background App Refresh is on</string>
+    <string name="background_off">Background App Refresh is off — enable it in Settings → General → Background App Refresh</string>
+    <string name="background_restricted">Background App Refresh is restricted on this device</string>
+    <string name="background_unknown">Background App Refresh status unknown</string>
+    <string name="background_unknown_status">Unknown</string>
+</resources>
