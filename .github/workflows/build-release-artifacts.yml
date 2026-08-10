@@ -113,11 +113,11 @@ jobs:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
 
-      # Full Gradle home + build-cache write on main; PRs/tags still read shared caches
+      # Keep PR caches read-only; trusted pushes/tags/manual runs may populate the shared cache.
       - name: Setup Gradle (max cache)
         uses: gradle/actions/setup-gradle@v5
         with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
           cache-cleanup: on-success
           gradle-home-cache-includes: |
             caches
@@ -238,7 +238,7 @@ jobs:
       - name: Setup Gradle (max cache)
         uses: gradle/actions/setup-gradle@v5
         with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
           cache-cleanup: on-success
           gradle-home-cache-includes: |
             caches
@@ -320,7 +320,6 @@ jobs:
           ./gradlew :composeApp:linkReleaseFrameworkIosArm64
           -Dorg.gradle.jvmargs="-Xmx6g -Dkotlin.daemon.jvm.options=-Xmx6g"
           --stacktrace --build-cache --configuration-cache
-          --no-configuration-cache
 
       # Xcode DerivedData for Swift / link steps (secondary to Konan)
       - name: Cache Xcode DerivedData
