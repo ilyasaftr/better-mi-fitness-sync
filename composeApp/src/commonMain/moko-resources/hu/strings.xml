@@ -43,11 +43,11 @@
     <string name="login_remove_link">A beillesztett link eltávolítása</string>
     <string name="login_tap_paste">Koppintson a link beillesztéséhez</string>
     <string name="login_copy_from_browser">Előbb másolja ki a böngészőből</string>
-    <string name="login_ready">Kész is van — érintse meg az alábbi „Bejelentkezés befejezése” gombot.</string>
+    <string name="login_ready">Kész is van — érintse meg az alábbi "Bejelentkezés befejezése" gombot.</string>
     <string name="login_tip">Tipp: a linket a címsorból kell beilleszteni, miután a Xiaomi kiírja az "OK" üzenetet.</string>
     <string name="login_nothing_to_paste">Még nincs mit beilleszteni. A böngészőben másolja ki az oldal linkjét, majd érintse meg újra ezt a helyet.</string>
     <string name="login_invalid_link">Ez a link nem a megfelelő. Miután a Xiaomi "OK" üzenetet kiírja, másolja ki a linket a címsorból, és próbálja meg újra.</string>
-    <string name="login_not_web_link">Ez nem egy webcím. Másolja ki a teljes oldal címét a böngésző címsorából, majd érintse meg újra a „Beillesztés” gombot.</string>
+    <string name="login_not_web_link">Ez nem egy webcím. Másolja ki a teljes oldal címét a böngésző címsorából, majd érintse meg újra a "Beillesztés" gombot.</string>
     <string name="login_verification_code">Ellenőrző kód</string>
     <string name="login_empty">Üres</string>
     <string name="login_digits">%1$d / %2$d számjegy</string>
@@ -78,10 +78,10 @@
     <string name="home_auto_on">Automatikus szinkronizálás be</string>
     <string name="home_manual">Kézi</string>
     <string name="home_nothing_selected_title">Nincs semmi kiválasztva szinkronizálásra</string>
-    <string name="home_nothing_selected_detail">Válassza ki az elemeket és az időt a Beállításokban. A megtekintett adatok itt találhatók: %s.</string>
+    <string name="home_nothing_selected_detail">Válassza ki az elemeket és az időtávot a Beállításokban. A megtekintett adatok itt találhatók: %s.</string>
     <string name="home_allow_access_detail">Írási hozzáférést ad, hogy az alkalmazás adatokat írhasson ide: %s.</string>
     <string name="home_last_sync">Utolsó szinkronizálás</string>
-    <string name="home_background_sync">Háttérben szinkronizálás</string>
+    <string name="home_background_sync">Szinkronizálás háttérben</string>
     <string name="home_never">Soha</string>
     <string name="home_syncing">Szinkronizálás…</string>
     <string name="home_sync_now">Szinkronizálás most</string>
@@ -116,15 +116,15 @@
     <string name="metric_heart_rate">Pulzusszám</string>
     <string name="metric_resting_heart_rate">Nyugalmi pulzusszám</string>
     <string name="metric_sleep">Alvás</string>
-    <string name="metric_hrv">Pulzusszám variabilitás</string>
-    <string name="metric_steps">Lépés</string>
+    <string name="metric_hrv">Pulzusszám variabilitás (HRV)</string>
+    <string name="metric_steps">Lépésszám</string>
     <string name="metric_distance">Távolság</string>
     <string name="metric_active_calories">Aktív kalóriák</string>
     <string name="metric_spo2">Véroxigén (SpO2)</string>
     <string name="metric_weight">Súly &amp; Testzsír</string>
     <string name="metric_workouts">Edzések</string>
     <string name="metric_blood_pressure">Vérnyomás</string>
-    <string name="metric_temperature">Test /Bőr hőmérséklet</string>
+    <string name="metric_temperature">Test / Bőr hőmérséklet</string>
     <string name="metric_vo2_max">Maximális oxigénfelvétel (VO2 Max)</string>
 
     <!-- Relative time -->
@@ -174,7 +174,7 @@
     <string name="settings_days_picker">Nap</string>
     <string name="settings_range_1_day">1 nap</string>
     <string name="settings_range_n_days">%d nap</string>
-    <string name="settings_background_auto_sync">Háttér automatikus szinkronizálás</string>
+    <string name="settings_background_auto_sync">Szinkronizálás automatikusan háttérben</string>
     <string name="settings_test_background_refresh">Háttér frissítés teszt</string>
     <string name="settings_running_refresh">1 napos frissítés futtatása…</string>
     <string name="settings_test_ok">Teszt OK — az utolsó háttérfrissítésnek frissülnie kell</string>
@@ -184,7 +184,7 @@
     <string name="settings_cancelled">Törölve</string>
     <string name="settings_failed_status">Sikertelen (%s)</string>
     <string name="settings_last_sync">Utolsó szinkronizálás</string>
-    <string name="settings_last_background_sync">Utolsó háttér szinkronizálás</string>
+    <string name="settings_last_background_sync">Utolsó szinkronizálás háttérben</string>
     <string name="settings_shortcuts_help">Használja a “Sync Better Mi Fitness” alkalmazás cél vagy gyorsbillentyűjét a kézi háttérben futtatáshoz.</string>
     <string name="settings_log_out">Kijelentkezés</string>
     <string name="settings_version">Verzió</string>
