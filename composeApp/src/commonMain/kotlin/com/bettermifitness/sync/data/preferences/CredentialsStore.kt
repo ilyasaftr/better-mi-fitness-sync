@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mifitness.miclient.auth.MiCredentials
 import com.mifitness.miclient.auth.MiRegion
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -17,6 +18,9 @@ class CredentialsStore(
     private val dataStore: DataStore<Preferences>,
 ) : CredentialsPort {
     override val token: Flow<String?> = dataStore.data.map { it[TOKEN_KEY] }
+
+    override val lastRefreshTime: Flow<String?> =
+        dataStore.data.map { it[LAST_REFRESH_KEY] }
 
     val miUserId: Flow<String?> = dataStore.data.map { it[MI_USER_ID_KEY] }
 
@@ -55,7 +59,13 @@ class CredentialsStore(
             }
             // Drop legacy manual mode key if present
             preferences.remove(REGION_MODE_KEY)
+            // Mark token freshness for proactive 1-day refresh on app open.
+            preferences[LAST_REFRESH_KEY] = Clock.System.now().toString()
         }
+    }
+
+    override suspend fun updateLastRefreshTime(timestamp: String) {
+        dataStore.edit { it[LAST_REFRESH_KEY] = timestamp }
     }
 
     override suspend fun loadCredentials(): MiCredentials? {
@@ -111,6 +121,7 @@ class CredentialsStore(
             preferences.remove(PASS_TOKEN_KEY)
             preferences.remove(DEVICE_ID_KEY)
             preferences.remove(C_USER_ID_KEY)
+            preferences.remove(LAST_REFRESH_KEY)
         }
     }
 
@@ -126,5 +137,6 @@ class CredentialsStore(
         private val PASS_TOKEN_KEY = stringPreferencesKey("pass_token")
         private val DEVICE_ID_KEY = stringPreferencesKey("device_id")
         private val C_USER_ID_KEY = stringPreferencesKey("c_user_id")
+        private val LAST_REFRESH_KEY = stringPreferencesKey("last_token_refresh_time")
     }
 }

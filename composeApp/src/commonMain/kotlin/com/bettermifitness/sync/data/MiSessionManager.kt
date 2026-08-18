@@ -7,6 +7,9 @@ import com.mifitness.miclient.api.MiDataClient
 import com.mifitness.miclient.auth.MiAuth
 import com.mifitness.miclient.auth.MiAuthException
 import com.mifitness.miclient.auth.MiCredentials
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -116,4 +119,42 @@ class MiSessionManager(
      * @return true if refresh succeeded
      */
     suspend fun refreshSession(): Boolean = refreshSessionDetailed().isSuccess
+
+    /**
+     * Proactive refresh: when the app is opened and the last successful token
+     * refresh/login is older than [threshold] (default 1 day), re-mint
+     * serviceToken via passToken so the 4-5 day Xiaomi expiry never hits
+     * while the app is being used regularly.
+     *
+     * Best-effort: returns null when fresh, otherwise the refresh result.
+     * Callers should ignore TransientFailure and keep the current session.
+     */
+    suspend fun refreshIfStale(
+        threshold: kotlin.time.Duration = 1.days,
+        clock: Clock = Clock.System,
+    ): SessionRefreshResult? {
+        // No session at all — nothing to refresh proactively.
+        val creds = credentialsStore.loadCredentials() ?: return null
+        if (creds.passToken.isBlank() || creds.deviceId.isBlank()) return null
+
+        val lastStr = try {
+            credentialsStore.lastRefreshTime.first()
+        } catch (_: Exception) {
+            null
+        }
+        val now = clock.now()
+        if (lastStr != null) {
+            val last = try {
+                kotlin.time.Instant.parse(lastStr)
+            } catch (_: Exception) {
+                null
+            }
+            if (last != null && now - last < threshold) {
+                return null // fresh — skip network
+            }
+        }
+        // Stale or unknown age (legacy installs where key is missing) → refresh.
+        // refreshSessionDetailed is mutex-protected and persists new timestamp on save.
+        return refreshSessionDetailed()
+    }
 }

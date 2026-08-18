@@ -119,6 +119,29 @@ class SyncCoordinator(
             return notLoggedInOrSkipped(userInitiated, requireAutoSync)
         }
 
+        // Proactive 1-day refresh before any Mi call (covers background + foreground sync).
+        // Best-effort: if it returns NeedsReLogin/NeedsVerification we let the real
+        // sync surface it; TransientFailure is ignored to keep current token.
+        try {
+            // SyncSessionPort may be a fake in tests — only MiSessionManager has this.
+            val mgr = session as? com.bettermifitness.sync.data.MiSessionManager
+            val proactive = mgr?.refreshIfStale()
+            if (proactive is com.bettermifitness.sync.data.SessionRefreshResult.NeedsReLogin ||
+                proactive is com.bettermifitness.sync.data.SessionRefreshResult.NeedsVerification
+            ) {
+                return if (userInitiated && !requireAutoSync) {
+                    SyncOutcome.NotLoggedIn
+                } else {
+                    SyncOutcome.Failed(
+                        message = proactive.userMessage,
+                        retryable = false,
+                    )
+                }
+            }
+        } catch (_: Exception) {
+            // Ignore — fall through to normal sync which will retry on AuthExpired.
+        }
+
         if (!healthAvailability.isAvailable()) {
             return SyncOutcome.HealthUnavailable
         }

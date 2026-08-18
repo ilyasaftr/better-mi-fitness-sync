@@ -155,6 +155,23 @@ class HomeViewModel(
     init {
         loadProfile()
         refreshHealthReadiness()
+        // Proactive 1-day refresh when the app is opened (before 4-5d expiry).
+        viewModelScope.launch {
+            try {
+                val result = session.refreshIfStale()
+                // If proactive refresh succeeded, reload profile so Home shows fresh auth.
+                if (result?.isSuccess == true) {
+                    try {
+                        _profile.value = session.api.getMe()
+                        _profileError.value = null
+                    } catch (_: Exception) {
+                        // Non-fatal — next loadProfile/sync will surface the error.
+                    }
+                }
+            } catch (_: Exception) {
+                // Best-effort: stale refresh must never crash app open.
+            }
+        }
     }
 
     fun loadProfile() {

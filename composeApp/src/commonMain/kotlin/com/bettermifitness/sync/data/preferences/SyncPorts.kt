@@ -2,12 +2,15 @@ package com.bettermifitness.sync.data.preferences
 
 import com.mifitness.miclient.auth.MiCredentials
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 /** ISP: auth token + credentials used by sync policy. */
 interface CredentialsPort {
     val token: Flow<String?>
+    val lastRefreshTime: Flow<String?> get() = emptyFlow()
     suspend fun loadCredentials(): MiCredentials?
     suspend fun saveCredentials(credentials: MiCredentials)
+    suspend fun updateLastRefreshTime(timestamp: String) {}
 }
 
 /** ISP: sync settings + last-run outcome persistence. */
