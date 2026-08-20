@@ -668,7 +668,7 @@ class MiAuth(
      * (like `XMPassport.refreshPassToken`). Returns new passToken + psecurity on success,
      * null otherwise. Used as fallback when `serviceLogin` returns 70016 before asking for
      * browser verification — matches Mi Fitness’s ability to stay logged in without
-     * re-entering password for >7d.
+     * re-entering password for >7d. Also handles Extension-Pragma `ssecurity` like APK.
      */
     private suspend fun tryRefreshPassTokenDedicated(
         client: HttpClient,
@@ -679,30 +679,50 @@ class MiAuth(
     ): Pair<String, String>? {
         return try {
             val url = "https://account.xiaomi.com/pass/login/passtoken/refresh?reason=renew"
-            // Fid stable fallback from deviceId (APK uses FidManager, we use deviceId hash)
+            // Fid stable fallback from deviceId (APK uses FidManager.getFid, we use deviceId)
+            // Also include uLocale like APK does for refreshPassToken
             val fid = deviceId
+            val uLocale = "en_US"
             val response = client.get(url) {
                 header("User-Agent", userAgent)
-                header("Cookie", "userId=$userId; passToken=$passToken; deviceId=$deviceId; fid=$fid")
+                header("Cookie", "userId=$userId; passToken=$passToken; deviceId=$deviceId; fid=$fid; uLocale=$uLocale")
             }
             val body = PassportAuthUtils.stripJsonPrefix(response.bodyAsText())
             val obj = try { json.parseToJsonElement(body).jsonObject } catch (_: Exception) { return null }
             val code = obj["code"]?.jsonPrimitive?.int ?: -1
             if (code != 0) return null
             val dataObj = obj["data"]?.jsonObject
-            val psecurity = dataObj?.get("psecurity")?.jsonPrimitive?.content ?: ""
+            // APK returns psecurity in data.psecurity, sometimes ssecurity via Extension-Pragma
+            var psecurity = dataObj?.get("psecurity")?.jsonPrimitive?.content ?: ""
+            if (psecurity.isEmpty()) {
+                // Fallback to Extension-Pragma header like harvestSsecurity does
+                val pragma = response.headers["Extension-Pragma"] ?: response.headers["extension-pragma"]
+                if (pragma != null) {
+                    psecurity = PassportAuthUtils.parseJsonField(pragma, "psecurity")
+                    if (psecurity.isEmpty()) psecurity = PassportAuthUtils.parseJsonField(pragma, "ssecurity")
+                }
+            }
             val newPass = response.headers["passToken"]
                 ?: response.headers["PassToken"]
                 ?: response.headers["pass-token"]
+                ?: response.headers["re-pass-token"]
+                ?: response.headers["Re-Pass-Token"]
                 ?: obj["passToken"]?.jsonPrimitive?.content
+                ?: dataObj?.get("passToken")?.jsonPrimitive?.content
                 ?: ""
-            if (newPass.isNotEmpty() && psecurity.isNotEmpty()) {
-                // Update cookie storage so next serviceLogin uses fresh token
+            if (newPass.isNotEmpty()) {
+                // Update cookie storage so next serviceLogin uses fresh token; persist psecurity
+                // via ssecurity field if present (psecurity == ssecurity for passport)
                 cookieStorage.addCookie(
                     Url("https://account.xiaomi.com/"),
                     Cookie(name = "passToken", value = newPass, domain = ".xiaomi.com", path = "/"),
                 )
+                // If psecurity is present, store as ssecurity for next STS (like APK)
+                // Return even if psecurity is empty — passToken renewal alone can unblock 70016
                 newPass to psecurity
+            } else if (psecurity.isNotEmpty()) {
+                // Rare case where only psecurity rotated
+                passToken to psecurity
             } else null
         } catch (_: Exception) {
             null
