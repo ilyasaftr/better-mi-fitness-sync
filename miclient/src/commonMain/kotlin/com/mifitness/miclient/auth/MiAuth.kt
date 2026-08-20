@@ -368,6 +368,19 @@ class MiAuth(
             val desc = obj["desc"]?.jsonPrimitive?.content
                 ?: obj["description"]?.jsonPrimitive?.content
                 ?: "passToken login failed"
+            // 70016 is “login verification failed” — often a browser verification step,
+            // not a plain bad password. Surface as NeedsVerification with the login location
+            // so the UI can open the Xiaomi verification WebView (like Mi Fitness does).
+            if (code == 70016) {
+                val loc = obj["location"]?.jsonPrimitive?.content
+                throw MiAuthException(
+                    PassportAuthUtils.friendlyLoginError(code, desc) +
+                        " — Xiaomi requires re-verification",
+                    kind = MiAuthException.Kind.NeedsVerification,
+                    notificationUrl = loc?.let { PassportAuthUtils.absUrl(it) },
+                    businessCode = code,
+                )
+            }
             throw MiAuthException(
                 PassportAuthUtils.friendlyLoginError(code, desc),
                 kind = MiAuthException.Kind.InvalidCredential,
