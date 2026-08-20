@@ -34,6 +34,9 @@ class MiDataClient(
     /** The regional data host for this user (e.g. "sg.hlth.io.mi.com"). */
     val healthHost: String = buildHealthHost(credentials.region)
 
+    /** Device-scoped phone identifier for fitness data uploads (APK `phoneId`). */
+    val phoneId: String get() = credentials.deviceId.ifBlank { "xiaomiwear_app_manually" }
+
     /**
      * Sends an encrypted POST request and returns the decrypted JSON response.
      *

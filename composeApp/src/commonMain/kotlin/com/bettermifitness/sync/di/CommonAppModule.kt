@@ -43,10 +43,11 @@ fun commonAppModule(): Module = module {
     // Platform module registers HealthWriter; bind ISP ports to the same instance.
     single<HealthStore> { get<HealthWriter>() }
     single<HealthSampleWriter> { get<HealthWriter>() }
+    single<com.bettermifitness.sync.health.HealthWeightReader> { get<HealthWriter>() }
     single<HealthAvailability> { get<HealthWriter>() }
     single<HealthPermissionRequester> { get<HealthWriter>() }
 
-    single { HealthRepository(get(), get<HealthSampleWriter>()) }
+    single { HealthRepository(get(), get<HealthStore>()) }
     single<HealthSyncRunner> { get<HealthRepository>() }
     single {
         SyncCoordinator(

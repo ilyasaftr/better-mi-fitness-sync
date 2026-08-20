@@ -3,12 +3,16 @@ package com.bettermifitness.sync.data.repository
 import com.bettermifitness.sync.data.MiSessionManager
 import com.bettermifitness.sync.data.SessionRefreshResult
 import com.bettermifitness.sync.data.api.HeartRateEntry
+import com.bettermifitness.sync.data.api.WeightMeasurement
 import com.bettermifitness.sync.data.api.WorkoutSession
 import com.bettermifitness.sync.data.parse.MiFitnessParsers
 import com.bettermifitness.sync.data.parse.toRaw
 import com.bettermifitness.sync.data.preferences.SyncPreferences
-import com.bettermifitness.sync.health.HealthSampleWriter
+import com.bettermifitness.sync.health.HealthDataNormalizer
+import com.bettermifitness.sync.health.HealthStore
+import com.bettermifitness.sync.health.HealthTimePolicy
 import com.mifitness.miclient.api.MiApiException
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,10 +44,14 @@ sealed class SyncState {
  * Orchestrates Mi fetch → parse → platform health write.
  * Each metric fails independently; one bad metric does not abort the rest.
  * On [MiApiException.AuthExpired], attempts a single passToken refresh for the whole run.
+ *
+ * Weight is bidirectional latest-only (sparse weigh-ins) — newest timestamp wins
+ * regardless of sync window. Body-fat rides with weight when present but is not
+ * a separate bidirectional metric (Mi has no standalone body-fat input). Other metrics remain window-based.
  */
 class HealthRepository(
     private val session: MiSessionManager,
-    private val healthWriter: HealthSampleWriter,
+    private val healthWriter: HealthStore,
 ) : HealthSyncRunner {
     private val _syncProgress = MutableStateFlow(SyncProgress())
     override val syncProgress: StateFlow<SyncProgress> = _syncProgress.asStateFlow()
@@ -76,7 +84,7 @@ class HealthRepository(
         if ("distance" in enabled) syncDistance(from, to)
         if ("active_calories" in enabled) syncActiveCalories(from, to)
         if ("spo2" in enabled) syncSpO2(from, to)
-        if ("weight" in enabled) syncWeight(from, to)
+        if ("weight" in enabled) syncWeightBidirectional()
         if ("workouts" in enabled) syncWorkouts(from, to)
         if ("blood_pressure" in enabled) syncBloodPressure(from, to)
         if ("temperature" in enabled) syncTemperature(from, to)
@@ -178,14 +186,82 @@ class HealthRepository(
         }
     }
 
-    suspend fun syncWeight(from: String, to: String) {
+    /**
+     * Bidirectional weight sync — latest-only LWW (no sync-window).
+     * Weight is sparse (weekly/monthly) so we compare the single newest record
+     * per platform regardless of [from]/[to]. Newer wins; same timestamp+different
+     * weight with newer timestamp still wins. Loop filtered via HealthStore (mifit-* / packageName).
+     */
+    suspend fun syncWeightBidirectional() {
         runMetric("weight") {
-            val measurements = MiFitnessParsers.parseWeightMeasurements(
-                fetchAllByTime("weight", from, to).map { it.toRaw() },
-            )
-            if (measurements.isNotEmpty()) healthWriter.writeWeight(measurements)
-            measurements.size
+            val miLatest = getMiLatestWeight()
+            val hcLatest = try { healthWriter.readLatestWeight() } catch (_: Exception) { null }
+
+            // Both empty
+            if (miLatest == null && hcLatest == null) return@runMetric 0
+
+            // Only one side has data
+            if (miLatest == null && hcLatest != null) {
+                // HC newer -> Mi
+                val ok = api.uploadWeight(hcLatest)
+                return@runMetric if (ok) 1 else throw IllegalStateException("Mi weight upload failed")
+            }
+            if (miLatest != null && hcLatest == null) {
+                healthWriter.writeWeight(listOf(miLatest))
+                return@runMetric 1
+            }
+
+            // Both present — LWW
+            val mi = miLatest!!
+            val hc = hcLatest!!
+            val deltaSec = hc.timestamp - mi.timestamp
+            val weightDiff = kotlin.math.abs(hc.weightKg - mi.weightKg)
+            // Same instant and effectively same weight -> already synced
+            if (kotlin.math.abs(deltaSec) < 60 && weightDiff < 0.05) return@runMetric 0
+            if (deltaSec > 60) {
+                // HC newer -> Mi (preserve timestamp)
+                val ok = api.uploadWeight(hc)
+                if (!ok) throw IllegalStateException("Mi weight upload failed")
+                1
+            } else if (deltaSec < -60) {
+                // Mi newer -> HC
+                healthWriter.writeWeight(listOf(mi))
+                1
+            } else {
+                // Within 60s threshold but different weight: treat larger timestamp as winner
+                if (hc.timestamp > mi.timestamp) {
+                    val ok = api.uploadWeight(hc)
+                    if (!ok) throw IllegalStateException("Mi weight upload failed")
+                    1
+                } else if (mi.timestamp > hc.timestamp) {
+                    healthWriter.writeWeight(listOf(mi))
+                    1
+                } else {
+                    0
+                }
+            }
         }
+    }
+
+    /** Legacy window-based weight (kept for tests); now delegates to bidirectional. */
+    suspend fun syncWeight(from: String, to: String) { syncWeightBidirectional() }
+
+    private suspend fun getMiLatestWeight(): WeightMeasurement? {
+        // Primary: getLatest (server-side latest regardless of time)
+        val latestViaLatest = try {
+            val res = api.getLatest("weight", limit = 5)
+            val list = MiFitnessParsers.parseWeightMeasurements(res.result?.dataList.orEmpty().map { it.toRaw() })
+            HealthDataNormalizer.normalizeWeight(list).maxByOrNull { it.timestamp }
+        } catch (_: Exception) { null }
+        if (latestViaLatest != null) return latestViaLatest
+        // Fallback: broad by-time window (covers legacy / CN quirks)
+        return try {
+            val nowSec = HealthTimePolicy.nowEpochSeconds()
+            val from = "1970-01-01T00:00:00Z"
+            val to = Clock.System.now().toString()
+            val list = MiFitnessParsers.parseWeightMeasurements(fetchAllByTime("weight", from, to).map { it.toRaw() })
+            HealthDataNormalizer.normalizeWeight(list).maxByOrNull { it.timestamp }
+        } catch (_: Exception) { null }
     }
 
     suspend fun syncWorkouts(from: String, to: String) {

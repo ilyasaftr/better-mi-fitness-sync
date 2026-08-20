@@ -15,8 +15,13 @@ import com.bettermifitness.sync.data.api.WeightMeasurement
 import com.bettermifitness.sync.data.api.WorkoutSession
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDate
+import platform.Foundation.NSSortDescriptor
 import platform.Foundation.NSURL
 import platform.Foundation.dateWithTimeIntervalSince1970
+import platform.Foundation.distantPast
+import platform.Foundation.distantFuture
+import platform.HealthKit.HKQuery
+import platform.HealthKit.HKSampleQuery
 import platform.HealthKit.HKCategoryTypeIdentifierSleepAnalysis
 import platform.HealthKit.HKCorrelation
 import platform.HealthKit.HKCorrelationType
@@ -452,6 +457,79 @@ actual class HealthWriter : HealthStore {
         saveSamples(hkSamples)
     }
 
+    actual override suspend fun readLatestWeight(): WeightMeasurement? {
+        val identifier = HKQuantityTypeIdentifierBodyMass ?: return null
+        return readLatestQuantity(identifier)
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    private suspend fun readLatestQuantity(
+        identifier: String,
+    ): WeightMeasurement? {
+        if (!HKHealthStore.isHealthDataAvailable()) return null
+        val type = HKQuantityType.quantityTypeForIdentifier(identifier) ?: return null
+        // Fetch up to 50 latest to skip self-written records
+        return suspendCoroutine { continuation ->
+            val sort = NSSortDescriptor.sortDescriptorWithKey("startDate", ascending = false)
+            // Use no predicate (null) to fetch all time; predicate API varies across SDKs
+            val predicate = null
+            @Suppress("UNCHECKED_CAST")
+            val query = HKSampleQuery(
+                sampleType = type,
+                predicate = predicate,
+                limit = 50UL,
+                sortDescriptors = listOf(sort),
+            ) { _, results, error ->
+                if (error != null) {
+                    continuation.resume(null)
+                    return@HKSampleQuery
+                }
+                val samples = results as? List<HKQuantitySample> ?: run {
+                    continuation.resume(null)
+                    return@HKSampleQuery
+                }
+                for (sample in samples) {
+                    val meta = sample.metadata
+                    val syncId = meta?.get(HKMetadataKeySyncIdentifier) as? String
+                    if (syncId?.startsWith("mifit-") == true) continue
+                    // Also skip if bundle identifier matches self (HealthKit sourceRevision)
+                    val sourceId = try {
+                        sample.sourceRevision.source.bundleIdentifier
+                    } catch (_: Exception) { null }
+                    // If we can detect self source, skip; but metadata prefix is primary
+                    // Allow any non-self record
+                    val quantity = sample.quantity
+                    val value = try {
+                        val kgUnit = HKUnit.unitFromString("kg")
+                        val kg = quantity.doubleValueForUnit(kgUnit)
+                        if (kg !in 1.0..500.0) continue
+                        kg
+                    } catch (_: Exception) { continue }
+                    val ts = (sample.startDate.timeIntervalSinceReferenceDate +
+                        978307200.0).toLong()
+                    if (!HealthTimePolicy.isNotFuture(ts, HealthTimePolicy.nowEpochSeconds())) {
+                        continue
+                    }
+                    val measurement = WeightMeasurement(
+                        timestamp = ts,
+                        weightKg = value,
+                        tzIn15Min = null,
+                    )
+                    // Normalize via HealthDataNormalizer for plausibility
+                    val normalized = HealthDataNormalizer.normalizeWeight(
+                        listOf(measurement),
+                    ).firstOrNull()
+                    if (normalized != null) {
+                        continuation.resume(normalized)
+                        return@HKSampleQuery
+                    }
+                }
+                continuation.resume(null)
+            }
+            healthStore.executeQuery(query)
+        }
+    }
+
     actual override suspend fun isAvailable(): Boolean {
         return HKHealthStore.isHealthDataAvailable()
     }
@@ -473,10 +551,13 @@ actual class HealthWriter : HealthStore {
         if (types.isEmpty()) {
             throw Exception("No HealthKit types available to request")
         }
+        val readTypes: Set<platform.HealthKit.HKObjectType> = buildSet {
+            HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass)?.let { add(it) }
+        }
         suspendCoroutine { continuation ->
             healthStore.requestAuthorizationToShareTypes(
                 typesToShare = types,
-                readTypes = emptySet<platform.HealthKit.HKObjectType>(),
+                readTypes = readTypes,
             ) { _, error ->
                 // Apple’s success flag means the sheet finished — not that types were granted.
                 if (error != null) {
