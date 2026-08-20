@@ -24,6 +24,7 @@ import kotlinx.serialization.json.long
  * Session refresh follows the official passport path:
  * passToken cookies → `/pass/serviceLogin` → signed STS (`clientSign`) → new serviceToken.
  */
+@Suppress("LargeClass")
 class MiAuth(
     private val userAgent: String = PassportAuthUtils.DEFAULT_USER_AGENT,
 ) : MiAuthHost {
@@ -369,9 +370,50 @@ class MiAuth(
                 ?: obj["description"]?.jsonPrimitive?.content
                 ?: "passToken login failed"
             // 70016 is “login verification failed” — often a browser verification step,
-            // not a plain bad password. Surface as NeedsVerification with the login location
-            // so the UI can open the Xiaomi verification WebView (like Mi Fitness does).
+            // not a plain bad password. Try dedicated passToken refresh first (like
+            // XMPassport.refreshPassToken via /pass/login/passtoken/refresh), then
+            // surface as NeedsVerification with the login location so the UI can open
+            // the Xiaomi verification WebView (like Mi Fitness does).
             if (code == 70016) {
+                // Try one automatic passToken renewal before asking user to verify.
+                val refreshed = tryRefreshPassTokenDedicated(
+                    client = client,
+                    cookieStorage = cookieStorage,
+                    userId = userId,
+                    passToken = passToken,
+                    deviceId = deviceId,
+                )
+                if (refreshed != null) {
+                    // Retry serviceLogin once with the new passToken.
+                    cookieStorage.addCookie(
+                        Url("https://account.xiaomi.com/"),
+                        Cookie(name = "passToken", value = refreshed.first, domain = ".xiaomi.com", path = "/"),
+                    )
+                    // Re-enter with fresh passToken (avoid infinite recursion by direct GET)
+                    val retryResponse = client.get(loginUrl) {
+                        header("User-Agent", userAgent)
+                    }
+                    val retryBody = PassportAuthUtils.stripJsonPrefix(retryResponse.bodyAsText())
+                    val retryObj = try {
+                        json.parseToJsonElement(retryBody).jsonObject
+                    } catch (_: Exception) { null }
+                    val retryCode = retryObj?.get("code")?.jsonPrimitive?.int ?: -1
+                    if (retryCode == 0) {
+                        // Success — continue with the new obj (ssecurity, location, etc.)
+                        // Fall through to securityStatus handling below by re-assigning.
+                        // To keep flow simple, return early via recursion with new passToken.
+                        return loginWithPassTokenCookies(
+                            client = client,
+                            cookieStorage = cookieStorage,
+                            deviceId = deviceId,
+                            sid = sid,
+                            callback = callback,
+                            previousPassToken = refreshed.first,
+                            previousCUserId = previousCUserId,
+                        )
+                    }
+                    // If retry still 70016, fall through to verification.
+                }
                 val loc = obj["location"]?.jsonPrimitive?.content
                 throw MiAuthException(
                     PassportAuthUtils.friendlyLoginError(code, desc) +
@@ -619,6 +661,52 @@ class MiAuth(
             currentUrl = PassportAuthUtils.absUrl(redirectUrl)
         }
         return serviceToken to region
+    }
+
+    /**
+     * Best-effort dedicated passToken refresh via `/pass/login/passtoken/refresh`
+     * (like `XMPassport.refreshPassToken`). Returns new passToken + psecurity on success,
+     * null otherwise. Used as fallback when `serviceLogin` returns 70016 before asking for
+     * browser verification — matches Mi Fitness’s ability to stay logged in without
+     * re-entering password for >7d.
+     */
+    private suspend fun tryRefreshPassTokenDedicated(
+        client: HttpClient,
+        cookieStorage: AcceptAllCookiesStorage,
+        userId: String,
+        passToken: String,
+        deviceId: String,
+    ): Pair<String, String>? {
+        return try {
+            val url = "https://account.xiaomi.com/pass/login/passtoken/refresh?reason=renew"
+            // Fid stable fallback from deviceId (APK uses FidManager, we use deviceId hash)
+            val fid = deviceId
+            val response = client.get(url) {
+                header("User-Agent", userAgent)
+                header("Cookie", "userId=$userId; passToken=$passToken; deviceId=$deviceId; fid=$fid")
+            }
+            val body = PassportAuthUtils.stripJsonPrefix(response.bodyAsText())
+            val obj = try { json.parseToJsonElement(body).jsonObject } catch (_: Exception) { return null }
+            val code = obj["code"]?.jsonPrimitive?.int ?: -1
+            if (code != 0) return null
+            val dataObj = obj["data"]?.jsonObject
+            val psecurity = dataObj?.get("psecurity")?.jsonPrimitive?.content ?: ""
+            val newPass = response.headers["passToken"]
+                ?: response.headers["PassToken"]
+                ?: response.headers["pass-token"]
+                ?: obj["passToken"]?.jsonPrimitive?.content
+                ?: ""
+            if (newPass.isNotEmpty() && psecurity.isNotEmpty()) {
+                // Update cookie storage so next serviceLogin uses fresh token
+                cookieStorage.addCookie(
+                    Url("https://account.xiaomi.com/"),
+                    Cookie(name = "passToken", value = newPass, domain = ".xiaomi.com", path = "/"),
+                )
+                newPass to psecurity
+            } else null
+        } catch (_: Exception) {
+            null
+        }
     }
 
     private suspend fun harvestSsecurity(
