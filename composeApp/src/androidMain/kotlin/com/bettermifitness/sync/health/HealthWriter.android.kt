@@ -18,6 +18,7 @@ import androidx.health.connect.client.records.HeartRateVariabilityRmssdRecord
 import androidx.health.connect.client.records.OxygenSaturationRecord
 import androidx.health.connect.client.records.PowerRecord
 import androidx.health.connect.client.records.RestingHeartRateRecord
+import com.bettermifitness.sync.data.time.MiTimezone
 import androidx.health.connect.client.records.SkinTemperatureRecord
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.SpeedRecord
@@ -33,6 +34,8 @@ import androidx.health.connect.client.units.Percentage
 import androidx.health.connect.client.units.Pressure
 import androidx.health.connect.client.units.Temperature
 import androidx.health.connect.client.units.TemperatureDelta
+import androidx.health.connect.client.request.ReadRecordsRequest
+import androidx.health.connect.client.time.TimeRangeFilter
 import com.bettermifitness.sync.data.api.ActiveCaloriesSample
 import com.bettermifitness.sync.data.api.BloodPressureSample
 import com.bettermifitness.sync.data.api.DistanceSample
@@ -87,6 +90,29 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             perms += HealthPermission.getWritePermission(SkinTemperatureRecord::class)
         }
         return perms
+    }
+
+    private fun availableReadPermissions(): Set<String> = setOf(
+        HealthPermission.getReadPermission(WeightRecord::class),
+    )
+
+    private fun availablePermissions(): Set<String> =
+        availableWritePermissions() + availableReadPermissions()
+
+    private fun zoneOffsetToMiUnits(zoneOffset: java.time.ZoneOffset?): Int? {
+        if (zoneOffset == null) return null
+        val seconds = zoneOffset.totalSeconds
+        val inRange = seconds in
+            MiTimezone.MIN_OFFSET_SECONDS..MiTimezone.MAX_OFFSET_SECONDS
+        if (!inRange) return null
+        // 15-minute units
+        return seconds / (15 * 60)
+    }
+
+    private fun isSelfWritten(clientRecordId: String?, packageName: String?): Boolean {
+        if (clientRecordId?.startsWith("mifit-") == true) return true
+        if (packageName != null && packageName == context.packageName) return true
+        return false
     }
 
     actual override suspend fun writeHeartRate(samples: List<HeartRateSample>) {
@@ -453,6 +479,41 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         client.insertRecords(records)
     }
 
+    actual override suspend fun readLatestWeight(): WeightMeasurement? {
+        if (!isAvailable()) return null
+        return try {
+            var latest: WeightRecord? = null
+            var pageToken: String? = null
+            do {
+                val response = client.readRecords(
+                    ReadRecordsRequest(
+                        WeightRecord::class,
+                        timeRangeFilter = TimeRangeFilter.between(Instant.EPOCH, Instant.now()),
+                        pageToken = pageToken,
+                    ),
+                )
+                for (r in response.records) {
+                    if (isSelfWritten(r.metadata.clientRecordId, r.metadata.dataOrigin.packageName)) continue
+                    if (latest == null || r.time.isAfter(latest.time)) latest = r
+                }
+                pageToken = response.pageToken
+            } while (pageToken != null)
+            val r = latest ?: return null
+            val ts = r.time.epochSecond
+            // HealthDataNormalizer will filter implausible, but double-check
+            val kg = r.weight.inKilograms
+            if (kg !in 1.0..500.0) return null
+            WeightMeasurement(
+                timestamp = ts,
+                weightKg = kg,
+                bodyFatPercent = null,
+                tzIn15Min = zoneOffsetToMiUnits(r.zoneOffset),
+            ).let { listOf(it) }.let { HealthDataNormalizer.normalizeWeight(it).firstOrNull() }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
     actual override suspend fun isAvailable(): Boolean {
         return HealthConnectClient.getSdkStatus(context) == HealthConnectClient.SDK_AVAILABLE
     }
@@ -460,7 +521,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
     actual override suspend fun hasWritePermissions(): Boolean {
         if (!isAvailable()) return false
         return try {
-            val needed = availableWritePermissions()
+            val needed = availablePermissions()
             if (needed.isEmpty()) return false
             val granted = client.permissionController.getGrantedPermissions()
             needed.all { it in granted }
@@ -472,7 +533,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
     actual override suspend fun requestPermissions() {
         val launcher = HealthConnectPermissionBridge.requestPermissions
             ?: throw IllegalStateException(L10n.text(L10n.healthPermissionsIncomplete))
-        val needed = availableWritePermissions()
+        val needed = availablePermissions()
         if (needed.isEmpty()) {
             throw Exception(L10n.text(L10n.healthNotAvailable))
         }

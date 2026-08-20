@@ -96,5 +96,14 @@ interface HealthPermissionRequester {
     suspend fun requestPermissions()
 }
 
-/** Full platform health façade (writes + availability + permissions). */
-interface HealthStore : HealthSampleWriter, HealthAvailability, HealthPermissionRequester
+/**
+ * ISP: read-only surface for weight latest value (bidirectional sync).
+ * Returns the latest sample regardless of sync window (sparse monthly weigh-ins).
+ */
+interface HealthWeightReader {
+    /** Latest weight from Health Connect / HealthKit, or null if none. Loop-filtered (excludes mifit-*). */
+    suspend fun readLatestWeight(): WeightMeasurement?
+}
+
+/** Full platform health façade (writes + availability + permissions + weight reads). */
+interface HealthStore : HealthSampleWriter, HealthWeightReader, HealthAvailability, HealthPermissionRequester

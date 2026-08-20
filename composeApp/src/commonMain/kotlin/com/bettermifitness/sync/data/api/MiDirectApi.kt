@@ -211,6 +211,52 @@ class MiDirectApi(private val client: MiDataClient) {
     }
 
     /**
+     * Uploads a single weight measurement to Mi cloud (Health Connect / HealthKit -> Mi).
+     * Uses `data/up_fitness_data` with `phone_id` from [MiDataClient.phoneId] and `sid=xiaomiwear_app_manually`.
+     * Mirrors APK `FitnessDataRequest.uploadFitnessData` + `FitnessDataModel` shape.
+     */
+    suspend fun uploadWeight(
+        measurement: WeightMeasurement,
+        phoneIdOverride: String? = null,
+    ): Boolean {
+        val phoneId = phoneIdOverride?.takeIf { it.isNotBlank() } ?: client.phoneId
+        val sid = "xiaomiwear_app_manually"
+        val tzUnits = measurement.tzIn15Min
+        val offsetSec = tzUnits?.let {
+            com.bettermifitness.sync.data.time.MiTimezone.fromPayloadOrNull(it)?.offsetSeconds()
+        } ?: 0
+        val valueJson = buildString {
+            append("{")
+            append("\"weight\":${measurement.weightKg}")
+            append(",\"time\":${measurement.timestamp}")
+            tzUnits?.let { append(",\"timezone\":$it") }
+            // Body-fat is not uploaded via weight-only sync (Mi has no standalone body-fat input);
+            // keep payload minimal weight + time + timezone.
+            append("}")
+        }
+        val dataList = listOf(
+            mapOf(
+                "sid" to sid,
+                "key" to "weight",
+                "time" to measurement.timestamp,
+                "value" to valueJson,
+                "zone_offset" to offsetSec,
+                "zone_name" to "",
+            ),
+        )
+        val result = client.post(
+            path = "/app/v1/data/up_fitness_data",
+            payload = mapOf(
+                "phone_id" to phoneId,
+                "data_list" to dataList,
+            ),
+        )
+        val obj = result.jsonObject
+        val code = obj["code"]?.jsonPrimitive?.content?.toIntOrNull()
+        return code == null || code == 0
+    }
+
+    /**
      * Fetches user profile (decrypted from Mi's endpoint).
      */
     suspend fun getMe(): MeResponse {

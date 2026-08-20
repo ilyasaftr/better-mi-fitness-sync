@@ -31,6 +31,7 @@ expect class HealthWriter : HealthStore {
     override suspend fun writeTemperature(samples: List<TemperatureSample>)
     override suspend fun writeVo2Max(samples: List<Vo2MaxSample>)
     override suspend fun writeHrv(samples: List<HrvSample>)
+    override suspend fun readLatestWeight(): WeightMeasurement?
     override suspend fun isAvailable(): Boolean
     override suspend fun hasWritePermissions(): Boolean
     override suspend fun requestPermissions()
