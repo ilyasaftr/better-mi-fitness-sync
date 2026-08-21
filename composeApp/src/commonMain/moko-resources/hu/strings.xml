@@ -130,7 +130,7 @@
     <!-- Relative time -->
     <string name="time_just_now">Éppen most</string>
     <string name="time_minute_ago">%d perccel ezelőtt</string>
-    <string name="time_hour_one_ago">1 órája</string>
+    <string name="time_hour_one_ago">1 órával ezelőtt</string>
     <string name="time_hour_many_ago">%d órával ezelőtt</string>
     <string name="time_yesterday">Tegnap</string>
     <string name="time_day_one_ago">1 nappal ezelőtt</string>
@@ -184,7 +184,7 @@
     <string name="settings_cancelled">Törölve</string>
     <string name="settings_failed_status">Sikertelen (%s)</string>
     <string name="settings_last_sync">Utolsó szinkronizálás</string>
-    <string name="settings_last_background_sync">Utolsó szinkronizálás háttérben</string>
+    <string name="settings_last_background_sync">Szinkronizálás háttérben</string>
     <string name="settings_shortcuts_help">Használja a “Sync Better Mi Fitness” alkalmazás cél vagy gyorsbillentyűjét a kézi háttérben futtatáshoz.</string>
     <string name="settings_log_out">Kijelentkezés</string>
     <string name="settings_version">Verzió</string>
