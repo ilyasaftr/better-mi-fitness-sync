@@ -406,10 +406,19 @@ class HealthRepository(
                         lastRefreshUserMessage = refresh.userMessage
                         lastRefreshRetryable = true
                     }
-                    is SessionRefreshResult.NeedsReLogin,
-                    is SessionRefreshResult.NeedsVerification,
-                    -> {
+                    is SessionRefreshResult.NeedsReLogin -> {
                         lastRefreshUserMessage = refresh.userMessage
+                        lastRefreshRetryable = false
+                    }
+                    is SessionRefreshResult.NeedsVerification -> {
+                        // Include verification URL so UI can open Xiaomi WebView directly,
+                        // matching Mi Fitness behavior where 70016 shows “Verify” link.
+                        val url = refresh.notificationUrl?.takeIf { it.isNotBlank() }
+                        lastRefreshUserMessage = if (url != null) {
+                            "${refresh.reason} — Verify at: $url"
+                        } else {
+                            refresh.userMessage
+                        }
                         lastRefreshRetryable = false
                     }
                 }
