@@ -39,16 +39,25 @@ object PassportSecureRequest {
         encryptedParams: Map<String, String>,
         ssecurity: String,
     ): String {
-        val path = url.substringAfter("://").substringAfter("/", "")
-            .let { if (url.contains("//") && "/" in url.substringAfter("://")) "/$it" else "" }
+        val path = encodedPath(url)
         val parts = ArrayList<String>(encryptedParams.size + 3)
         parts += method.uppercase()
-        parts += path.substringBefore("?")
-        for ((name, value) in encryptedParams.toSortedMap()) {
-            parts += "$name=$value"
+        parts += path
+        for (name in encryptedParams.keys.sorted()) {
+            parts += "$name=${encryptedParams[name]}"
         }
         parts += ssecurity
         return Base64.encode(Hash.sha1(parts.joinToString("&").encodeToByteArray()))
+    }
+
+    internal fun encodedPath(url: String): String {
+        val afterScheme = url.substringAfter("://", url)
+        if (afterScheme == url) return ""
+        val slash = afterScheme.indexOf('/')
+        if (slash < 0) return ""
+        val path = afterScheme.substring(slash)
+        val query = path.indexOf('?')
+        return if (query < 0) path else path.substring(0, query)
     }
 
     internal fun encrypt(plaintext: String, key: ByteArray): String =
