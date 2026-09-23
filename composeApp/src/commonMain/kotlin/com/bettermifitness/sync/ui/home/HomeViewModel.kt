@@ -16,6 +16,7 @@ import com.bettermifitness.sync.sync.SyncOutcomeLabels
 import com.bettermifitness.sync.ui.SyncMetric
 import com.bettermifitness.sync.util.RelativeTime
 import com.mifitness.miclient.api.MiApiException
+import com.mifitness.miclient.auth.PassportCoreInfoClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +27,8 @@ import kotlinx.coroutines.launch
 data class HomeUiState(
     val profile: MeResponse? = null,
     val profileError: String? = null,
+    /** Mi account avatar URL (passport coreInfo); empty keeps the initial letter. */
+    val avatarUrl: String = "",
     /** False until the first hot-snapshot emission — screens hold skeleton. */
     val prefsReady: Boolean = false,
     val lastSyncLabel: String = L10n.text(L10n.homeNever),
@@ -57,6 +60,7 @@ class HomeViewModel(
     private val healthAvailability: HealthAvailability,
     private val healthPermissions: HealthPermissionRequester,
     private val syncCoordinator: SyncCoordinator,
+    private val coreInfoClient: PassportCoreInfoClient,
     syncPreferences: SyncPreferences,
 ) : ViewModel() {
     /** Hot snapshot: single DataStore subscription, shared with all screens. */
@@ -64,6 +68,7 @@ class HomeViewModel(
 
     private val profileState = MutableStateFlow<MeResponse?>(null)
     private val profileErrorState = MutableStateFlow<String?>(null)
+    private val avatarUrlState = MutableStateFlow("")
     private val loggedOutState = MutableStateFlow(false)
     private val healthState = MutableStateFlow(
         HealthReadiness(
@@ -107,42 +112,47 @@ class HomeViewModel(
     }
 
     val uiState: StateFlow<HomeUiState> = combine(
-        combine(profileState, profileErrorState, prefs, loggedOutState, healthState) {
-                profile, profileError, prefsSnap, loggedOut, health ->
-            HomeUiState(
-                profile = profile,
-                profileError = profileError,
-                prefsReady = prefsSnap.ready,
-                lastSyncLabel = RelativeTime.format(prefsSnap.lastSync),
-                lastSyncStatusTitle = SyncOutcomeLabels.title(prefsSnap.lastSyncStatus),
-                lastSyncDetail = SyncOutcomeLabels.detail(
-                    prefsSnap.lastSyncStatus,
-                    prefsSnap.lastSyncMessage,
-                ),
-                lastSyncIsError = SyncOutcomeLabels.isError(prefsSnap.lastSyncStatus),
-                lastSyncIsWarning = SyncOutcomeLabels.isWarning(prefsSnap.lastSyncStatus),
-                lastBackgroundLabel = RelativeTime.format(prefsSnap.lastBg),
-                lastBackgroundDetail = SyncOutcomeLabels.detail(
-                    prefsSnap.lastBgStatus,
-                    prefsSnap.lastBgMessage,
-                ),
-                lastBackgroundIsError = SyncOutcomeLabels.isError(prefsSnap.lastBgStatus),
-                enabledMetricsCount = prefsSnap.enabled.size,
-                totalMetricsCount = SyncMetric.entries.size,
-                rangeDays = prefsSnap.rangeDays,
-                autoSync = prefsSnap.autoSync,
-                canSync = prefsSnap.enabled.isNotEmpty(),
-                healthServiceName = health.serviceName,
-                healthReady = health.isReady,
-                healthStatusTitle = health.statusTitle,
-                healthStatusDetail = health.statusDetail,
-                healthNeedsAction = !health.isReady,
-                loggedOut = loggedOut,
-            )
+        combine(profileState, profileErrorState, avatarUrlState) { profile, profileError, avatarUrl ->
+            Triple(profile, profileError, avatarUrl)
         },
+        prefs,
+        loggedOutState,
+        healthState,
         syncCoordinator.isRunning,
-    ) { base, running ->
-        base.copy(isSyncing = running)
+    ) { avatarTriple, prefsSnap, loggedOut, health, running ->
+        val (profile, profileError, avatarUrl) = avatarTriple
+        HomeUiState(
+            profile = profile,
+            profileError = profileError,
+            avatarUrl = avatarUrl,
+            prefsReady = prefsSnap.ready,
+            lastSyncLabel = RelativeTime.format(prefsSnap.lastSync),
+            lastSyncStatusTitle = SyncOutcomeLabels.title(prefsSnap.lastSyncStatus),
+            lastSyncDetail = SyncOutcomeLabels.detail(
+                prefsSnap.lastSyncStatus,
+                prefsSnap.lastSyncMessage,
+            ),
+            lastSyncIsError = SyncOutcomeLabels.isError(prefsSnap.lastSyncStatus),
+            lastSyncIsWarning = SyncOutcomeLabels.isWarning(prefsSnap.lastSyncStatus),
+            lastBackgroundLabel = RelativeTime.format(prefsSnap.lastBg),
+            lastBackgroundDetail = SyncOutcomeLabels.detail(
+                prefsSnap.lastBgStatus,
+                prefsSnap.lastBgMessage,
+            ),
+            lastBackgroundIsError = SyncOutcomeLabels.isError(prefsSnap.lastBgStatus),
+            enabledMetricsCount = prefsSnap.enabled.size,
+            totalMetricsCount = SyncMetric.entries.size,
+            rangeDays = prefsSnap.rangeDays,
+            autoSync = prefsSnap.autoSync,
+            canSync = prefsSnap.enabled.isNotEmpty(),
+            isSyncing = running,
+            healthServiceName = health.serviceName,
+            healthReady = health.isReady,
+            healthStatusTitle = health.statusTitle,
+            healthStatusDetail = health.statusDetail,
+            healthNeedsAction = !health.isReady,
+            loggedOut = loggedOut,
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -164,14 +174,23 @@ class HomeViewModel(
                 return@launch
             }
             try {
-                profileState.value = session.api.getMe()
+                val me = session.api.getMe()
+                profileState.value = me
                 profileErrorState.value = null
+                // Best-effort avatar: never fails the profile load.
+                viewModelScope.launch {
+                    avatarUrlState.value = resolveAvatarUrl(me.result?.icon)
+                }
             } catch (e: MiApiException.AuthExpired) {
                 val refresh = session.refreshSessionDetailed()
                 if (refresh.isSuccess) {
                     try {
-                        profileState.value = session.api.getMe()
+                        val me = session.api.getMe()
+                        profileState.value = me
                         profileErrorState.value = null
+                        viewModelScope.launch {
+                            avatarUrlState.value = resolveAvatarUrl(me.result?.icon)
+                        }
                         return@launch
                     } catch (retry: Exception) {
                         profileErrorState.value = retry.message ?: L10n.text(L10n.homeSignedIn)
@@ -182,6 +201,17 @@ class HomeViewModel(
             } catch (e: Exception) {
                 profileErrorState.value = e.message ?: L10n.text(L10n.homeSignedIn)
             }
+        }
+    }
+
+    /** coreInfo avatar primary, fitness-profile icon secondary, else initial fallback. */
+    private suspend fun resolveAvatarUrl(fitnessIcon: String?): String {
+        return try {
+            val creds = tokenStore.loadCredentials() ?: return fitnessIcon.orEmpty()
+            val coreInfo = coreInfoClient.avatarAddress(creds)
+            PassportCoreInfoClient.resolveAvatarUrl(coreInfo, fitnessIcon)
+        } catch (_: Exception) {
+            fitnessIcon.orEmpty()
         }
     }
 

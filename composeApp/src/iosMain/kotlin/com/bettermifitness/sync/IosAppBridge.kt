@@ -125,7 +125,7 @@ object IosAppBridge : KoinComponent {
     fun profileName(state: HomeUiState): String =
         state.profile?.result?.name?.takeIf { it.isNotBlank() } ?: L10n.text(L10n.homeAccount)
 
-    fun profileAvatarUrl(state: HomeUiState): String = state.profile?.result?.icon?.takeIf { it.isNotBlank() }.orEmpty()
+    fun profileAvatarUrl(state: HomeUiState): String = state.avatarUrl
 
     fun visibleMetricKeys(state: SyncUiState): List<String> =
         state.visibleMetrics.map { it.key }

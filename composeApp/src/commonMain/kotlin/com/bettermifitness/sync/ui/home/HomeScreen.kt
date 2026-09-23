@@ -147,7 +147,7 @@ fun HomeScreen(
                     else -> L10n.string(L10n.homeLoadingProfile)
                 },
                 isError = state.profileError != null,
-                avatarUrl = state.profile?.result?.icon.orEmpty(),
+                avatarUrl = state.avatarUrl,
             )
 
             blockingBanner(state, healthName)?.let { banner ->

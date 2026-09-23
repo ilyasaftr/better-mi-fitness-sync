@@ -21,6 +21,7 @@ import com.bettermifitness.sync.ui.login.LoginViewModel
 import com.bettermifitness.sync.ui.settings.SettingsViewModel
 import com.bettermifitness.sync.ui.sync.SyncViewModel
 import com.mifitness.miclient.auth.MiAuth
+import com.mifitness.miclient.auth.PassportCoreInfoClient
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -37,6 +38,7 @@ fun commonAppModule(): Module = module {
     single { TokenStore(get(), get(), get()) }
 
     single { MiAuth() }
+    single { PassportCoreInfoClient(miAuth = get()) }
     single { MiSessionManager(credentialsStore = get(), miAuth = get()) }
     single<SyncSessionPort> { get<MiSessionManager>() }
     single { MiRegionDiscovery() }
