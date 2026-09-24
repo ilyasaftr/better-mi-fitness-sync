@@ -61,7 +61,16 @@
     <string name="login_browser_finish_failed">A böngészőben nem sikerült bejelentkezni az adott címről. Illessze be a teljes sts-hlth címet.</string>
     <string name="login_missing_pass_token">A bejelentkezés nem adott vissza passTokent, ezért az alkalmazás nem maradhat bejelentkezve több napon keresztül. Próbálja újra, vagy használja a másik bejelentkezési módszert.</string>
     <string name="login_missing_device_id">A bejelentkezéshez hiányzik az eszköz azonosítója — próbálja meg újra.</string>
-
+    <string name="login_captcha_title">Írja be a képen látható kódot</string>
+    <string name="login_captcha_detail">A Xiaomi bejelentkezés előtt képellenőrzést kér. Írja be a kódot, majd folytassa.</string>
+    <string name="login_captcha_code">Kép kód</string>
+    <string name="login_captcha_continue">Folytatás</string>
+    <string name="login_captcha_refresh">Új kép</string>
+    <string name="login_captcha_loading">Kép betöltése…</string>
+    <string name="login_captcha_wrong">A kód nem egyezik - új kép jelenik meg, próbálja meg újra.</string>
+    <string name="login_captcha_empty">Először írja be a képen látható kódot.</string>
+    <string name="login_captcha_load_failed">A kép betöltése nem sikerült. Érintse meg az "Új kép" gombot, majd próbálja meg újra.</string>
+	
     <!-- Home -->
     <string name="home_account">A fiókja</string>
     <string name="home_signed_in">Bejelentkezve</string>
