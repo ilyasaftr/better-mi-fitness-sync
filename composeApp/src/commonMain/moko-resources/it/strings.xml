@@ -62,7 +62,7 @@
     <string name="login_missing_pass_token">L\'accesso non ha restituito un passToken, quindi l\'app non può mantenere la sessione attiva tra un giorno e l\'altro. Riprova o usa l\'altro metodo di accesso.</string>
     <string name="login_missing_device_id">Device id mancante nell\'accesso — riprova.</string>
     <string name="login_captcha_title">Digita il codice dell\'immagine</string>
-    <string name="login_captcha_detail">Xiaomi richiede un controllo con immagine prima dell’accesso. Digita il codice, poi continua.</string>
+    <string name="login_captcha_detail">Xiaomi richiede un controllo con immagine prima dell\'accesso. Digita il codice, poi continua.</string>
     <string name="login_captcha_code">Codice dell\'immagine</string>
     <string name="login_captcha_continue">Continua</string>
     <string name="login_captcha_refresh">Nuova immagine</string>

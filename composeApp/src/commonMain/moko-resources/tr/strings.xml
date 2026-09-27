@@ -69,7 +69,7 @@
     <string name="login_captcha_loading">Resim yükleniyor…</string>
     <string name="login_captcha_wrong">Bu kod eşleşmedi — yeni bir resim gösterildi, tekrar dene.</string>
     <string name="login_captcha_empty">Önce resimde gösterilen kodu yaz.</string>
-    <string name="login_captcha_load_failed">Resim yüklenemedi. Yeni resim\'e dokun ve tekrar dene.</string>
+    <string name="login_captcha_load_failed">Resim yüklenemedi. Yeni resme dokun ve tekrar dene.</string>
 
     <!-- Home -->
     <string name="home_account">Hesabınız</string>

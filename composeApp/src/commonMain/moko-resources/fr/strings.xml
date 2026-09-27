@@ -67,8 +67,8 @@
     <string name="login_captcha_continue">Continuer</string>
     <string name="login_captcha_refresh">Nouvelle image</string>
     <string name="login_captcha_loading">Chargement de l\'image…</string>
-    <string name="login_captcha_wrong">Ce code ne correspond pas — une nouvelle image s’affiche, réessayez.</string>
-    <string name="login_captcha_empty">Saisissez d’abord le code affiché dans l\'image.</string>
+    <string name="login_captcha_wrong">Ce code ne correspond pas — une nouvelle image s\'affiche, réessayez.</string>
+    <string name="login_captcha_empty">Saisissez d\'abord le code affiché dans l\'image.</string>
     <string name="login_captcha_load_failed">Impossible de charger l\'image. Touchez Nouvelle image et réessayez.</string>
 
     <!-- Home -->
