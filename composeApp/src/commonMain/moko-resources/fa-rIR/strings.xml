@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">تکمیل ورود مرورگر از آن URL ممکن نبود. URL کامل sts-hlth را جای‌گذاری کنید.</string>
     <string name="login_missing_pass_token">ورود passToken برنگرداند، بنابراین برنامه نمی‌تواند چند روز وارد بماند. دوباره تلاش کنید یا روش ورود دیگری استفاده کنید.</string>
     <string name="login_missing_device_id">device id در ورود یافت نشد — دوباره تلاش کنید.</string>
+    <string name="login_captcha_title">کد تصویری را وارد کنید</string>
+    <string name="login_captcha_detail">شیائومی قبل از ورود، بررسی تصویری می‌خواهد. کد را وارد کنید، سپس ادامه دهید.</string>
+    <string name="login_captcha_code">کد تصویری</string>
+    <string name="login_captcha_continue">ادامه</string>
+    <string name="login_captcha_refresh">تصویر جدید</string>
+    <string name="login_captcha_loading">در حال بارگذاری تصویر…</string>
+    <string name="login_captcha_wrong">آن کد درست نبود — یک تصویر تازه نمایش داده شده، دوباره تلاش کنید.</string>
+    <string name="login_captcha_empty">ابتدا کد نمایش داده‌شده در تصویر را وارد کنید.</string>
+    <string name="login_captcha_load_failed">تصویر بارگذاری نشد. روی تصویر جدید بزنید و دوباره تلاش کنید.</string>
 
     <!-- Home -->
     <string name="home_account">حساب شما</string>

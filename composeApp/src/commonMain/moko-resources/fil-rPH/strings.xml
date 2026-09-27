@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Hindi makumpleto ang browser login mula sa URL na iyon. I-paste ang buong sts-hlth URL.</string>
     <string name="login_missing_pass_token">Hindi nagbalik ng passToken ang login, kaya hindi makakapag-sign in ang app nang tuloy-tuloy. Subukan ulit o gamitin ang ibang paraan ng login.</string>
     <string name="login_missing_device_id">Nawawala ang device id sa login — subukan ulit.</string>
+    <string name="login_captcha_title">I-type ang code sa larawan</string>
+    <string name="login_captcha_detail">Humihingi ang Xiaomi ng picture check bago mag-sign in. I-type ang code, pagkatapos ay magpatuloy.</string>
+    <string name="login_captcha_code">Code sa larawan</string>
+    <string name="login_captcha_continue">Magpatuloy</string>
+    <string name="login_captcha_refresh">Bagong larawan</string>
+    <string name="login_captcha_loading">Nilo-load ang larawan…</string>
+    <string name="login_captcha_wrong">Hindi tumugma ang code na iyon — may bagong larawang ipinapakita, subukang muli.</string>
+    <string name="login_captcha_empty">I-type muna ang code na nakikita sa larawan.</string>
+    <string name="login_captcha_load_failed">Hindi ma-load ang larawan. I-tap ang Bagong larawan at subukang muli.</string>
 
     <!-- Home -->
     <string name="home_account">Ang iyong account</string>

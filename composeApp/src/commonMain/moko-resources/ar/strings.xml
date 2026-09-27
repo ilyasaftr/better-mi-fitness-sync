@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">تعذّر إتمام تسجيل الدخول عبر المتصفّح من هذا الرابط. الصق رابط sts-hlth الكامل.</string>
     <string name="login_missing_pass_token">لم يُعِد تسجيل الدخول passToken، لذا لن يبقى التطبيق مسجّلاً عبر الأيام. أعد المحاولة أو استخدم طريقة تسجيل الدخول الأخرى.</string>
     <string name="login_missing_device_id">تسجيل الدخول يفتقد معرّف الجهاز — أعد المحاولة.</string>
+    <string name="login_captcha_title">اكتب رمز الصورة</string>
+    <string name="login_captcha_detail">يطلب Xiaomi تحققًا بالصورة قبل تسجيل الدخول. اكتب الرمز، ثم تابع.</string>
+    <string name="login_captcha_code">رمز الصورة</string>
+    <string name="login_captcha_continue">متابعة</string>
+    <string name="login_captcha_refresh">صورة جديدة</string>
+    <string name="login_captcha_loading">جارٍ تحميل الصورة…</string>
+    <string name="login_captcha_wrong">الرمز غير مطابق — تظهر الآن صورة جديدة، حاول مرة أخرى.</string>
+    <string name="login_captcha_empty">اكتب الرمز الظاهر في الصورة أولًا.</string>
+    <string name="login_captcha_load_failed">تعذّر تحميل الصورة. اضغط صورة جديدة وحاول مرة أخرى.</string>
 
     <!-- Home -->
     <string name="home_account">حسابك</string>

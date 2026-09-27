@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Tidak dapat menyelesaikan log masuk pelayar dari URL itu. Tampal URL sts-hlth yang penuh.</string>
     <string name="login_missing_pass_token">Log masuk tidak memulangkan passToken, jadi aplikasi tidak dapat kekal log masuk merentasi hari. Cuba lagi atau gunakan kaedah log masuk yang lain.</string>
     <string name="login_missing_device_id">ID peranti tiada dalam log masuk — cuba lagi.</string>
+    <string name="login_captcha_title">Taip kod gambar</string>
+    <string name="login_captcha_detail">Xiaomi meminta semakan gambar sebelum log masuk. Taip kod tersebut, kemudian teruskan.</string>
+    <string name="login_captcha_code">Kod gambar</string>
+    <string name="login_captcha_continue">Teruskan</string>
+    <string name="login_captcha_refresh">Gambar baharu</string>
+    <string name="login_captcha_loading">Memuatkan gambar…</string>
+    <string name="login_captcha_wrong">Kod itu tidak sepadan — gambar baharu dipaparkan, cuba lagi.</string>
+    <string name="login_captcha_empty">Taip kod yang ditunjukkan dalam gambar dahulu.</string>
+    <string name="login_captcha_load_failed">Gambar tidak dapat dimuatkan. Ketik Gambar baharu dan cuba lagi.</string>
 
     <!-- Home -->
     <string name="home_account">Akaun anda</string>

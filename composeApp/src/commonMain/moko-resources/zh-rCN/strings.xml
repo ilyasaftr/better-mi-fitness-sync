@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">无法通过该 URL 完成浏览器登录。请粘贴完整的 sts-hlth URL。</string>
     <string name="login_missing_pass_token">登录未返回 passToken，应用无法跨天保持登录状态。请重试或使用其他登录方式。</string>
     <string name="login_missing_device_id">登录缺少设备 ID — 请重试。</string>
+    <string name="login_captcha_title">输入图片验证码</string>
+    <string name="login_captcha_detail">登录前 Xiaomi 需要进行图片验证。请输入验证码，然后继续。</string>
+    <string name="login_captcha_code">图片验证码</string>
+    <string name="login_captcha_continue">继续</string>
+    <string name="login_captcha_refresh">换一张</string>
+    <string name="login_captcha_loading">正在加载图片…</string>
+    <string name="login_captcha_wrong">验证码不正确 — 已显示新的图片，请重试。</string>
+    <string name="login_captcha_empty">请先输入图片中显示的验证码。</string>
+    <string name="login_captcha_load_failed">图片加载失败。点按“换一张”后重试。</string>
 
     <!-- Home -->
     <string name="home_account">您的账户</string>

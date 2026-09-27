@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Não foi possível concluir o login pelo navegador com essa URL. Cole a URL completa de sts-hlth.</string>
     <string name="login_missing_pass_token">O login não retornou um passToken, então o app não consegue manter a sessão ativa entre dias. Tente novamente ou use o outro método de login.</string>
     <string name="login_missing_device_id">Device id ausente no login — tente novamente.</string>
+    <string name="login_captcha_title">Digite o código da imagem</string>
+    <string name="login_captcha_detail">A Xiaomi pede uma verificação por imagem antes de entrar. Digite o código e continue.</string>
+    <string name="login_captcha_code">Código da imagem</string>
+    <string name="login_captcha_continue">Continuar</string>
+    <string name="login_captcha_refresh">Nova imagem</string>
+    <string name="login_captcha_loading">Carregando imagem…</string>
+    <string name="login_captcha_wrong">Esse código não confere — uma nova imagem é exibida, tente novamente.</string>
+    <string name="login_captcha_empty">Digite primeiro o código mostrado na imagem.</string>
+    <string name="login_captcha_load_failed">Não foi possível carregar a imagem. Toque em Nova imagem e tente novamente.</string>
 
     <!-- Home -->
     <string name="home_account">Sua conta</string>

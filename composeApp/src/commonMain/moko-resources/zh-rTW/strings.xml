@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">無法透過該 URL 完成瀏覽器登入。請貼上完整的 sts-hlth URL。</string>
     <string name="login_missing_pass_token">登入未回傳 passToken，應用程式無法跨天維持登入狀態。請重試或使用其他登入方式。</string>
     <string name="login_missing_device_id">登入缺少裝置 ID — 請重試。</string>
+    <string name="login_captcha_title">輸入圖片驗證碼</string>
+    <string name="login_captcha_detail">登入前 Xiaomi 需要進行圖片驗證。請輸入驗證碼，然後繼續。</string>
+    <string name="login_captcha_code">圖片驗證碼</string>
+    <string name="login_captcha_continue">繼續</string>
+    <string name="login_captcha_refresh">換一張</string>
+    <string name="login_captcha_loading">正在載入圖片…</string>
+    <string name="login_captcha_wrong">驗證碼不正確 — 已顯示新的圖片，請再試一次。</string>
+    <string name="login_captcha_empty">請先輸入圖片中顯示的驗證碼。</string>
+    <string name="login_captcha_load_failed">圖片載入失敗。請點按「換一張」後再試一次。</string>
 
     <!-- Home -->
     <string name="home_account">您的帳戶</string>

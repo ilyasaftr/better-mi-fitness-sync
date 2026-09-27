@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Impossible de terminer la connexion par navigateur avec cette URL. Collez l\'URL complète de sts-hlth.</string>
     <string name="login_missing_pass_token">La connexion n\'a pas renvoyé de passToken, l\'app ne peut donc pas maintenir la session entre les jours. Réessayez ou utilisez l\'autre méthode de connexion.</string>
     <string name="login_missing_device_id">Device id manquant à la connexion — réessayez.</string>
+    <string name="login_captcha_title">Saisissez le code de l\'image</string>
+    <string name="login_captcha_detail">Xiaomi demande une vérification par image avant la connexion. Saisissez le code, puis continuez.</string>
+    <string name="login_captcha_code">Code de l\'image</string>
+    <string name="login_captcha_continue">Continuer</string>
+    <string name="login_captcha_refresh">Nouvelle image</string>
+    <string name="login_captcha_loading">Chargement de l\'image…</string>
+    <string name="login_captcha_wrong">Ce code ne correspond pas — une nouvelle image s\'affiche, réessayez.</string>
+    <string name="login_captcha_empty">Saisissez d\'abord le code affiché dans l\'image.</string>
+    <string name="login_captcha_load_failed">Impossible de charger l\'image. Touchez Nouvelle image et réessayez.</string>
 
     <!-- Home -->
     <string name="home_account">Votre compte</string>

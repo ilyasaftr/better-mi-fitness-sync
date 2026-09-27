@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Impossibile completare l\'accesso tramite browser con quell\'URL. Incolla l\'URL completo di sts-hlth.</string>
     <string name="login_missing_pass_token">L\'accesso non ha restituito un passToken, quindi l\'app non può mantenere la sessione attiva tra un giorno e l\'altro. Riprova o usa l\'altro metodo di accesso.</string>
     <string name="login_missing_device_id">Device id mancante nell\'accesso — riprova.</string>
+    <string name="login_captcha_title">Digita il codice dell\'immagine</string>
+    <string name="login_captcha_detail">Xiaomi richiede un controllo con immagine prima dell\'accesso. Digita il codice, poi continua.</string>
+    <string name="login_captcha_code">Codice dell\'immagine</string>
+    <string name="login_captcha_continue">Continua</string>
+    <string name="login_captcha_refresh">Nuova immagine</string>
+    <string name="login_captcha_loading">Caricamento immagine…</string>
+    <string name="login_captcha_wrong">Il codice non corrisponde — viene mostrata una nuova immagine, riprova.</string>
+    <string name="login_captcha_empty">Digita prima il codice mostrato nell\'immagine.</string>
+    <string name="login_captcha_load_failed">Impossibile caricare l\'immagine. Tocca Nuova immagine e riprova.</string>
 
     <!-- Home -->
     <string name="home_account">Il tuo account</string>
