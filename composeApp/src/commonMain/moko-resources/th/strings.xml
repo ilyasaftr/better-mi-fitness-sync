@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">ไม่สามารถลงชื่อเข้าใช้ผ่านเบราว์เซอร์จาก URL นั้นได้ วาง URL sts-hlth แบบเต็ม</string>
     <string name="login_missing_pass_token">การลงชื่อเข้าใช้ไม่ได้คืนค่า passToken ดังนั้นแอปไม่สามารถคงสถานะลงชื่อเข้าใช้ข้ามวันได้ ลองอีกครั้งหรือใช้วิธีลงชื่อเข้าใช้อื่น</string>
     <string name="login_missing_device_id">การลงชื่อเข้าใช้ขาด device id — ลองอีกครั้ง</string>
+    <string name="login_captcha_title">พิมพ์รหัสในภาพ</string>
+    <string name="login_captcha_detail">Xiaomi ขอให้ยืนยันด้วยภาพก่อนลงชื่อเข้าใช้ พิมพ์รหัส แล้วดำเนินการต่อ</string>
+    <string name="login_captcha_code">รหัสในภาพ</string>
+    <string name="login_captcha_continue">ดำเนินการต่อ</string>
+    <string name="login_captcha_refresh">ภาพใหม่</string>
+    <string name="login_captcha_loading">กำลังโหลดภาพ…</string>
+    <string name="login_captcha_wrong">รหัสนั้นไม่ตรงกัน — แสดงภาพใหม่แล้ว โปรดลองอีกครั้ง</string>
+    <string name="login_captcha_empty">โปรดพิมพ์รหัสที่แสดงในภาพก่อน</string>
+    <string name="login_captcha_load_failed">ไม่สามารถโหลดภาพได้ แตะภาพใหม่แล้วลองอีกครั้ง</string>
 
     <!-- Home -->
     <string name="home_account">บัญชีของคุณ</string>

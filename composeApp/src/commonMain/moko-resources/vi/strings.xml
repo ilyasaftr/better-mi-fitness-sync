@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Không thể hoàn tất đăng nhập trình duyệt từ URL đó. Dán URL sts-hlth đầy đủ.</string>
     <string name="login_missing_pass_token">Đăng nhập không trả về passToken, nên ứng dụng không thể duy trì đăng nhập qua các ngày. Thử lại hoặc sử dụng phương thức đăng nhập khác.</string>
     <string name="login_missing_device_id">Đăng nhập thiếu device id — thử lại.</string>
+    <string name="login_captcha_title">Nhập mã trong hình</string>
+    <string name="login_captcha_detail">Xiaomi yêu cầu kiểm tra hình ảnh trước khi đăng nhập. Nhập mã rồi tiếp tục.</string>
+    <string name="login_captcha_code">Mã trong hình</string>
+    <string name="login_captcha_continue">Tiếp tục</string>
+    <string name="login_captcha_refresh">Hình mới</string>
+    <string name="login_captcha_loading">Đang tải hình…</string>
+    <string name="login_captcha_wrong">Mã đó không khớp — hình mới đã hiển thị, hãy thử lại.</string>
+    <string name="login_captcha_empty">Hãy nhập mã hiển thị trong hình trước.</string>
+    <string name="login_captcha_load_failed">Không tải được hình. Chạm vào Hình mới rồi thử lại.</string>
 
     <!-- Home -->
     <string name="home_account">Tài khoản của bạn</string>

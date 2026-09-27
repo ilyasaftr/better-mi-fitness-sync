@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">そのURLからブラウザログインを完了できませんでした。完全なsts-hlth URLを貼り付けてください。</string>
     <string name="login_missing_pass_token">ログインがpassTokenを返しませんでした。そのためアプリは日をまたいでサインイン状態を維持できません。もう一度試すか、別のログイン方法をお使いください。</string>
     <string name="login_missing_device_id">ログインにデバイスIDがありません — もう一度お試しください。</string>
+    <string name="login_captcha_title">画像のコードを入力</string>
+    <string name="login_captcha_detail">サインインの前に Xiaomi が画像認証を求めています。コードを入力して、続行してください。</string>
+    <string name="login_captcha_code">画像コード</string>
+    <string name="login_captcha_continue">続行</string>
+    <string name="login_captcha_refresh">新しい画像</string>
+    <string name="login_captcha_loading">画像を読み込み中…</string>
+    <string name="login_captcha_wrong">コードが一致しませんでした — 新しい画像が表示されていますので、もう一度お試しください。</string>
+    <string name="login_captcha_empty">先に画像に表示されているコードを入力してください。</string>
+    <string name="login_captcha_load_failed">画像を読み込めませんでした。"新しい画像"をタップして、もう一度お試しください。</string>
 
     <!-- Home -->
     <string name="home_account">あなたのアカウント</string>

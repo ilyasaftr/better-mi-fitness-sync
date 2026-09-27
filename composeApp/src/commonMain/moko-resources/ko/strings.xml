@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">해당 URL로 브라우저 로그인을 완료할 수 없습니다. 전체 sts-hlth URL을 붙여넣으세요.</string>
     <string name="login_missing_pass_token">로그인이 passToken을 반환하지 않아 앱이 며칠간 로그인 상태를 유지할 수 없습니다. 다시 시도하거나 다른 로그인 방법을 사용하세요.</string>
     <string name="login_missing_device_id">로그인에 기기 ID가 없습니다 — 다시 시도하세요.</string>
+    <string name="login_captcha_title">그림 코드를 입력하세요</string>
+    <string name="login_captcha_detail">로그인하기 전에 Xiaomi에서 그림 확인을 요청합니다. 코드를 입력한 후 계속하세요.</string>
+    <string name="login_captcha_code">그림 코드</string>
+    <string name="login_captcha_continue">계속</string>
+    <string name="login_captcha_refresh">새 그림</string>
+    <string name="login_captcha_loading">그림 불러오는 중…</string>
+    <string name="login_captcha_wrong">코드가 일치하지 않습니다 — 새 그림이 표시됩니다. 다시 시도하세요.</string>
+    <string name="login_captcha_empty">먼저 그림에 표시된 코드를 입력하세요.</string>
+    <string name="login_captcha_load_failed">그림을 불러오지 못했습니다. 새 그림을 탭하고 다시 시도하세요.</string>
 
     <!-- Home -->
     <string name="home_account">내 계정</string>

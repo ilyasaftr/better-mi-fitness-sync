@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Bu URL\'den tarayıcı girişi tamamlanamadı. Tam sts-hlth URL\'sini yapıştırın.</string>
     <string name="login_missing_pass_token">Giriş passToken döndürmedi, bu nedenle uygulama günler boyunca oturum açık kalamaz. Tekrar deneyin veya diğer giriş yöntemini kullanın.</string>
     <string name="login_missing_device_id">Girişte device id eksik — tekrar deneyin.</string>
+    <string name="login_captcha_title">Resimdeki kodu yaz</string>
+    <string name="login_captcha_detail">Xiaomi, oturum açmadan önce resimli doğrulama istiyor. Kodu yaz, ardından devam et.</string>
+    <string name="login_captcha_code">Resim kodu</string>
+    <string name="login_captcha_continue">Devam et</string>
+    <string name="login_captcha_refresh">Yeni resim</string>
+    <string name="login_captcha_loading">Resim yükleniyor…</string>
+    <string name="login_captcha_wrong">Bu kod eşleşmedi — yeni bir resim gösterildi, tekrar dene.</string>
+    <string name="login_captcha_empty">Önce resimde gösterilen kodu yaz.</string>
+    <string name="login_captcha_load_failed">Resim yüklenemedi. Yeni resim\'e dokun ve tekrar dene.</string>
 
     <!-- Home -->
     <string name="home_account">Hesabınız</string>

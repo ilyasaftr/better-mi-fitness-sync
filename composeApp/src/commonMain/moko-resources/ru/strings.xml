@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Не удалось завершить вход через браузер по этому URL. Вставьте полный URL sts-hlth.</string>
     <string name="login_missing_pass_token">Вход не вернул passToken, поэтому приложение не сможет оставаться авторизованным. Попробуйте снова или используйте другой способ входа.</string>
     <string name="login_missing_device_id">Вход не получил ID устройства — попробуйте снова.</string>
+    <string name="login_captcha_title">Введите код с картинки</string>
+    <string name="login_captcha_detail">Xiaomi просит пройти проверку картинкой перед входом. Введите код и продолжите.</string>
+    <string name="login_captcha_code">Код с картинки</string>
+    <string name="login_captcha_continue">Продолжить</string>
+    <string name="login_captcha_refresh">Новая картинка</string>
+    <string name="login_captcha_loading">Загрузка картинки…</string>
+    <string name="login_captcha_wrong">Код не подошёл — показана новая картинка, попробуйте ещё раз.</string>
+    <string name="login_captcha_empty">Сначала введите код, показанный на картинке.</string>
+    <string name="login_captcha_load_failed">Не удалось загрузить картинку. Нажмите «Новая картинка» и попробуйте ещё раз.</string>
 
     <!-- Home -->
     <string name="home_account">Ваш аккаунт</string>

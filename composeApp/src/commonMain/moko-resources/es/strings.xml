@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">No se pudo finalizar el inicio de sesión por navegador con esa URL. Pega la URL completa de sts-hlth.</string>
     <string name="login_missing_pass_token">El inicio de sesión no devolvió un passToken, por lo que la app no puede mantener la sesión activa entre días. Inténtalo de nuevo o usa el otro método de inicio de sesión.</string>
     <string name="login_missing_device_id">Falta el device id en el inicio de sesión — inténtalo de nuevo.</string>
+    <string name="login_captcha_title">Escribe el código de la imagen</string>
+    <string name="login_captcha_detail">Xiaomi pide una comprobación con imagen antes de iniciar sesión. Escribe el código y continúa.</string>
+    <string name="login_captcha_code">Código de la imagen</string>
+    <string name="login_captcha_continue">Continuar</string>
+    <string name="login_captcha_refresh">Nueva imagen</string>
+    <string name="login_captcha_loading">Cargando imagen…</string>
+    <string name="login_captcha_wrong">Ese código no coincide — se muestra una imagen nueva, inténtalo de nuevo.</string>
+    <string name="login_captcha_empty">Escribe primero el código que se muestra en la imagen.</string>
+    <string name="login_captcha_load_failed">No se pudo cargar la imagen. Toca Nueva imagen e inténtalo de nuevo.</string>
 
     <!-- Home -->
     <string name="home_account">Tu cuenta</string>

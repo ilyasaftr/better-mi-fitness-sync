@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">সেই URL থেকে ব্রাউজার লগইন সম্পন্ন করা যায়নি। পুরো sts-hlth URL পেস্ট করুন।</string>
     <string name="login_missing_pass_token">লগইন passToken ফেরত দেয়নি, তাই অ্যাপ বেশ কয়েক দিন সাইন ইন থাকতে পারবে না। আবার চেষ্টা করুন বা অন্য লগইন পদ্ধতি ব্যবহার করুন।</string>
     <string name="login_missing_device_id">লগইনে device id পাওয়া যায়নি — আবার চেষ্টা করুন।</string>
+    <string name="login_captcha_title">ছবির কোডটি লিখুন</string>
+    <string name="login_captcha_detail">সাইন ইন করার আগে Xiaomi ছবি যাচাই চাইছে। কোডটি লিখুন, তারপর চালিয়ে যান।</string>
+    <string name="login_captcha_code">ছবির কোড</string>
+    <string name="login_captcha_continue">চালিয়ে যান</string>
+    <string name="login_captcha_refresh">নতুন ছবি</string>
+    <string name="login_captcha_loading">ছবি লোড হচ্ছে…</string>
+    <string name="login_captcha_wrong">কোডটি মেলেনি — একটি নতুন ছবি দেখানো হয়েছে, আবার চেষ্টা করুন।</string>
+    <string name="login_captcha_empty">প্রথমে ছবিতে দেখানো কোডটি লিখুন।</string>
+    <string name="login_captcha_load_failed">ছবিটি লোড করা যায়নি। নতুন ছবি চাপুন এবং আবার চেষ্টা করুন।</string>
 
     <!-- Home -->
     <string name="home_account">আপনার অ্যাকাউন্ট</string>

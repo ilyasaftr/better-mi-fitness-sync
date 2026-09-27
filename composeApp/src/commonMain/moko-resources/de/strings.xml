@@ -61,6 +61,15 @@
     <string name="login_browser_finish_failed">Browser-Anmeldung mit dieser URL konnte nicht abgeschlossen werden. Füge die vollständige sts-hlth-URL ein.</string>
     <string name="login_missing_pass_token">Die Anmeldung hat keinen passToken zurückgegeben, daher kann die App die Sitzung nicht über Tage hinweg aufrechterhalten. Versuche es erneut oder nutze die andere Anmeldemethode.</string>
     <string name="login_missing_device_id">Device-ID bei der Anmeldung fehlt — versuche es erneut.</string>
+    <string name="login_captcha_title">Gib den Bildcode ein</string>
+    <string name="login_captcha_detail">Xiaomi möchte vor der Anmeldung eine Bildprüfung. Gib den Code ein und tippe dann auf Weiter.</string>
+    <string name="login_captcha_code">Bildcode</string>
+    <string name="login_captcha_continue">Weiter</string>
+    <string name="login_captcha_refresh">Neues Bild</string>
+    <string name="login_captcha_loading">Bild wird geladen…</string>
+    <string name="login_captcha_wrong">Der Code war falsch – ein neues Bild wird angezeigt, versuch es erneut.</string>
+    <string name="login_captcha_empty">Gib zuerst den Code aus dem Bild ein.</string>
+    <string name="login_captcha_load_failed">Das Bild konnte nicht geladen werden. Tippe auf Neues Bild und versuch es erneut.</string>
 
     <!-- Home -->
     <string name="home_account">Dein Konto</string>
