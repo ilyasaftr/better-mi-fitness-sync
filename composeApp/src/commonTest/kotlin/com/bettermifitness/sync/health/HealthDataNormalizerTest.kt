@@ -191,6 +191,68 @@ class HealthDataNormalizerTest {
     }
 
     @Test
+    fun normalizeSleep_repairsOverlapsAfterMergingRows() {
+        val bed = 1_700_000_000L
+        val full = SleepSession(
+            startTime = bed,
+            endTime = bed + 7_200,
+            stages = listOf(
+                SleepStage(bed, bed + 1_800, 3),
+                SleepStage(bed + 1_800, bed + 3_600, 2),
+            ),
+            tzIn15Min = 32,
+        )
+        val legacy = SleepSession(
+            startTime = bed,
+            endTime = bed + 7_200,
+            stages = listOf(
+                SleepStage(bed + 900, bed + 2_700, 4),
+                SleepStage(bed + 2_700, bed + 7_200, 5),
+            ),
+            tzIn15Min = 32,
+        )
+
+        val out = HealthDataNormalizer.normalizeSleep(listOf(full, legacy))
+        val stages = out.single().stages
+
+        assertEquals(4, stages.size)
+        assertTrue(stages.all { it.startTime < it.endTime })
+        assertEquals(bed, stages[0].startTime)
+        assertEquals(bed + 1_801, stages[1].startTime)
+        assertEquals(bed + 2_701, stages[2].startTime)
+        assertEquals(bed + 3_601, stages[3].startTime)
+        assertTrue(
+            stages.zipWithNext().all { (previous, next) ->
+                next.startTime >= previous.endTime + 1
+            },
+        )
+    }
+
+    @Test
+    fun normalizeSleep_dropsStageWhenRepairWouldRemoveItsDuration() {
+        val bed = 1_700_000_000L
+        val session = SleepSession(
+            startTime = bed,
+            endTime = bed + 600,
+            stages = listOf(
+                SleepStage(bed, bed + 100, 3),
+                // This stage is entirely consumed by the required one-second gap.
+                SleepStage(bed + 50, bed + 100, 2),
+                SleepStage(bed + 100, bed + 600, 4),
+            ),
+            tzIn15Min = 32,
+        )
+
+        val stages = HealthDataNormalizer.normalizeSleep(listOf(session)).single().stages
+
+        assertEquals(2, stages.size)
+        assertEquals(3, stages[0].stage)
+        assertEquals(4, stages[1].stage)
+        assertEquals(bed + 101, stages[1].startTime)
+        assertTrue(stages[1].startTime >= stages[0].endTime + 1)
+    }
+
+    @Test
     fun sleepRecordVersion_growsWithEndTime() {
         val stages = "1700000000:2,1700000900:3"
         val truncated = HealthRecordIds.counterVersion(1_700_001_800L, stages, 32)

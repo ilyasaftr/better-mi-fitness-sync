@@ -27,6 +27,7 @@ import kotlin.math.roundToInt
 object HealthDataNormalizer {
 
     private const val HOUR_SEC = 3600L
+    private const val MIN_SLEEP_STAGE_GAP_SECONDS = 1L
 
     /**
      * Floor for buckets reduced by workout-overlap subtraction: keeps the record alive
@@ -229,7 +230,63 @@ object HealthDataNormalizer {
             byStart[cleaned.startTime] =
                 if (existing == null) cleaned else mergeSleepSessions(existing, cleaned)
         }
-        return byStart.values.sortedBy { it.startTime }
+        // Merging complete and legacy/truncated rows can introduce overlapping stages
+        // with different start times. Repair the merged timeline before constructing
+        // platform sleep records, whose stage intervals must be strictly ordered.
+        return byStart.values
+            .sortedBy { it.startTime }
+            .mapNotNull { session ->
+                val repairedStages = repairSleepStages(
+                    sessionStart = session.startTime,
+                    sessionEnd = session.endTime,
+                    stages = session.stages,
+                )
+                if (repairedStages.isEmpty()) {
+                    null
+                } else {
+                    session.copy(stages = repairedStages)
+                }
+            }
+    }
+
+    /**
+     * Makes a merged sleep timeline acceptable to Health Connect / HealthKit.
+     *
+     * Stages are ordered by their source start time. Each stage after the first
+     * starts at least one second after the previous retained stage ends. We move
+     * only the start boundary, preserving the source end; if that would leave no
+     * positive duration, the stage is discarded instead of inventing an end time.
+     */
+    internal fun repairSleepStages(
+        sessionStart: Long,
+        sessionEnd: Long,
+        stages: List<SleepStage>,
+    ): List<SleepStage> {
+        var previousEnd: Long? = null
+
+        return stages
+            .asSequence()
+            .filter { it.endTime > it.startTime }
+            .sortedWith(
+                compareBy<SleepStage> { it.startTime }
+                    .thenBy { it.endTime },
+            )
+            .mapNotNull { stage ->
+                val end = minOf(stage.endTime, sessionEnd)
+                val minimumStart = previousEnd
+                    ?.plus(MIN_SLEEP_STAGE_GAP_SECONDS)
+                    ?: sessionStart
+                val start = maxOf(stage.startTime, minimumStart)
+
+                if (start >= end) {
+                    null
+                } else {
+                    stage.copy(startTime = start, endTime = end).also {
+                        previousEnd = end
+                    }
+                }
+            }
+            .toList()
     }
 
     private fun cleanSleepSession(
