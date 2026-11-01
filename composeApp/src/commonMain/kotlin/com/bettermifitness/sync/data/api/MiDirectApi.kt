@@ -337,6 +337,7 @@ class MiDirectApi(private val client: MiDataClient) {
                 key = entry["key"]?.jsonPrimitive?.content,
                 time = entry["time"]?.jsonPrimitive?.long ?: 0,
                 value = entry["value"]?.jsonPrimitive?.content ?: "",
+                sid = entry["sid"]?.jsonPrimitive?.content,
             )
         } ?: emptyList()
         return FitnessResponse(

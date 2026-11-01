@@ -1,5 +1,7 @@
 package com.bettermifitness.sync.health
 
+import kotlin.time.Clock
+
 /**
  * Stable Health Connect [clientRecordId] / HealthKit [HKMetadataKeySyncIdentifier] values.
  *
@@ -23,6 +25,10 @@ object HealthRecordIds {
      * counterVersion reachable under the normalizer caps (200k steps * 1e6).
      */
     const val WORKOUT_ADJUSTMENT_VERSION_BUMP = 1_000_000_000_000L
+
+    // Source merging can lower totals. Exceed legacy counter versions (at most
+    // 500,000 meters * 1,000 * 1,000,000 + the workout adjustment) on every sync.
+    fun activityVersion(): Long = 1_000_000_000_000_000L + Clock.System.now().toEpochMilliseconds()
 
     fun heartRateWindow(windowStartEpochSec: Long): String =
         "mifit-hr-$windowStartEpochSec"
