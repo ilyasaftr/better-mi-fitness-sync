@@ -216,13 +216,30 @@ object HealthDataNormalizer {
             val start = toEpochSeconds(w.startTime)
             val end = toEpochSeconds(w.endTime)
             if (end <= start) continue
-            val duration = (end - start).toDouble()
-            for (i in buckets.starts.indices) {
-                val overlap = minOf(end, buckets.ends[i]) - maxOf(start, buckets.starts[i])
-                if (overlap <= 0) continue
-                buckets.values[i] -= amount * overlap / duration
-                buckets.adjusted[i] = true
+            val overlaps = DoubleArray(buckets.starts.size) { i ->
+                (minOf(end, buckets.ends[i]) - maxOf(start, buckets.starts[i])).coerceAtLeast(0).toDouble()
             }
+            deductOverlap(buckets, overlaps, amount)
+        }
+    }
+
+    private fun deductOverlap(buckets: OverlapBuckets, overlaps: DoubleArray, amount: Double) {
+        // Empty intervals carry no activity. Redistribute any deduction that exceeds
+        // one interval's value across the remaining overlapping intervals.
+        var remaining = amount
+        while (remaining > 0.0001) {
+            val active = overlaps.indices.filter { overlaps[it] > 0 && buckets.values[it] > 0 }
+            val duration = active.sumOf { overlaps[it] }
+            if (duration == 0.0) break
+            var deducted = 0.0
+            for (i in active) {
+                val share = minOf(buckets.values[i], remaining * overlaps[i] / duration)
+                buckets.values[i] -= share
+                buckets.adjusted[i] = true
+                deducted += share
+            }
+            if (deducted <= 0) break
+            remaining -= deducted
         }
     }
 
