@@ -49,6 +49,7 @@ data class HeartRateEntry(
     val key: String? = null,
     val time: Long = 0,
     val value: String = "",
+    val sid: String? = null,
 )
 
 @Serializable

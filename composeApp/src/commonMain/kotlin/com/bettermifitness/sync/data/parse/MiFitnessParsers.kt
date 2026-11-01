@@ -37,9 +37,10 @@ data class RawFitnessEntry(
     val key: String? = null,
     val time: Long = 0,
     val value: String = "",
+    val sid: String? = null,
 )
 
-fun HeartRateEntry.toRaw(): RawFitnessEntry = RawFitnessEntry(key, time, value)
+fun HeartRateEntry.toRaw(): RawFitnessEntry = RawFitnessEntry(key, time, value, sid)
 fun SleepEntry.toRaw(): RawFitnessEntry = RawFitnessEntry(key, time, value)
 
 /**
@@ -114,15 +115,33 @@ object MiFitnessParsers {
             }
         }
 
-    /**
-     * Mi records per-minute step deltas; bucket into hourly samples to match Mi Fitness UI.
-     */
+    // Mi selects the source with the largest total in each half-hour interval.
+    // Distance follows the selected step source.
+    private fun activityRows(
+        entries: List<RawFitnessEntry>,
+        primaryValue: String,
+    ): List<Pair<RawFitnessEntry, JsonObject>> = entries.mapNotNull { entry ->
+        try {
+            entry to json.parseToJsonElement(entry.value).jsonObject
+        } catch (_: Exception) {
+            null
+        }
+    }.groupBy { (entry, obj) ->
+        val time = obj.longField("time") ?: entry.time
+        val offset = (obj.intField("timezone") ?: 0) * 900L
+        time - (time + offset) % 1800L
+    }.values.flatMap { rows ->
+        rows.groupBy { it.first.sid }.values.maxBy { sourceRows ->
+            sourceRows.sumOf { (_, obj) -> obj.doubleField(primaryValue) ?: 0.0 }
+        }
+    }
+
+    /** Mi records per-minute step deltas; bucket selected sources into hourly samples. */
     fun parseHourlySteps(entries: List<RawFitnessEntry>): List<StepsRecord> {
         val byHour = HashMap<Long, Int>()
         val tzByHour = HashMap<Long, Int>()
-        for (entry in entries) {
+        for ((_, o) in activityRows(entries, "steps")) {
             try {
-                val o = json.parseToJsonElement(entry.value).jsonObject
                 val t = o["time"]?.jsonPrimitive?.long ?: continue
                 val steps = o["steps"]?.jsonPrimitive?.int ?: continue
                 val hourStart = (t / 3600L) * 3600L
@@ -152,9 +171,8 @@ object MiFitnessParsers {
     fun parseHourlyDistanceFromSteps(entries: List<RawFitnessEntry>): List<DistanceSample> {
         val byHour = HashMap<Long, Double>()
         val tzByHour = HashMap<Long, Int>()
-        for (entry in entries) {
+        for ((_, o) in activityRows(entries, "steps")) {
             try {
-                val o = json.parseToJsonElement(entry.value).jsonObject
                 val t = o["time"]?.jsonPrimitive?.long ?: continue
                 val meters = o.doubleField("distance") ?: continue
                 if (meters <= 0) continue
@@ -182,9 +200,8 @@ object MiFitnessParsers {
     fun parseHourlyActiveCalories(entries: List<RawFitnessEntry>): List<ActiveCaloriesSample> {
         val byHour = HashMap<Long, Double>()
         val tzByHour = HashMap<Long, Int>()
-        for (entry in entries) {
+        for ((entry, o) in activityRows(entries, "calories")) {
             try {
-                val o = json.parseToJsonElement(entry.value).jsonObject
                 val t = o["time"]?.jsonPrimitive?.long ?: entry.time
                 val kcal = o.doubleField("calories") ?: continue
                 if (kcal <= 0) continue
