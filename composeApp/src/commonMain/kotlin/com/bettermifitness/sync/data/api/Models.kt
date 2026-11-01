@@ -116,13 +116,14 @@ data class StepsRecord(
     val steps: Int,
     val distance: Double = 0.0,
     val calories: Double = 0.0,
-    /** Mi `timezone` from first sample in the hour bucket, if present. */
+    /** Mi `timezone` from the earliest sample in the activity interval, if present. */
     val tzIn15Min: Int? = null,
     /**
      * True when workout-overlap steps were subtracted (issue #51). Writers use it
      * to bump the record version so the correction overwrites inflated history.
      */
     val workoutAdjusted: Boolean = false,
+    val endTime: Long? = null,
 )
 
 // --- SpO2 ---
@@ -142,7 +143,7 @@ data class DistanceSample(
     val startTime: Long,
     val endTime: Long,
     val meters: Double,
-    /** Mi `timezone` from first sample in the hour bucket, if present. */
+    /** Mi `timezone` from the earliest sample in the activity interval, if present. */
     val tzIn15Min: Int? = null,
     /**
      * True when workout-overlap distance was subtracted (issue #51). Writers use it
@@ -158,7 +159,7 @@ data class ActiveCaloriesSample(
     val startTime: Long,
     val endTime: Long,
     val kilocalories: Double,
-    /** Mi `timezone` from first sample in the hour bucket, if present. */
+    /** Mi `timezone` from the earliest sample in the activity interval, if present. */
     val tzIn15Min: Int? = null,
     /**
      * True when workout-overlap calories were subtracted (issue #51). Writers use it

@@ -148,13 +148,13 @@ class MiFitnessParsersTest {
     }
 
     @Test
-    fun parseHourlySteps_bucketsByHour() {
-        // Floor to hour start: (t / 3600) * 3600
+    fun parseHourlySteps_bucketsByQuarterHour() {
+        // Floor to 15-minute interval start.
         val t1 = 1_700_000_100L
         val t2 = 1_700_000_200L
         val t3 = 1_700_003_700L
-        val hour1 = (t1 / 3600L) * 3600L
-        val hour2 = (t3 / 3600L) * 3600L
+        val hour1 = (t1 / 900L) * 900L
+        val hour2 = (t3 / 900L) * 900L
         val entries = listOf(
             RawFitnessEntry(value = """{"time":$t1,"steps":10}"""),
             RawFitnessEntry(value = """{"time":$t2,"steps":5}"""),
@@ -194,7 +194,7 @@ class MiFitnessParsersTest {
     @Test
     fun parseHourlyActiveCalories_bucketsKcal() {
         val t = 1_700_000_100L
-        val hour = (t / 3600L) * 3600L
+        val hour = (t / 900L) * 900L
         val samples = MiFitnessParsers.parseHourlyActiveCalories(
             listOf(RawFitnessEntry(value = """{"time":$t,"calories":12.5}""")),
         )

@@ -15,6 +15,7 @@ import com.bettermifitness.sync.health.HealthStore
 import com.bettermifitness.sync.health.HealthTimePolicy
 import com.mifitness.miclient.api.MiApiException
 import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -132,7 +133,7 @@ class HealthRepository(
                 async {
                     try {
                         fetchSemaphore.withPermit {
-                            MiFitnessParsers.parseWorkouts(api.getSportRecordsByTime(from, to))
+                            MiFitnessParsers.parseWorkouts(api.getSportRecordsByTime(activityFrom(from), to))
                         }
                     } catch (_: Exception) {
                         emptyList()
@@ -518,7 +519,7 @@ class HealthRepository(
     suspend fun syncWorkouts(from: String, to: String) {
         runMetric("workouts") {
             val parsed = MiFitnessParsers.parseWorkouts(
-                api.getSportRecordsByTime(from, to),
+                api.getSportRecordsByTime(activityFrom(from), to),
             )
             // HR samples in range — attach as series when FDS record is sparse.
             // Include manual spot checks (single_heart_rate) like the main HR sync.
@@ -547,7 +548,7 @@ class HealthRepository(
     ) {
         runMetric("workouts") {
             val parsed = MiFitnessParsers.parseWorkouts(
-                fetchSemaphore.withPermit { api.getSportRecordsByTime(from, to) },
+                fetchSemaphore.withPermit { api.getSportRecordsByTime(activityFrom(from), to) },
             )
             // Shared HR rows including manual spot checks — attach when FDS is sparse.
             val hrSamples = MiFitnessParsers.parseHeartRateSamples(
@@ -681,17 +682,34 @@ class HealthRepository(
         to: String,
         maxPages: Int = 60,
     ): List<HeartRateEntry> {
+        // Fetch the complete oldest hour before replacing legacy hourly activity records.
+        val activity = key == "steps" || key == "calories"
+        val queryFrom = if (activity) activityFrom(from) else from
         val all = mutableListOf<HeartRateEntry>()
         var next: String? = null
         var pages = 0
         while (pages < maxPages) {
-            val res = api.getDataByTime(key, from, to, next).result ?: break
+            val res = api.getDataByTime(key, queryFrom, to, next).result
+            if (res == null) {
+                check(!activity) { "Missing $key data page" }
+                return all
+            }
             all += res.dataList
             pages++
-            if (!res.hasMore || res.nextKey.isNullOrEmpty()) break
+            if (!res.hasMore) return all
+            if (res.nextKey.isNullOrEmpty()) {
+                check(!activity) { "Missing $key page cursor" }
+                return all
+            }
             next = res.nextKey
         }
+        check(!activity) { "Incomplete $key data after $maxPages pages" }
         return all
+    }
+
+    private fun activityFrom(from: String): String {
+        val start = Instant.parse(from).epochSeconds
+        return Instant.fromEpochSeconds(start - start.mod(3600L)).toString()
     }
 
     private suspend fun fetchAllMedicalByTime(

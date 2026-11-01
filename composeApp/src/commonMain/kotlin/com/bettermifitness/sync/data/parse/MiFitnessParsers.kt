@@ -115,17 +115,17 @@ object MiFitnessParsers {
         }
 
     /**
-     * Mi records per-minute step deltas; bucket into hourly samples to match Mi Fitness UI.
+     * Use absolute 15-minute intervals so every supported Mi offset aligns with local midnight.
      */
     fun parseHourlySteps(entries: List<RawFitnessEntry>): List<StepsRecord> {
         val byHour = HashMap<Long, Int>()
         val tzByHour = HashMap<Long, Int>()
-        for (entry in entries) {
+        for (entry in activityEntries(entries)) {
             try {
                 val o = json.parseToJsonElement(entry.value).jsonObject
                 val t = o["time"]?.jsonPrimitive?.long ?: continue
                 val steps = o["steps"]?.jsonPrimitive?.int ?: continue
-                val hourStart = (t / 3600L) * 3600L
+                val hourStart = t - t.mod(900L)
                 byHour[hourStart] = (byHour[hourStart] ?: 0) + steps
                 if (hourStart !in tzByHour) {
                     o.miTimezoneOrNull()?.let { tzByHour[hourStart] = it }
@@ -140,6 +140,7 @@ object MiFitnessParsers {
                 StepsRecord(
                     date = hour.toString(),
                     steps = steps,
+                    endTime = hour + 899,
                     tzIn15Min = tzByHour[hour],
                 )
             }
@@ -147,18 +148,18 @@ object MiFitnessParsers {
 
     /**
      * Distance often rides on the same per-minute `steps` stream (`distance` field, meters).
-     * Bucket into hourly intervals for Health writes.
+     * Bucket into 15-minute intervals for Health writes.
      */
     fun parseHourlyDistanceFromSteps(entries: List<RawFitnessEntry>): List<DistanceSample> {
         val byHour = HashMap<Long, Double>()
         val tzByHour = HashMap<Long, Int>()
-        for (entry in entries) {
+        for (entry in activityEntries(entries)) {
             try {
                 val o = json.parseToJsonElement(entry.value).jsonObject
                 val t = o["time"]?.jsonPrimitive?.long ?: continue
                 val meters = o.doubleField("distance") ?: continue
                 if (meters <= 0) continue
-                val hourStart = (t / 3600L) * 3600L
+                val hourStart = t - t.mod(900L)
                 byHour[hourStart] = (byHour[hourStart] ?: 0.0) + meters
                 if (hourStart !in tzByHour) {
                     o.miTimezoneOrNull()?.let { tzByHour[hourStart] = it }
@@ -171,24 +172,35 @@ object MiFitnessParsers {
             .map { (hour, meters) ->
                 DistanceSample(
                     startTime = hour,
-                    endTime = hour + 3599,
+                    endTime = hour + 899,
                     meters = meters,
                     tzIn15Min = tzByHour[hour],
                 )
             }
     }
 
+    private fun jsonTime(value: String): Long? = try {
+        json.parseToJsonElement(value).jsonObject.longField("time")
+    } catch (_: Exception) {
+        null
+    }
+
+    private fun activityEntries(entries: List<RawFitnessEntry>): List<RawFitnessEntry> =
+        entries.map { (jsonTime(it.value) ?: it.time) to it }
+            .sortedWith(compareBy({ it.first }, { it.second.value }))
+            .map { it.second }
+
     /** Active energy from the dedicated `calories` key (kcal). */
     fun parseHourlyActiveCalories(entries: List<RawFitnessEntry>): List<ActiveCaloriesSample> {
         val byHour = HashMap<Long, Double>()
         val tzByHour = HashMap<Long, Int>()
-        for (entry in entries) {
+        for (entry in activityEntries(entries)) {
             try {
                 val o = json.parseToJsonElement(entry.value).jsonObject
                 val t = o["time"]?.jsonPrimitive?.long ?: entry.time
                 val kcal = o.doubleField("calories") ?: continue
                 if (kcal <= 0) continue
-                val hourStart = (t / 3600L) * 3600L
+                val hourStart = t - t.mod(900L)
                 byHour[hourStart] = (byHour[hourStart] ?: 0.0) + kcal
                 if (hourStart !in tzByHour) {
                     o.miTimezoneOrNull()?.let { tzByHour[hourStart] = it }
@@ -201,7 +213,7 @@ object MiFitnessParsers {
             .map { (hour, kcal) ->
                 ActiveCaloriesSample(
                     startTime = hour,
-                    endTime = hour + 3599,
+                    endTime = hour + 899,
                     kilocalories = kcal,
                     tzIn15Min = tzByHour[hour],
                 )
