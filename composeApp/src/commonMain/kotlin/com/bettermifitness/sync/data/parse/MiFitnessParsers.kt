@@ -115,7 +115,7 @@ object MiFitnessParsers {
             }
         }
 
-    // Mi selects the source with the largest total in each half-hour interval.
+    // Compare sources in the same absolute half-hour window, including across offset changes.
     // Distance follows the selected step source.
     private fun activityRows(
         entries: List<RawFitnessEntry>,
@@ -128,8 +128,7 @@ object MiFitnessParsers {
         }
     }.groupBy { (entry, obj) ->
         val time = obj.longField("time") ?: entry.time
-        val offset = (obj.intField("timezone") ?: 0) * 900L
-        time - (time + offset) % 1800L
+        time - time.mod(1800L)
     }.values.flatMap { rows ->
         rows.groupBy { it.first.sid }.values.maxBy { sourceRows ->
             sourceRows.sumOf { (_, obj) -> obj.doubleField(primaryValue) ?: 0.0 }
