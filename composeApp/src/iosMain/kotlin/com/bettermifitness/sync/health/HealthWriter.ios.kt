@@ -184,12 +184,12 @@ actual class HealthWriter : HealthStore {
         val hkSamples = clean.map { record ->
             val timestamp = record.date.toLong()
             val start = NSDate.dateWithTimeIntervalSince1970(timestamp.toDouble())
-            val end = NSDate.dateWithTimeIntervalSince1970((timestamp + 3600 - 1).toDouble())
+            val end = NSDate.dateWithTimeIntervalSince1970((record.endTime ?: timestamp + 3599).toDouble())
             // Same syncIdentifier + version on re-sync → HealthKit replaces, no double-count.
             // Workout-adjusted buckets carry a bump so the (lower) corrected value still
             // overwrites previously synced inflated history (issue #51).
             val metadata = mapOf<Any?, Any?>(
-                HKMetadataKeySyncIdentifier to HealthRecordIds.steps(timestamp),
+                HKMetadataKeySyncIdentifier to HealthRecordIds.steps(timestamp) + ":15m",
                 HKMetadataKeySyncVersion to HealthRecordIds.counterVersion(
                     record.steps.toLong(),
                     timestamp,
@@ -205,6 +205,7 @@ actual class HealthWriter : HealthStore {
         }
 
         saveSamples(hkSamples)
+        deleteLegacyActivity(stepsType, clean.map { it.date.toLong() }, HealthRecordIds::steps)
     }
 
     actual override suspend fun writeSpO2(samples: List<SpO2Sample>) {
@@ -247,7 +248,7 @@ actual class HealthWriter : HealthStore {
                 startDate = NSDate.dateWithTimeIntervalSince1970(s.startTime.toDouble()),
                 endDate = NSDate.dateWithTimeIntervalSince1970(s.endTime.toDouble()),
                 metadata = mapOf<Any?, Any?>(
-                    HKMetadataKeySyncIdentifier to HealthRecordIds.distance(s.startTime),
+                    HKMetadataKeySyncIdentifier to HealthRecordIds.distance(s.startTime) + ":15m",
                     // Counter-based so mid-day growth still wins; adjusted buckets carry a
                     // bump so the correction overwrites inflated history (issue #51).
                     HKMetadataKeySyncVersion to HealthRecordIds.counterVersion(
@@ -258,6 +259,7 @@ actual class HealthWriter : HealthStore {
             )
         }
         saveSamples(hkSamples)
+        deleteLegacyActivity(type, clean.map { it.startTime }, HealthRecordIds::distance)
     }
 
     actual override suspend fun writeActiveCalories(samples: List<ActiveCaloriesSample>) {
@@ -274,7 +276,7 @@ actual class HealthWriter : HealthStore {
                 startDate = NSDate.dateWithTimeIntervalSince1970(s.startTime.toDouble()),
                 endDate = NSDate.dateWithTimeIntervalSince1970(s.endTime.toDouble()),
                 metadata = mapOf<Any?, Any?>(
-                    HKMetadataKeySyncIdentifier to HealthRecordIds.activeCalories(s.startTime),
+                    HKMetadataKeySyncIdentifier to HealthRecordIds.activeCalories(s.startTime) + ":15m",
                     // Counter-based so mid-day growth still wins; adjusted buckets carry a
                     // bump so the correction overwrites inflated history (issue #51).
                     HKMetadataKeySyncVersion to HealthRecordIds.counterVersion(
@@ -285,6 +287,7 @@ actual class HealthWriter : HealthStore {
             )
         }
         saveSamples(hkSamples)
+        deleteLegacyActivity(type, clean.map { it.startTime }, HealthRecordIds::activeCalories)
     }
 
     actual override suspend fun writeWeight(measurements: List<WeightMeasurement>) {
@@ -607,6 +610,22 @@ actual class HealthWriter : HealthStore {
         dispatch_async(dispatch_get_main_queue(), open)
     }
 
+
+    private suspend fun deleteLegacyActivity(
+        type: HKQuantityType,
+        starts: List<Long>,
+        idOf: (Long) -> String,
+    ) {
+        for (ids in HealthRecordIds.legacyActivityIds(starts, idOf).chunked(IOS_SAVE_CHUNK_SIZE)) {
+            val predicate = HKQuery.predicateForObjectsWithMetadataKey(HKMetadataKeySyncIdentifier, ids)
+            suspendCoroutine { continuation ->
+                healthStore.deleteObjectsOfType(type, predicate) { success, _, error ->
+                    if (success) continuation.resume(Unit)
+                    else continuation.resumeWithException(Exception(error?.localizedDescription ?: "Failed to replace hourly activity"))
+                }
+            }
+        }
+    }
 
     private suspend fun saveSamples(
         samples: List<Any>,

@@ -51,6 +51,9 @@ object HealthRecordIds {
     fun activeCalories(startSec: Long): String =
         "mifit-kcal-$startSec"
 
+    fun legacyActivityIds(starts: List<Long>, idOf: (Long) -> String): List<String> =
+        starts.map { idOf(it - it.mod(3600L)) }.distinct()
+
     fun spo2(timestampSec: Long): String =
         "mifit-spo2-$timestampSec"
 

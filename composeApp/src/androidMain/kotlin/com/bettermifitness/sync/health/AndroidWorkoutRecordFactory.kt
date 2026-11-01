@@ -47,7 +47,7 @@ class AndroidWorkoutRecordFactory {
                 startTime = start,
                 startZoneOffset = zo,
                 endTime = end,
-                endZoneOffset = zo,
+                endZoneOffset = zoneOffsetOf(session, end),
                 metadata = meta,
                 exerciseType = mapping.healthConnectType,
                 title = mapping.title,
@@ -59,7 +59,7 @@ class AndroidWorkoutRecordFactory {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = zoneOffsetOf(session, end),
                 exerciseType = mapping.healthConnectType,
                 title = mapping.title,
                 notes = notes,
@@ -72,7 +72,7 @@ class AndroidWorkoutRecordFactory {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = zoneOffsetOf(session, end),
                 distance = Length.meters(d),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.workout(session.startTime) + ":dist",
@@ -85,7 +85,7 @@ class AndroidWorkoutRecordFactory {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = zoneOffsetOf(session, end),
                 energy = Energy.kilocalories(c),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.workout(session.startTime) + ":kcal",
@@ -98,7 +98,7 @@ class AndroidWorkoutRecordFactory {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = zoneOffsetOf(session, end),
                 count = steps.toLong(),
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.workout(session.startTime) + ":steps",
@@ -112,7 +112,7 @@ class AndroidWorkoutRecordFactory {
                     startTime = start,
                     endTime = end,
                     startZoneOffset = zo,
-                    endZoneOffset = zo,
+                    endZoneOffset = zoneOffsetOf(session, end),
                     elevation = Length.meters(gain),
                     metadata = Metadata.manualEntry(
                         clientRecordId = HealthRecordIds.workout(session.startTime) + ":elev",
@@ -121,17 +121,16 @@ class AndroidWorkoutRecordFactory {
                 )
             } catch (_: Exception) { /* optional */ }
         }
-        addHeartRate(out, session, zo, version)
-        addSpeed(out, session, zo, version)
-        addCadence(out, session, zo, version)
-        addPower(out, session, zo, version)
+        addHeartRate(out, session, version)
+        addSpeed(out, session, version)
+        addCadence(out, session, version)
+        addPower(out, session, version)
         return out
     }
 
     private fun addHeartRate(
         out: MutableList<androidx.health.connect.client.records.Record>,
         session: WorkoutSession,
-        zo: ZoneOffset,
         version: Long,
     ) {
         if (session.heartRateSeries.size < 2) return
@@ -147,8 +146,8 @@ class AndroidWorkoutRecordFactory {
         out += HeartRateRecord(
             startTime = hrStart,
             endTime = hrEnd,
-            startZoneOffset = zo,
-            endZoneOffset = zo,
+            startZoneOffset = zoneOffsetOf(session, hrStart),
+            endZoneOffset = zoneOffsetOf(session, hrEnd),
             samples = samples,
             metadata = Metadata.manualEntry(
                 clientRecordId = HealthRecordIds.workout(session.startTime) + ":hr",
@@ -160,7 +159,6 @@ class AndroidWorkoutRecordFactory {
     private fun addSpeed(
         out: MutableList<androidx.health.connect.client.records.Record>,
         session: WorkoutSession,
-        zo: ZoneOffset,
         version: Long,
     ) {
         val series = WorkoutFormSeries.speed(session)
@@ -178,8 +176,8 @@ class AndroidWorkoutRecordFactory {
             out += SpeedRecord(
                 startTime = s0,
                 endTime = s1,
-                startZoneOffset = zo,
-                endZoneOffset = zo,
+                startZoneOffset = zoneOffsetOf(session, s0),
+                endZoneOffset = zoneOffsetOf(session, s1),
                 samples = samples,
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.workout(session.startTime) + ":spd",
@@ -198,7 +196,6 @@ class AndroidWorkoutRecordFactory {
     private fun addCadence(
         out: MutableList<androidx.health.connect.client.records.Record>,
         session: WorkoutSession,
-        zo: ZoneOffset,
         version: Long,
     ) {
         val series = WorkoutFormSeries.cadence(session)
@@ -218,8 +215,8 @@ class AndroidWorkoutRecordFactory {
                 out += CyclingPedalingCadenceRecord(
                     startTime = s0,
                     endTime = s1,
-                    startZoneOffset = zo,
-                    endZoneOffset = zo,
+                    startZoneOffset = zoneOffsetOf(session, s0),
+                    endZoneOffset = zoneOffsetOf(session, s1),
                     samples = samples,
                     metadata = Metadata.manualEntry(
                         clientRecordId = HealthRecordIds.workout(session.startTime) + ":pcad",
@@ -236,8 +233,8 @@ class AndroidWorkoutRecordFactory {
                 out += StepsCadenceRecord(
                     startTime = s0,
                     endTime = s1,
-                    startZoneOffset = zo,
-                    endZoneOffset = zo,
+                    startZoneOffset = zoneOffsetOf(session, s0),
+                    endZoneOffset = zoneOffsetOf(session, s1),
                     samples = samples,
                     metadata = Metadata.manualEntry(
                         clientRecordId = HealthRecordIds.workout(session.startTime) + ":cad",
@@ -251,7 +248,6 @@ class AndroidWorkoutRecordFactory {
     private fun addPower(
         out: MutableList<androidx.health.connect.client.records.Record>,
         session: WorkoutSession,
-        zo: ZoneOffset,
         version: Long,
     ) {
         val series = session.powerWattsSeries
@@ -269,8 +265,8 @@ class AndroidWorkoutRecordFactory {
             out += PowerRecord(
                 startTime = s0,
                 endTime = s1,
-                startZoneOffset = zo,
-                endZoneOffset = zo,
+                startZoneOffset = zoneOffsetOf(session, s0),
+                endZoneOffset = zoneOffsetOf(session, s1),
                 samples = samples,
                 metadata = Metadata.manualEntry(
                     clientRecordId = HealthRecordIds.workout(session.startTime) + ":pow",
@@ -299,10 +295,10 @@ class AndroidWorkoutRecordFactory {
         }
     }
 
-    private fun zoneOffsetOf(session: WorkoutSession): ZoneOffset =
+    private fun zoneOffsetOf(session: WorkoutSession, at: Instant = Instant.ofEpochSecond(session.startTime)): ZoneOffset =
         ZoneOffsetResolver.fromMiOrSystem(
             tzIn15Min = session.tzIn15Min,
             gpsTzIn15Min = session.gpsTzIn15Min,
-            at = Instant.ofEpochSecond(session.startTime),
+            at = at,
         )
 }

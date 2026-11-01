@@ -15,6 +15,7 @@ import com.bettermifitness.sync.health.HealthStore
 import com.bettermifitness.sync.health.HealthTimePolicy
 import com.mifitness.miclient.api.MiApiException
 import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -681,16 +682,31 @@ class HealthRepository(
         to: String,
         maxPages: Int = 60,
     ): List<HeartRateEntry> {
+        // Fetch the complete oldest hour before replacing legacy hourly activity records.
+        val activity = key == "steps" || key == "calories"
+        val queryFrom = if (activity) {
+            val start = Instant.parse(from).epochSeconds
+            Instant.fromEpochSeconds(start - start.mod(3600L)).toString()
+        } else from
         val all = mutableListOf<HeartRateEntry>()
         var next: String? = null
         var pages = 0
         while (pages < maxPages) {
-            val res = api.getDataByTime(key, from, to, next).result ?: break
+            val res = api.getDataByTime(key, queryFrom, to, next).result
+            if (res == null) {
+                check(!activity) { "Missing $key data page" }
+                return all
+            }
             all += res.dataList
             pages++
-            if (!res.hasMore || res.nextKey.isNullOrEmpty()) break
+            if (!res.hasMore) return all
+            if (res.nextKey.isNullOrEmpty()) {
+                check(!activity) { "Missing $key page cursor" }
+                return all
+            }
             next = res.nextKey
         }
+        check(!activity) { "Incomplete $key data after $maxPages pages" }
         return all
     }
 

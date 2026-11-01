@@ -29,7 +29,10 @@ object ZoneOffsetResolver {
         tzIn15Min: Int?,
         gpsTzIn15Min: Int?,
         at: Instant,
-    ): ZoneOffset = fromMiOrSystem(tzIn15Min ?: gpsTzIn15Min, at)
+    ): ZoneOffset = fromMiOrSystem(
+        MiTimezone.fromPayloadOrNull(tzIn15Min)?.unitsOf15Min ?: gpsTzIn15Min,
+        at,
+    )
 
     private fun ofTotalSecondsSafe(seconds: Int): ZoneOffset =
         try {

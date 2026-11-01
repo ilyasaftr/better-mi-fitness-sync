@@ -129,7 +129,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val end = Instant.ofEpochSecond(ordered.last().timestamp).plusSeconds(1)
             if (!end.isAfter(start)) return@mapNotNull null
             val zo = ZoneOffsetResolver.fromMiOrSystem(
-                ordered.firstNotNullOfOrNull { it.tzIn15Min },
+                ordered.first().tzIn15Min,
                 start,
             )
 
@@ -137,7 +137,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = ZoneOffsetResolver.fromMiOrSystem(ordered.last().tzIn15Min, end),
                 samples = ordered.map { sample ->
                     HeartRateRecord.Sample(
                         time = Instant.ofEpochSecond(sample.timestamp),
@@ -191,7 +191,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = ZoneOffsetResolver.fromMiOrSystem(session.tzIn15Min, end),
                 stages = session.stages.mapNotNull { stage ->
                     val s = Instant.ofEpochSecond(stage.startTime)
                     val e = Instant.ofEpochSecond(stage.endTime)
@@ -224,7 +224,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             val ts = record.date.toLong()
             val start = Instant.ofEpochSecond(ts)
             // Clamp open hour end so HC never sees endTime in the future (issue #10 class).
-            val end = minOf(start.plusSeconds(3599), Instant.now())
+            val end = minOf(Instant.ofEpochSecond(record.endTime ?: ts + 3599), Instant.now())
             if (!end.isAfter(start)) return@mapNotNull null
             val zo = ZoneOffsetResolver.fromMiOrSystem(record.tzIn15Min, start)
 
@@ -232,10 +232,10 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = ZoneOffsetResolver.fromMiOrSystem(record.tzIn15Min, end),
                 count = record.steps.toLong(),
                 metadata = Metadata.manualEntry(
-                    clientRecordId = HealthRecordIds.steps(ts),
+                    clientRecordId = HealthRecordIds.steps(ts) + ":15m",
                     // Higher step counts during the day should replace earlier partial buckets.
                     // Workout-adjusted buckets carry a bump so the (lower) corrected value
                     // still overwrites previously synced inflated history (issue #51).
@@ -245,6 +245,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             )
         }
         insertChunked(hcRecords)
+        deleteLegacyActivity(HcStepsRecord::class, hcRecords.map { it.startTime.epochSecond }, HealthRecordIds::steps)
     }
 
     actual override suspend fun writeDistance(samples: List<DistanceSample>) {
@@ -257,10 +258,10 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 startTime = start,
                 endTime = Instant.ofEpochSecond(s.endTime),
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, Instant.ofEpochSecond(s.endTime)),
                 distance = Length.meters(s.meters),
                 metadata = Metadata.manualEntry(
-                    clientRecordId = HealthRecordIds.distance(s.startTime),
+                    clientRecordId = HealthRecordIds.distance(s.startTime) + ":15m",
                     // Counter-based so mid-day growth still wins; adjusted buckets carry a
                     // bump so the correction overwrites inflated history (issue #51).
                     clientRecordVersion = HealthRecordIds.counterVersion(
@@ -271,6 +272,17 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             )
         }
         insertChunked(records)
+        deleteLegacyActivity(DistanceRecord::class, clean.map { it.startTime }, HealthRecordIds::distance)
+    }
+
+    private suspend fun <T : androidx.health.connect.client.records.Record> deleteLegacyActivity(
+        type: kotlin.reflect.KClass<T>,
+        starts: List<Long>,
+        idOf: (Long) -> String,
+    ) {
+        for (ids in HealthRecordIds.legacyActivityIds(starts, idOf).chunked(500)) {
+            client.deleteRecords(type, recordIdsList = emptyList(), clientRecordIdsList = ids)
+        }
     }
 
     actual override suspend fun writeActiveCalories(samples: List<ActiveCaloriesSample>) {
@@ -283,10 +295,10 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 startTime = start,
                 endTime = Instant.ofEpochSecond(s.endTime),
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, Instant.ofEpochSecond(s.endTime)),
                 energy = Energy.kilocalories(s.kilocalories),
                 metadata = Metadata.manualEntry(
-                    clientRecordId = HealthRecordIds.activeCalories(s.startTime),
+                    clientRecordId = HealthRecordIds.activeCalories(s.startTime) + ":15m",
                     // Counter-based so mid-day growth still wins; adjusted buckets carry a
                     // bump so the correction overwrites inflated history (issue #51).
                     clientRecordVersion = HealthRecordIds.counterVersion(
@@ -297,6 +309,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
             )
         }
         insertChunked(records)
+        deleteLegacyActivity(ActiveCaloriesBurnedRecord::class, clean.map { it.startTime }, HealthRecordIds::activeCalories)
     }
 
     actual override suspend fun writeWeight(measurements: List<WeightMeasurement>) {
@@ -421,7 +434,7 @@ actual class HealthWriter(private val context: Context) : HealthStore {
                 startTime = start,
                 endTime = end,
                 startZoneOffset = zo,
-                endZoneOffset = zo,
+                endZoneOffset = ZoneOffsetResolver.fromMiOrSystem(s.tzIn15Min, end),
                 deltas = listOf(
                     SkinTemperatureRecord.Delta(
                         time = start,

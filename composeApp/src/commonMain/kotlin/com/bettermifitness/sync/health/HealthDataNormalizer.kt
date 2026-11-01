@@ -95,6 +95,10 @@ object HealthDataNormalizer {
                 calories = r.calories,
                 tzIn15Min = r.tzIn15Min,
                 workoutAdjusted = r.workoutAdjusted,
+                endTime = r.endTime?.let {
+                    HealthTimePolicy.clampInterval(ts, toEpochSeconds(it), nowEpochSeconds)?.second
+                        ?: return@mapNotNull null
+                },
             )
         }
             .sortedBy { it.date.toLong() }
@@ -120,6 +124,10 @@ object HealthDataNormalizer {
         val buckets = OverlapBuckets(
             starts = LongArray(records.size) { i ->
                 records[i].date.toLongOrNull()?.let { toEpochSeconds(it) } ?: 0L
+            },
+            ends = LongArray(records.size) { i ->
+                records[i].endTime?.let { toEpochSeconds(it) + 1 }
+                    ?: (records[i].date.toLongOrNull()?.let { toEpochSeconds(it) } ?: 0L) + HOUR_SEC
             },
             values = DoubleArray(records.size) { i -> records[i].steps.toDouble() },
         )
