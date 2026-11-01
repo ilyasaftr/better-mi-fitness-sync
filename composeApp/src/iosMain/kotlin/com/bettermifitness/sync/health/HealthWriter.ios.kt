@@ -21,6 +21,7 @@ import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.Foundation.distantPast
 import platform.Foundation.distantFuture
 import platform.HealthKit.HKQuery
+import platform.HealthKit.predicateForObjectsWithMetadataKey
 import platform.HealthKit.HKSampleQuery
 import platform.HealthKit.HKCategoryTypeIdentifierSleepAnalysis
 import platform.HealthKit.HKCorrelation
