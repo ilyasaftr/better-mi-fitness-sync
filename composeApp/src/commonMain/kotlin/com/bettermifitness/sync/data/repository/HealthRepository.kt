@@ -133,7 +133,7 @@ class HealthRepository(
                 async {
                     try {
                         fetchSemaphore.withPermit {
-                            MiFitnessParsers.parseWorkouts(api.getSportRecordsByTime(from, to))
+                            MiFitnessParsers.parseWorkouts(api.getSportRecordsByTime(activityFrom(from), to))
                         }
                     } catch (_: Exception) {
                         emptyList()
@@ -519,7 +519,7 @@ class HealthRepository(
     suspend fun syncWorkouts(from: String, to: String) {
         runMetric("workouts") {
             val parsed = MiFitnessParsers.parseWorkouts(
-                api.getSportRecordsByTime(from, to),
+                api.getSportRecordsByTime(activityFrom(from), to),
             )
             // HR samples in range — attach as series when FDS record is sparse.
             // Include manual spot checks (single_heart_rate) like the main HR sync.
@@ -548,7 +548,7 @@ class HealthRepository(
     ) {
         runMetric("workouts") {
             val parsed = MiFitnessParsers.parseWorkouts(
-                fetchSemaphore.withPermit { api.getSportRecordsByTime(from, to) },
+                fetchSemaphore.withPermit { api.getSportRecordsByTime(activityFrom(from), to) },
             )
             // Shared HR rows including manual spot checks — attach when FDS is sparse.
             val hrSamples = MiFitnessParsers.parseHeartRateSamples(
@@ -684,10 +684,7 @@ class HealthRepository(
     ): List<HeartRateEntry> {
         // Fetch the complete oldest hour before replacing legacy hourly activity records.
         val activity = key == "steps" || key == "calories"
-        val queryFrom = if (activity) {
-            val start = Instant.parse(from).epochSeconds
-            Instant.fromEpochSeconds(start - start.mod(3600L)).toString()
-        } else from
+        val queryFrom = if (activity) activityFrom(from) else from
         val all = mutableListOf<HeartRateEntry>()
         var next: String? = null
         var pages = 0
@@ -708,6 +705,11 @@ class HealthRepository(
         }
         check(!activity) { "Incomplete $key data after $maxPages pages" }
         return all
+    }
+
+    private fun activityFrom(from: String): String {
+        val start = Instant.parse(from).epochSeconds
+        return Instant.fromEpochSeconds(start - start.mod(3600L)).toString()
     }
 
     private suspend fun fetchAllMedicalByTime(
