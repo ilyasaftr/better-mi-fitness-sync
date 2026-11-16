@@ -19,7 +19,8 @@ object FdsAes {
 
     fun decryptBase64Ciphertext(objectKey: String, base64Ciphertext: String): ByteArray {
         val key = decodeObjectKey(objectKey)
-        val ciphertext = FdsKeys.decodeUrlSafe(base64Ciphertext.trim())
+        // Some FDS objects (e.g. indoor workout records) come back as a JSON string: "<base64>"
+        val ciphertext = FdsKeys.decodeUrlSafe(base64Ciphertext.trim().removeSurrounding("\""))
         return decrypt(key, ciphertext)
     }
 
