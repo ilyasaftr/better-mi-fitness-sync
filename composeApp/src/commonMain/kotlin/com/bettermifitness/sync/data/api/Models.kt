@@ -289,6 +289,11 @@ data class SportRecordEntry(
     val time: Long = 0,
     val value: String = "",
     val category: String? = null,
+    /**
+     * Source device id of the record row. Indoor workouts (e.g. strength training) carry no `did` in their
+     * value JSON, only this, and the FDS files of the workout are keyed by it.
+     */
+    val sid: String? = null,
 )
 
 // --- P2: from Mi FitnessPersistKey + item models (decompiled APK) ---

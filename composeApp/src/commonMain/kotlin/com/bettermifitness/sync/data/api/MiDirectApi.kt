@@ -141,6 +141,7 @@ class MiDirectApi(private val client: MiDataClient) {
                     time = obj["time"]?.jsonPrimitive?.long ?: 0,
                     value = valueStr,
                     category = obj["category"]?.jsonPrimitive?.content,
+                    sid = obj["sid"]?.jsonPrimitive?.content,
                 )
             }
             pages++
