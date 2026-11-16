@@ -333,7 +333,9 @@ object MiFitnessParsers {
             val version = payload["version"]?.jsonPrimitive?.intOrNull ?: 0
             val protoType = payload["proto_type"]?.jsonPrimitive?.intOrNull
                 ?: payload["sport_type"]?.jsonPrimitive?.intOrNull
+            // Outdoor workouts name their device in the value JSON; indoor ones only on the record row
             val did = payload["did"]?.jsonPrimitive?.content?.takeIf { it.isNotBlank() }
+                ?: entry.sid?.takeIf { it.isNotBlank() }
             val tz = payload.miTimezoneOrNull()
             val gpsTime = payload["time"]?.jsonPrimitive?.longOrNull ?: startTs
             // FDS files exist when report version > 0 (Mi FitnessFDSDataGetter).

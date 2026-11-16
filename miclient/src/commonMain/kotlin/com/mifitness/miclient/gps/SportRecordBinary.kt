@@ -30,6 +30,7 @@ object SportRecordBinary {
 
     fun parseSeries(data: ByteArray, sessionStartHint: Long = 0L): Series {
         if (data.size < 16) return Series()
+        parseIndoorSecondSamples(data)?.takeIf { it.isNotEmpty() }?.let { return Series(heartRate = it) }
         val version = data[5].toInt() and 0xFF
         val validLen = guessValidLen(version, data)
         val bodyOff = 7 + 1 + validLen
@@ -261,6 +262,29 @@ object SportRecordBinary {
         if (bodyOff >= data.size) return scanHrBytes(data.copyOfRange(minOf(bodyOff, data.size - 1), data.size), recoverStartSec)
         val body = data.copyOfRange(bodyOff, data.size)
         return scanHrBytes(body, recoverStartSec)
+    }
+
+    private const val INDOOR_HEADER = 19
+
+    /**
+     * Indoor record with one sample per active second, as strength training on Xiaomi Smart Band 10 writes it
+     * (proto 8, version 3). Header (19 bytes): start time u32, a flag byte, version, proto, 0, marker `FF BB`,
+     * sample count u32, start time u32, `7F`. Then 4 bytes per second: heart rate, calorie tick (1 = one more
+     * kcal), 0, 0. Paused seconds are not stored, so times after a pause run a little early.
+     *
+     * Taken only when the marker and the count match the file size exactly, so no other layout lands here.
+     * Checked on 17 real workouts: average, max and min heart rate and the calorie ticks equal the cloud summary.
+     */
+    fun parseIndoorSecondSamples(data: ByteArray): List<TimedValue>? {
+        if (data.size < INDOOR_HEADER) return null
+        if ((data[8].toInt() and 0xFF) != 0xFF || (data[9].toInt() and 0xFF) != 0xBB) return null
+        val count = u32(data, 10)
+        if (count <= 0 || INDOOR_HEADER + count * 4 != data.size.toLong()) return null
+        val start = u32(data, 14).takeIf { it > 1_000_000_000L } ?: u32(data, 0)
+        return (0 until count.toInt()).mapNotNull { i ->
+            val bpm = data[INDOOR_HEADER + i * 4].toInt() and 0xFF
+            if (bpm in 30..230) TimedValue(start + i, bpm.toDouble()) else null
+        }
     }
 
     private fun u32(b: ByteArray, o: Int): Long {
