@@ -340,6 +340,14 @@ actual class HealthWriter(private val context: Context) : HealthStore {
         if (clean.isEmpty()) return
         val factory = AndroidWorkoutRecordFactory()
         val batch = clean.flatMap { factory.buildRecords(it) }
+        // Record versions are content hashes, so a richer re-sync (e.g. per-second HR found later) can carry a
+        // LOWER version than what Health Connect holds, and Health Connect then silently keeps the old record.
+        // Workouts are few: drop the previous copies by client id first, so the current content always lands.
+        batch.groupBy { it::class }.forEach { (type, records) ->
+            records.mapNotNull { it.metadata.clientRecordId }.chunked(100).forEach { ids ->
+                runCatching { client.deleteRecords(type, emptyList(), ids) }
+            }
+        }
         // Insert in chunks to avoid binder limits on large routes/HR
         batch.chunked(50).forEach { chunk ->
             client.insertRecords(chunk)
